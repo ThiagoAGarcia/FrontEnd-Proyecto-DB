@@ -4,8 +4,8 @@ import './App.css'
 import Login from './views/LoginView/Login.jsx'
 import Protected from './navigation/Protected'
 import Admin from './views/AdminView/Admin.jsx'
-import User from './views/UserView/User.jsx'
 import Register from './views/LoginView/Register.jsx'
+import Main from './views/UserView/Main.jsx'
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
         <Route element={<Protected />}>
           <Route element={<Admin />} path="/admin" exact />
         </Route>
-        <Route element={<User />} path="/user" />
+        <Route element={<Main />} path="/main" />
       </Routes>
     </BrowserRouter>
   )

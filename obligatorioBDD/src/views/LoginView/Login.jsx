@@ -12,9 +12,9 @@ function Login() {
           alt="Logo de la Universidad Católica de Uruguay"
           className="w-50 h-auto"
         />
-        <div className="flex flex-col justify-center items-center shadow-xl rounded-2xl w-[70%] lg:w-[30%] h-120 p-12">
+        <div className="flex flex-col justify-center text-center items-center shadow-xl rounded-2xl w-[70%] lg:w-[30%] h-120 p-12">
           <h1 className="text-4xl text-blue-900">Inicio de sesión</h1>
-          <div className="w-full flex flex-col justify-center items-center">
+          <div className="w-full flex flex-col justify-center items-center mt-10">
             <form
               id="loginForm"
               className="w-full flex flex-col justify-start items-start">
