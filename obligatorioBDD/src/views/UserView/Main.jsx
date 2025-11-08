@@ -1,10 +1,33 @@
+import { useState } from "react";
 import NavBar from "../../components/navBar";
+
+import getUsersService from '../../service/getUsersService.jsx';
 import Footer from "../../components/footer";
 
 export default function Main() {
+    const [allUsers, setAllUsers] = useState([]);
+
+    const getAllUsers = async () => {
+        const res = await getUsersService();
+        console.log(res);
+        if (await res.success) {
+            setAllUsers(res.users);
+        }
+    }
+
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
             <NavBar />
+            <button onClick={() => getAllUsers()}>Get Users!</button>
+            <ul>
+                {allUsers && (
+                    allUsers.map((user) => (
+                        <li key={user.ci}>{user.name}</li>
+                    ))
+                )}
+            </ul>
+        </>
+
             <section className="flex-grow flex text-left flex-col justify-center p-10 ">
                 <h2 className="text-3xl flex ml-2 mb-3 font-semibold text-gray-800">Grupos</h2>
                 <div className="w-full bg-white shadow-md rounded-2xl p-6 flex justify-center items-center h-60 border border-gray-400">
@@ -15,5 +38,6 @@ export default function Main() {
             </section>
             <Footer />
         </div>
+
     );
 }
