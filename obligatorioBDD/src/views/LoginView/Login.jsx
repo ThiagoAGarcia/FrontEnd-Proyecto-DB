@@ -1,9 +1,31 @@
 import {IoEye} from 'react-icons/io5'
 import {IoEyeOff} from 'react-icons/io5'
 import {useState} from 'react'
+import LoginService from '../../service/loginService.jsx'
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [verPwd, setVerPwd] = useState(false)
+  const [verPwd, setVerPwd] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const navigate = useNavigate();
+
+  const commitLogin = async () => {
+    const usernameInput = document.getElementById('emailInput').value;
+    const passwordInput = document.getElementById('passwordInput').value;
+    const BODY = {
+      "mail": usernameInput,
+      "password": passwordInput
+    };
+    const logged = await LoginService(BODY);
+    console.log(logged);
+
+    if (logged.success) {
+      setLoginError('');
+    } else {
+      setLoginError(logged.description);
+    }
+  }
+
   return (
     <>
       <div className="w-full h-[100vh] flex flex-col justify-center items-center">
@@ -16,6 +38,7 @@ function Login() {
           <h1 className="text-4xl text-blue-900">Inicio de sesión</h1>
           <div className="w-full flex flex-col justify-center items-center mt-10">
             <form
+              onSubmit={(e) => e.preventDefault()}
               id="loginForm"
               className="w-full flex flex-col justify-start items-start">
               <label htmlFor="emailInput">Email</label>
@@ -42,9 +65,10 @@ function Login() {
                 <label htmlFor="rememberInput">Recordar usuario</label>
               </div>
               <section className="w-full flex justify-center items-center">
-                <button className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer">
+                <button className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer" onClick={() => commitLogin()}>
                   Iniciar sesión
                 </button>
+                <p>{loginError}</p>
               </section>
             </form>
           </div>
