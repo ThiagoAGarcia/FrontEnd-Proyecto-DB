@@ -13,6 +13,7 @@ export default function Main() {
                     </button>
                 </div>
             </section>
+            hola
             <Footer />
         </div>
     );
