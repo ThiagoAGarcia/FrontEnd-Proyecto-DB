@@ -13,7 +13,7 @@ function Login() {
     const usernameInput = document.getElementById('emailInput').value;
     const passwordInput = document.getElementById('passwordInput').value;
     const BODY = {
-      "mail": usernameInput,
+      "email": usernameInput,
       "password": passwordInput
     };
     const logged = await LoginService(BODY);
