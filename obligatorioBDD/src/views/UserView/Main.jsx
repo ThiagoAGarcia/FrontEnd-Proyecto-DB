@@ -26,7 +26,6 @@ export default function Main() {
                     ))
                 )}
             </ul>
-        </>
 
             <section className="flex-grow flex text-left flex-col justify-center p-10 ">
                 <h2 className="text-3xl flex ml-2 mb-3 font-semibold text-gray-800">Grupos</h2>
