@@ -4,6 +4,7 @@ import {useState} from 'react'
 
 function Register() {
   const [verPwd, setVerPwd] = useState(false)
+  
   return (
     <>
       <div className="flex flex-col justify-center items-center w-full">

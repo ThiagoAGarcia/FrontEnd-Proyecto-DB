@@ -1,4 +1,7 @@
+import { useState } from "react";
 import NavBar from "../../components/navBar";
+
+import getUsersService from '../../service/getUsersService.jsx';
 import Footer from "../../components/footer";
 
 export default function Main() {
