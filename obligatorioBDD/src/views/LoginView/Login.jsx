@@ -10,6 +10,10 @@ function Login() {
   const [verPwd, setVerPwd] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  useEffect(() => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+  }, [])
 
   const commitLogin = async () => {
     const email = document.getElementById('emailInput').value.trim()

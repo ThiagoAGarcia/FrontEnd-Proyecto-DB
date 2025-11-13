@@ -1,4 +1,9 @@
-import {IoEye, IoEyeOff} from 'react-icons/io5'
+import {
+  IoEye,
+  IoEyeOff,
+  IoAddCircleOutline,
+  IoRemoveCircleOutline,
+} from 'react-icons/io5'
 import {useEffect, useState} from 'react'
 import postRegisterService from '../../service/registerService'
 import {ToastContainer, toast} from 'react-toastify'
@@ -6,17 +11,21 @@ import 'react-toastify/dist/ReactToastify.css'
 import getCarrersService from '../../service/getCareers'
 import getCampusService from '../../service/getCampus'
 import {Oval} from 'react-loader-spinner'
+import {useNavigate} from 'react-router-dom'
 
 function Register() {
   useEffect(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('role')
   }, [])
+
   const [verPwd, setVerPwd] = useState(false)
   const [errores, setErrores] = useState({})
   const [career, setCareer] = useState([])
+  const navigate = useNavigate()
   const [campus, setCampus] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showSecondCareer, setShowSecondCareer] = useState(false)
 
   useEffect(() => {
     async function getCareer() {
@@ -52,6 +61,9 @@ function Register() {
     const carrera = document.getElementById('carreraInput').value
     const password = document.getElementById('passwordInput').value.trim()
     const campus = document.getElementById('campusInput').value
+    const secondCareer = document.getElementById('secondCareerInput')
+      ? document.getElementById('secondCareerInput').value
+      : ''
 
     const regexNombre = /^[a-zA-ZÀ-ÿ\s]+$/
     const regexEmail = /^[a-zA-Z0-9._%+-]+@(correo\.ucu\.edu\.uy|ucu\.edu\.uy)$/
@@ -97,6 +109,7 @@ function Register() {
         email,
         password,
         campus,
+        secondCareer: showSecondCareer && secondCareer ? secondCareer : null,
       }
 
       try {
@@ -110,6 +123,8 @@ function Register() {
             autoClose: 3000,
           })
           e.target.reset()
+          setTimeout(() => navigate('/admin'), 2500)
+          return
         } else {
           toast.error(register?.description || 'Error al registrar', {
             position: 'bottom-left',
@@ -138,7 +153,7 @@ function Register() {
               width={35}
               color="#1d4ed8"
               visible={true}
-              ariaLabel="loading-login"
+              ariaLabel="loading-register"
               secondaryColor="#e5e7eb"
               strokeWidth={4}
               strokeWidthSecondary={4}
@@ -235,6 +250,48 @@ function Register() {
                 ▼
               </span>
             </div>
+
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => setShowSecondCareer((prev) => !prev)}
+              className="flex items-center gap-2 text-blue-900 mb-2">
+              {showSecondCareer ? (
+                <>
+                  <IoRemoveCircleOutline size={20} />
+                  <span>Quitar segunda carrera</span>
+                </>
+              ) : (
+                <>
+                  <IoAddCircleOutline size={20} />
+                  <span>Agregar segunda carrera</span>
+                </>
+              )}
+            </button>
+
+            {showSecondCareer && (
+              <>
+                <label htmlFor="secondCareerInput" className="p-1">
+                  Segunda carrera (opcional)
+                </label>
+                <div className="relative w-full mb-2">
+                  <select
+                    id="secondCareerInput"
+                    disabled={isLoading}
+                    className="appearance-none w-full border-b mb-2 p-2 pr-8 rounded-sm bg-[rgb(232,240,254)]">
+                    <option value="">Seleccione una segunda carrera</option>
+                    {career.map((data) => (
+                      <option key={data.careerId} value={data.careerId}>
+                        {data.careerName}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute top-2 right-5 pointer-events-none">
+                    ▼
+                  </span>
+                </div>
+              </>
+            )}
 
             <label htmlFor="campusInput" className="p-1">
               Campus
