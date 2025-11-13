@@ -1,7 +1,7 @@
 const API = "http://localhost:5000";
-PATH = "/reservationsToday"
+const PATH = "/reservationsToday"
 
-export default async function getReservationsToday(PATH) {
+export default async function getReservationsToday() {
     try {
         const res = await fetch(`${API}${PATH}`);
         if (!res.ok) throw new Error(`GET ${PATH} -> ${res.status}`);

@@ -4,7 +4,7 @@ import Footer from "../../components/footer";
 import ReservationsAvailable from "./reservationsAvailable";
 import ManagedReservations from "./managedReservations";
 import '../../index.css';
-import { getReservationsTodayService } from '../../service/getReservationsTodayService.jsx';
+import getReservationsToday from '../../service/getReservationsTodayService';
 
 export default function Main() {
     const [activeTab, setActiveTab] = useState("Reservas Disponibles");
@@ -14,7 +14,7 @@ export default function Main() {
 
     useEffect(() => {
         const getReservationsToday = async () => {
-            const reservationsRes = await getReservationsTodayService();
+            const reservationsRes = await getReservationsToday();
             if (reservationsRes.success) {
                 setTotalReservations(reservationsRes);
                 setAvailableReservations(reservationsRes);
