@@ -11,6 +11,11 @@ export default function NavBar() {
                     <img src="./public/logo.png" className="h-12" alt="Logo" />
                     <div className="px-5 flex items-center gap-6 relative">
                         <div className="hidden sm:flex items-center gap-6">
+                            <div className="text-gray-300 flex flex-col leading-tight text-right">
+                                <h1 className="">Santiago Aguerre</h1> {/* NOMBRE DEL USUARIO TOKEN*/}
+                                <h1 className="text-gray-400">(Bibliotecario)</h1> {/* ROL DE TOKEN*/}
+                            </div>
+                            
                             <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center cursor-pointer">
                                 <i className="fa-solid fa-user text-[#052e66] text-lg"></i>
                             </div>
