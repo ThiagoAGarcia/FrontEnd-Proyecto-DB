@@ -9,19 +9,19 @@ import Main from './views/UserView/Main.jsx'
 import MainLibrarian from './views/LibrarianView/Main.jsx'
 
 function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route element={<Login />} path="/" />
-                <Route element={<Register />} path="/Register" />
-                <Route element={<Protected />}>
-                    <Route element={<Admin />} path="/admin" exact />
-                </Route>
-                <Route element={<Main />} path="/main" />
-                <Route element={<MainLibrarian />} path="/main-librarian" />
-            </Routes>
-        </BrowserRouter>
-    )
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Login />} path="/" />
+        <Route element={<Register />} path="/Register" />
+        <Route element={<Protected allowedRoles={'admin'} />}>
+          <Route element={<Admin />} path="/admin" />
+        </Route>
+         <Route element={<Main />} path="/main" />
+         <Route element={<MainLibrarian />} path="/main-librarian" />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App
