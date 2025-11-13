@@ -1,28 +1,61 @@
-import {IoEye} from 'react-icons/io5'
-import {IoEyeOff} from 'react-icons/io5'
+import {IoEye, IoEyeOff} from 'react-icons/io5'
 import {useState} from 'react'
 import LoginService from '../../service/loginService.jsx'
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
+import {ToastContainer, toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Login() {
-  const [verPwd, setVerPwd] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const navigate = useNavigate();
+  const [verPwd, setVerPwd] = useState(false)
+  const navigate = useNavigate()
 
   const commitLogin = async () => {
-    const usernameInput = document.getElementById('emailInput').value;
-    const passwordInput = document.getElementById('passwordInput').value;
-    const BODY = {
-      "email": usernameInput,
-      "password": passwordInput
-    };
-    const logged = await LoginService(BODY);
-    console.log(logged);
+    const email = document.getElementById('emailInput').value.trim()
+    const password = document.getElementById('passwordInput').value.trim()
 
-    if (logged.success) {
-      setLoginError('');
-    } else {
-      setLoginError(logged.description);
+    if (!email || !password) {
+      toast.error('Debes completar todos los campos', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+      return
+    }
+
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@(correo\.ucu\.edu\.uy|ucu\.edu\.uy)$/
+    if (!regexEmail.test(email)) {
+      toast.error(
+        'El correo debe pertenecer al dominio @ucu.edu.uy o @correo.ucu.edu.uy',
+        {
+          position: 'bottom-left',
+          autoClose: 3000,
+        }
+      )
+      return
+    }
+
+    try {
+      const BODY = {email, password}
+      const logged = await LoginService(BODY)
+
+      if (logged?.success) {
+        toast.success('Inicio de sesión exitoso', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
+
+        setTimeout(() => navigate('/home'), 2500)
+      } else {
+        toast.error(logged?.description || 'Correo o contraseña incorrectos', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error('Error de conexión con el servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
     }
   }
 
@@ -30,7 +63,7 @@ function Login() {
     <>
       <div className="w-full h-[100vh] flex flex-col justify-center items-center">
         <img
-          src=".\public\ucu.png"
+          src="./public/ucu.png"
           alt="Logo de la Universidad Católica de Uruguay"
           className="w-50 h-auto"
         />
@@ -45,8 +78,10 @@ function Login() {
               <input
                 type="text"
                 id="emailInput"
-                className="w-full border-b mb-6 p-2 rounded-sm focus:border-blue-900 focus:border-b"
+                className="w-full border-b mb-6 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+                placeholder="ejemplo@correo.ucu.edu.uy"
               />
+
               <section className="relative w-full text-left">
                 <label htmlFor="passwordInput">Contraseña</label>
                 <i
@@ -57,23 +92,39 @@ function Login() {
                 <input
                   type={verPwd ? 'text' : 'password'}
                   id="passwordInput"
-                  className="w-full border-b mb-6 p-2 rounded-sm focus:border-blue-900 focus:border-b"
+                  className="w-full border-b mb-6 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+                  placeholder="contraseña"
                 />
               </section>
+
               <div className="flex mb-2 items-center justify-center w-full">
                 <input type="checkbox" id="rememberInput" className="mr-1" />
                 <label htmlFor="rememberInput">Recordar usuario</label>
               </div>
+
               <section className="w-full flex justify-center items-center">
-                <button className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer" onClick={() => commitLogin()}>
+                <button
+                  type="button"
+                  className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer"
+                  onClick={() => commitLogin()}>
                   Iniciar sesión
                 </button>
-                <p>{loginError}</p>
               </section>
+
+              <div className="w-full flex justify-center items-center mt-5">
+                <span>
+                  ¿No tienes un usuario?{' '}
+                  <a href="/register" className="hover:border-b-0 border-b-1">
+                    Registrarse
+                  </a>
+                </span>
+              </div>
             </form>
           </div>
         </div>
       </div>
+
+      <ToastContainer />
     </>
   )
 }
