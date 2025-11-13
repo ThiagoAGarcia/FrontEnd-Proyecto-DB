@@ -46,6 +46,7 @@ function Register() {
     const email = document.getElementById('emailInput').value.trim()
     const carrera = document.getElementById('carreraInput').value
     const password = document.getElementById('passwordInput').value.trim()
+    const campus = document.getElementById('campusInput').value
 
     const regexNombre = /^[a-zA-ZÀ-ÿ\s]+$/
     const regexEmail = /^[a-zA-Z0-9._%+-]+@(correo\.ucu\.edu\.uy|ucu\.edu\.uy)$/
@@ -71,6 +72,9 @@ function Register() {
     if (!carrera) {
       erroresTemp.carrera = 'Debe seleccionar una carrera.'
     }
+    if (!campus) {
+      erroresTemp.campus = 'Debe seleccionar un campus.'
+    }
 
     if (password.length < 8) {
       erroresTemp.password = 'La contraseña debe tener al menos 8 caracteres.'
@@ -86,6 +90,7 @@ function Register() {
         career: carrera,
         email: email,
         password: password,
+        campus: campus,
       }
 
       try {
