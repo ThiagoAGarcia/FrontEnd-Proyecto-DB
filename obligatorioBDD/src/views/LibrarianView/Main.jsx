@@ -1,12 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "../../components/navBar";
 import Footer from "../../components/footer";
 import ReservationsAvailable from "./components/reservationsAvailable";
 import ManagedReservations from "./components/managedReservations";
 import '../../index.css';
+import { getReservationsTodayService } from '../../service/getReservationsTodayService.jsx';
 
 export default function Main() {
     const [activeTab, setActiveTab] = useState("Reservas Disponibles");
+    const [totalReservations, setTotalReservations] = useState(null);
+    const [availableReservations, setAvailableReservations] = useState(null);
+    const [managedReservations, setManagedReservations] = useState(null);
+
+    useEffect(() => {
+        const getReservationsToday = async () => {
+            const reservationsRes = await getReservationsTodayService();
+            if (reservationsRes.success) {
+                setTotalReservations(reservationsRes);
+                setAvailableReservations(reservationsRes);
+            }
+        }
+        getReservationsToday();
+    }, [])
+
+    const handleNewManagedReservation = (reservationGroupId) => {
+        const newManagedReservation = '';
+        setAvailableReservations(availableReservations.filter((reservation) => reservation.studyGroupId !== newManagedReservation.studyGroupId));
+        setManagedReservations(...managedReservations, newManagedReservation);
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">

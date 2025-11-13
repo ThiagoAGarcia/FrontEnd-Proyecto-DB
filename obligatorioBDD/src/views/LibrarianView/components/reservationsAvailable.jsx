@@ -1,6 +1,6 @@
 import Data from "../../../components/data";
 
-export default function ReservationsAvailable() {
+export default function ReservationsAvailable( {reservationsToday, handleNewManagedReservation } ) {
     const reservas = [
         { studyGroupid: 101, roomName: "Sala 101" },
         { studyGroupid: 102, roomName: "Sala 102" },
@@ -36,8 +36,6 @@ export default function ReservationsAvailable() {
                     </span>
                 )}
             </div>
-
-
         </div>
     );
 }
