@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import NavBar from "../../components/navBar";
 import Footer from "../../components/footer";
-import ReservationsAvailable from "./components/reservationsAvailable";
-import ManagedReservations from "./components/managedReservations";
+import ReservationsAvailable from "./reservationsAvailable";
+import ManagedReservations from "./managedReservations";
 import '../../index.css';
 import { getReservationsTodayService } from '../../service/getReservationsTodayService.jsx';
 
