@@ -13,9 +13,10 @@ function App() {
       <Routes>
         <Route element={<Login />} path="/" />
         <Route element={<Register />} path="/Register" />
-        <Route element={<Protected />}>
-          <Route element={<Admin />} path="/admin" exact />
+        <Route element={<Protected allowedRoles={'admin'} />}>
+          <Route element={<Admin />} path="/admin" />
         </Route>
+
         <Route element={<Main />} path="/main" />
       </Routes>
     </BrowserRouter>

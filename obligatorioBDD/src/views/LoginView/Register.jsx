@@ -5,12 +5,18 @@ import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import getCarrersService from '../../service/getCareers'
 import getCampusService from '../../service/getCampus'
+import {Oval} from 'react-loader-spinner'
 
 function Register() {
+  useEffect(() => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+  }, [])
   const [verPwd, setVerPwd] = useState(false)
   const [errores, setErrores] = useState({})
   const [career, setCareer] = useState([])
   const [campus, setCampus] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     async function getCareer() {
@@ -26,7 +32,6 @@ function Register() {
     async function getCampus() {
       try {
         const data = await getCampusService()
-        console.log(data)
         setCampus(data.campus)
       } catch (error) {
         console.error('Error al obtener los campus:', error)
@@ -72,6 +77,7 @@ function Register() {
     if (!carrera) {
       erroresTemp.carrera = 'Debe seleccionar una carrera.'
     }
+
     if (!campus) {
       erroresTemp.campus = 'Debe seleccionar un campus.'
     }
@@ -84,26 +90,28 @@ function Register() {
 
     if (Object.keys(erroresTemp).length === 0) {
       const BODY = {
-        ci: ci,
+        ci,
         name: nombre,
         lastName: apellido,
         career: carrera,
-        email: email,
-        password: password,
-        campus: campus,
+        email,
+        password,
+        campus,
       }
 
       try {
+        setIsLoading(true)
+
         const register = await postRegisterService(BODY)
 
-        if (register.success) {
+        if (register?.success) {
           toast.success('Registro exitoso', {
             position: 'bottom-left',
             autoClose: 3000,
           })
           e.target.reset()
         } else {
-          toast.error(register.description || 'Error al registrar ', {
+          toast.error(register?.description || 'Error al registrar', {
             position: 'bottom-left',
             autoClose: 3000,
           })
@@ -114,19 +122,39 @@ function Register() {
           position: 'bottom-left',
           autoClose: 3000,
         })
+      } finally {
+        setIsLoading(false)
       }
     }
   }
 
   return (
     <>
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="flex flex-col items-center">
+            <Oval
+              height={35}
+              width={35}
+              color="#1d4ed8"
+              visible={true}
+              ariaLabel="loading-login"
+              secondaryColor="#e5e7eb"
+              strokeWidth={4}
+              strokeWidthSecondary={4}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col justify-center items-center w-full">
         <img
           src="./public/ucu.png"
           alt="Logo de la Universidad Católica de Uruguay"
           className="w-50 h-auto"
         />
-        <div className="flex flex-col justify-center items-center shadow-xl rounded-2xl w-[80%] lg:w-[40%] h-auto p-12">
+
+        <div className="flex flex-col justify-center items-center shadow-xl rounded-2xl w-[80%] lg:w-[40%] h-auto p-12 bg-white">
           <h1 className="text-4xl text-blue-900 mb-4">Registro</h1>
 
           <form
@@ -139,12 +167,10 @@ function Register() {
             <input
               type="text"
               id="CiInput"
-              className="w-full border-b mb-2 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
-              inputMode="numeric"
-              pattern="[0-9]*"
+              disabled={isLoading}
+              className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
               maxLength={8}
               placeholder="Ingrese su cédula sin puntos ni guiones"
-              title="Solo se permiten números"
             />
             {errores.ci && <p className="text-red-600 text-sm">{errores.ci}</p>}
 
@@ -154,7 +180,8 @@ function Register() {
             <input
               type="text"
               id="NameInput"
-              className="w-full border-b mb-2 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+              disabled={isLoading}
+              className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
               placeholder="nombre"
             />
             {errores.nombre && (
@@ -167,7 +194,8 @@ function Register() {
             <input
               type="text"
               id="LastNameInput"
-              className="w-full border-b mb-2 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+              disabled={isLoading}
+              className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
               placeholder="apellido"
             />
             {errores.apellido && (
@@ -180,7 +208,8 @@ function Register() {
             <input
               type="text"
               id="emailInput"
-              className="w-full border-b mb-2 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+              disabled={isLoading}
+              className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
               placeholder="ejemplo@correo.ucu.edu.uy"
             />
             {errores.email && (
@@ -193,35 +222,35 @@ function Register() {
             <div className="relative w-full mb-2">
               <select
                 id="carreraInput"
-                className="appearance-none w-full border-b mb-2 p-2 pr-8 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]">
+                disabled={isLoading}
+                className="appearance-none w-full border-b mb-2 p-2 pr-8 rounded-sm bg-[rgb(232,240,254)]">
                 <option value="">Seleccione una carrera</option>
-                {career &&
-                  career.map((data) => (
-                    <option key={data.careerId} value={data.careerId}>
-                      {data.careerName}
-                    </option>
-                  ))}
+                {career.map((data) => (
+                  <option key={data.careerId} value={data.careerId}>
+                    {data.careerName}
+                  </option>
+                ))}
               </select>
               <span className="absolute top-2 right-5 pointer-events-none">
                 ▼
               </span>
             </div>
+
             <label htmlFor="campusInput" className="p-1">
               Campus
             </label>
             <div className="relative w-full mb-2">
               <select
                 id="campusInput"
-                className="appearance-none w-full border-b mb-2 p-2 pr-8 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]">
+                disabled={isLoading}
+                className="appearance-none w-full border-b mb-2 p-2 pr-8 rounded-sm bg-[rgb(232,240,254)]">
                 <option value="">Seleccione un campus</option>
-                {campus &&
-                  campus.map((data) => (
-                    <option key={data.campusName} value={data.campusName}>
-                      {data.campusName}
-                    </option>
-                  ))}
+                {campus.map((data) => (
+                  <option key={data.campusName} value={data.campusName}>
+                    {data.campusName}
+                  </option>
+                ))}
               </select>
-
               <span className="absolute top-2 right-5 pointer-events-none">
                 ▼
               </span>
@@ -237,13 +266,14 @@ function Register() {
               </label>
               <i
                 className="absolute top-9 right-5 cursor-pointer"
-                onClick={() => setVerPwd(!verPwd)}>
+                onClick={() => !isLoading && setVerPwd(!verPwd)}>
                 {verPwd ? <IoEyeOff size={20} /> : <IoEye size={20} />}
               </i>
               <input
                 type={verPwd ? 'text' : 'password'}
                 id="passwordInput"
-                className="w-full border-b mb-2 p-2 rounded-sm focus:border-blue-900 focus:border-b bg-[rgb(232,240,254)]"
+                disabled={isLoading}
+                className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
                 placeholder="contraseña"
               />
               {errores.password && (
@@ -251,18 +281,19 @@ function Register() {
               )}
             </section>
 
-            {/* Botón */}
             <section className="w-full flex justify-center items-center mt-4">
               <button
                 type="submit"
-                className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer">
-                Registrarse
+                disabled={isLoading}
+                className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                {isLoading ? 'Registrando...' : 'Registrarse'}
               </button>
             </section>
+
             <div className="w-full flex justify-center items-center mt-5">
               <span>
                 ¿Ya tienes un usuario?{' '}
-                <a href="/" className="hover:border-b-0 border-b-1">
+                <a href="/" className="border-b hover:border-b-0">
                   Iniciar sesión
                 </a>
               </span>
