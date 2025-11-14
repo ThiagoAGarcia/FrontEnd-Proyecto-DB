@@ -1,4 +1,4 @@
-import Data from "./components/dataManaged";
+import Data from "./components/data";
 
 export default function ReservationsAvailable() {
     const reservas = [
@@ -33,7 +33,14 @@ export default function ReservationsAvailable() {
                         <ul className="w-full overflow-auto scrollbar mt-1">
                             {reservas.map((reserva) => (
                                 <li key={reserva.studyGroupid}>
-                                    <Data reserva={reserva} />
+                                    <Data reserva={reserva}>
+                                        <button title="Dejar de gestionar" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
+                                            <i className="fa-solid fa-arrow-left text-[#052e66]"></i>
+                                        </button>
+                                        <button title="Información reserva" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">
+                                            <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
+                                        </button>
+                                    </Data>
                                 </li>
                             ))}
                         </ul>

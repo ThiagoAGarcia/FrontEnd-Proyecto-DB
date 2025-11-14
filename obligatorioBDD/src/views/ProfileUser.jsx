@@ -1,6 +1,8 @@
 import NavBar from "../components/navBar";
 import Footer from "../components/footer";
 import { useState } from "react";
+import Data from "./UserView/components/data";
+import MisReservas from "./UserView/components/misReservas";
 
 export default function ProfileUser() {
     const [tab, setTab] = useState("acerca");
@@ -46,7 +48,7 @@ export default function ProfileUser() {
 
                     <div className="flex gap-6 mt-6 border-b">
                         <button onClick={() => setTab("acerca")} className={`cursor-pointer pb-2 font-medium ${tab === "acerca" ? "border-b-2 border-[#052e66] text-[#052e66]" : "text-gray-500 hover:text-gray-700"}`}> Acerca de mí</button>
-                        <button onClick={() => setTab("reservas")} className={`cursor-pointer pb-2 font-medium ${tab === "reservas" ? "border-b-2 border-[#052e66] text-[#052e66]" : "text-gray-500 hover:text-gray-700"}`}> Reservas realizadas</button>
+                        {/* Esto tendria que desaparecer si el rol es administrador o bibliotecario*/} <button onClick={() => setTab("reservas")} className={`cursor-pointer pb-2 font-medium ${tab === "reservas" ? "border-b-2 border-[#052e66] text-[#052e66]" : "text-gray-500 hover:text-gray-700"}`}> Reservas realizadas</button>
                     </div>
 
                     <div className="bg-gray-50 rounded-lg p-6 mt-6 shadow-sm">
@@ -73,56 +75,12 @@ export default function ProfileUser() {
                                     </div>
                                 </div>
 
-                                <div className="text-gray-700 text-lg overflow-y-auto scrollbar pt-10">
-                                    <div className="w-full bg-white rounded-2xl p-2 flex flex-col border border-gray-400">
-
-                                        <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
-                                            <div className="w-1/2 text-center">Carrera</div>
-                                            <div className="md:w-1/6 w-1/3 text-center">Plan</div>
-                                            <div className="md:w-1/2 text-center hidden md:inline">Facultad</div>
-                                            <div className="md:w-1/6 w-1/3 text-center">Tipo</div>
-                                        </div>
-
-                                        <ul className="w-full overflow-auto scrollbar mt-1">
-                                            <li>
-                                                <div className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-lg text-sm">
-                                                    <div className="w-1/2 text-center border-r-2 border-gray-300">
-                                                        <h1 className="break-words">Ingeniería en Informática</h1>
-                                                    </div>
-                                                    <div className="md:w-1/6 w-1/3 text-center border-r-2 border-gray-300">
-                                                        <h1>2021</h1>
-                                                    </div>
-                                                    <div className="md:w-1/2 text-center border-r-2 hidden md:inline border-gray-300">
-                                                        <h1 className="break-words">Facultad de Ingeniería y Tecnologías</h1>
-                                                    </div>
-                                                    <div className="md:w-1/6 w-1/3 text-center border-gray-300">
-                                                        <h1>Grado</h1>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-
-                                    </div>
-                                </div>
+                                <Data />
                             </>
                         )}
 
                         {tab === "reservas" && (
-                            <>
-                                <h2 className="text-xl font-bold mb-4 text-[#052e66]">Mis reservas</h2>
-
-                                <div className="flex flex-col gap-3">
-                                    <div className="p-4 bg-white rounded shadow border flex justify-between">
-                                        <div>
-                                            <p className="font-semibold text-[#052e66]">Sala 101</p>
-                                            <p className="text-sm text-gray-600">14:00 - 16:00</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-right text-[#052e66]">2024-04-29</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
+                            <MisReservas />
                         )}
 
                     </div>
