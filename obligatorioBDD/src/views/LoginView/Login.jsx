@@ -48,6 +48,7 @@ function Login() {
       const logged = await LoginService(BODY)
 
       if (logged?.success) {
+        console.log(logged.role)
         toast.success('Inicio de sesión exitoso', {
           position: 'bottom-left',
           autoClose: 2500,
@@ -58,6 +59,11 @@ function Login() {
         localStorage.setItem('ci', JSON.stringify(logged.ci))
         if (logged.role.includes('administrator')) {
           setTimeout(() => navigate('/admin'), 2500)
+          return
+        }
+
+        if (logged.role.includes('librarian')) {
+          setTimeout(() => navigate('/main-librarian'), 2500)
           return
         }
 
