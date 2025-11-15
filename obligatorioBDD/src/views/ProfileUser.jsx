@@ -4,6 +4,8 @@ import {useState, useEffect} from 'react'
 import getUsersByCiService from '../service/getUsersByCiService'
 import getCareerService from '../service/getCareer'
 import getReservationsUserService from '../service/getUserReservations'
+import Data from "./UserView/components/data";
+import MisReservas from "./UserView/components/misReservas";
 
 const ROLE_LABELS = {
   student: 'Estudiante',
