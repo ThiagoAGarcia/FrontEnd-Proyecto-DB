@@ -1,9 +1,9 @@
 const API = 'http://localhost:5000'
 const PATH = '/userByCi'
 
-export default async function getUsersByCiService(ci) {
+export default async function getUsersByCiService() {
   try {
-    const res = await fetch(`${API}${PATH}/${ci}`, {
+    const res = await fetch(`${API}${PATH}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${(
