@@ -13,6 +13,8 @@ function Login() {
   useEffect(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('role')
+    localStorage.removeItem('ci')
+    localStorage.removeItem('roles')
   }, [])
 
   const commitLogin = async () => {
@@ -52,6 +54,8 @@ function Login() {
         })
         localStorage.setItem('token', logged.access_token)
         localStorage.setItem('role', JSON.stringify(logged.role))
+
+        localStorage.setItem('ci', JSON.stringify(logged.ci))
         if (logged.role.includes('administrator')) {
           setTimeout(() => navigate('/admin'), 2500)
           return
@@ -103,7 +107,9 @@ function Login() {
           alt="Logo de la Universidad Católica de Uruguay"
           className="w-50 h-auto"
         />
-        <div className="flex flex-col justify-center text-center items-center shadow-xl rounded-2xl w-[70%] lg:w-[30%] h-120 p-12 bg-white">
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="flex flex-col justify-center text-center items-center shadow-xl rounded-2xl w-[70%] lg:w-[30%] h-120 p-12 bg-white">
           <h1 className="text-4xl text-blue-900">Inicio de sesión</h1>
           <div className="w-full flex flex-col justify-center items-center mt-10">
             <form
@@ -147,7 +153,7 @@ function Login() {
 
               <section className="w-full flex justify-center items-center">
                 <button
-                  type="button"
+                  type="submit"
                   className="w-40 h-auto bg-blue-900 rounded-full p-2 text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   onClick={commitLogin}
                   disabled={isLoading}>
@@ -165,7 +171,7 @@ function Login() {
               </div>
             </form>
           </div>
-        </div>
+        </form>
       </div>
 
       <ToastContainer />

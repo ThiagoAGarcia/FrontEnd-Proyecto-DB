@@ -16,7 +16,8 @@ export default function Main() {
           <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer">
             <span className="font-medium text-[#052e66]">
               {' '}
-              <i class="fa-solid fa-plus text-green-600"></i> Crear nuevo grupo
+              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo
+              grupo
             </span>
           </button>
         </div>
