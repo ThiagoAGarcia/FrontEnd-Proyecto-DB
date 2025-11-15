@@ -17,6 +17,8 @@ function Register() {
   useEffect(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('role')
+    localStorage.removeItem('ci')
+    localStorage.removeItem('roles')
   }, [])
 
   const [verPwd, setVerPwd] = useState(false)

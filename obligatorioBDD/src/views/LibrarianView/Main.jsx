@@ -4,29 +4,55 @@ import Footer from "../../components/footer";
 import ReservationsAvailable from "./reservationsAvailable";
 import ManagedReservations from "./managedReservations";
 import '../../index.css';
-import getReservationsToday from '../../service/getReservationsTodayService';
+import getReservationsTodayService from '../../service/getReservationsTodayService';
+import patchManageReservationService from '../../service/patchManageReservationService';
+import patchUnmanageReservationService from '../../service/patchUnmanageReservationService';
 
 export default function Main() {
     const [activeTab, setActiveTab] = useState("Reservas Disponibles");
-    const [totalReservations, setTotalReservations] = useState(null);
-    const [availableReservations, setAvailableReservations] = useState(null);
-    const [managedReservations, setManagedReservations] = useState(null);
+    const [availableReservations, setAvailableReservations] = useState([]);
+    const [managedReservations, setManagedReservations] = useState([]);
 
     useEffect(() => {
         const getReservationsToday = async () => {
-            const reservationsRes = await getReservationsToday();
+            const reservationsRes = await getReservationsTodayService();
             if (reservationsRes.success) {
-                setTotalReservations(reservationsRes);
-                setAvailableReservations(reservationsRes);
+                let reservationArray = (reservationsRes.reservations).sort((a, b) => (a.start).localeCompare(b.start));
+                setAvailableReservations(reservationArray);
             }
         }
+        
         getReservationsToday();
     }, [])
 
-    const handleNewManagedReservation = (reservationGroupId) => {
-        const newManagedReservation = '';
-        setAvailableReservations(availableReservations.filter((reservation) => reservation.studyGroupId !== newManagedReservation.studyGroupId));
-        setManagedReservations(...managedReservations, newManagedReservation);
+    const handleNewManagedReservation = async (newManagedReservation) => {
+        const BODY = {
+            "librarian": localStorage.getItem('ci'),
+            "studyGroupId": newManagedReservation.studyGroupId
+        }
+        const manageReservation = await patchManageReservationService(BODY);
+        if (manageReservation.success) {
+            setAvailableReservations(availableReservations.filter((availableReservation) => availableReservation.studyGroupId !== newManagedReservation.studyGroupId));
+            const managedReservationsArray = managedReservations;
+            managedReservationsArray.push(newManagedReservation);
+            managedReservationsArray.sort((a, b) => (a.start).localeCompare(b.start));
+            setManagedReservations(managedReservationsArray);
+        }
+    }
+
+    const handleRestoreAvailableReservation = async (restoredAvailableReservation) => {
+        const BODY = {
+            "librarian": localStorage.getItem('ci'),
+            "studyGroupId": restoredAvailableReservation.studyGroupId
+        }
+        const restoreReservation = await patchUnmanageReservationService(BODY);
+        if (restoreReservation.success) {
+            setManagedReservations(managedReservations.filter((managedReservation) => managedReservation.studyGroupId !== restoredAvailableReservation.studyGroupId));
+            const availableReservationsArray = availableReservations;
+            availableReservationsArray.push(restoredAvailableReservation);
+            availableReservationsArray.sort((a, b) => (a.start).localeCompare(b.start))
+            setAvailableReservations(availableReservationsArray);
+        }
     }
 
     return (
@@ -50,8 +76,8 @@ export default function Main() {
 
                 <div className="w-full sm:max-w-9xl bg-white border border-gray-300 rounded-b-2xl rounded-tr-2xl shadow-md flex flex-col h-[70vh] relative z-10">
                     <div className="sm:p-8 p-4 text-gray-700 text-lg overflow-y-auto scrollbar">
-                        {activeTab === "Reservas Disponibles" && <ReservationsAvailable /> }
-                        {activeTab === "Reservas Gestionadas" && <ManagedReservations /> }
+                        {activeTab === "Reservas Disponibles" && availableReservations.length !== 0 && <ReservationsAvailable reservationsToday={availableReservations} handleNewManagedReservation={handleNewManagedReservation}/> }
+                        {activeTab === "Reservas Gestionadas" && <ManagedReservations managedReservations={managedReservations} handleRestoreAvailableReservation={handleRestoreAvailableReservation}/> }
                         {activeTab === "Reserva Express" && <div className="animate-fadeIn"><p>Reserva Express</p></div>}
                     </div>
                 </div>

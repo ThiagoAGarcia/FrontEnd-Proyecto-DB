@@ -1,6 +1,6 @@
 import Data from "./components/data";
 
-export default function ReservationsAvailable() {
+export default function ReservationsAvailable( {managedReservations, handleRestoreAvailableReservation} ) {
     const reservas = [
         { studyGroupid: 101, roomName: "Sala 101" },
         { studyGroupid: 102, roomName: "Sala 102" },
@@ -31,10 +31,10 @@ export default function ReservationsAvailable() {
                         </div>
 
                         <ul className="w-full overflow-auto scrollbar mt-1">
-                            {reservas.map((reserva) => (
-                                <li key={reserva.studyGroupid}>
-                                    <Data reserva={reserva}>
-                                        <button title="Dejar de gestionar" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
+                            {managedReservations.length !== 0 && managedReservations.map((reservation) => (
+                                <li key={reservation.studyGroupId}>
+                                    <Data reserva={reservation}>
+                                        <button onClick={() => handleRestoreAvailableReservation(reservation)} title="Dejar de gestionar" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
                                             <i className="fa-solid fa-arrow-left text-[#052e66]"></i>
                                         </button>
                                         <button title="Información reserva" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">
@@ -47,7 +47,7 @@ export default function ReservationsAvailable() {
                     </>
                 ) : (
                     <span className="font-medium text-2xl text-gray-600">
-                        No hay reservas disponibles hoy
+                        No se ha gestionado ninguna reserva hoy
                     </span>
                 )}
             </div>

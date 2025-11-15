@@ -6,7 +6,6 @@ export default function ReservationsAvailable({ reservationsToday, handleNewMana
         { studyGroupid: 102, roomName: "Sala 102" },
         { studyGroupid: 103, roomName: "Sala 103" },
     ];
-
     const hayReservas = reservas.length > 0;
 
     return (
@@ -31,18 +30,18 @@ export default function ReservationsAvailable({ reservationsToday, handleNewMana
                         </div>
 
                         <ul className="w-full overflow-auto scrollbar mt-1">
-                            {reservas.map((reserva) => (
-                                <li key={reserva.studyGroupid}>
-                                    <Data reserva={reserva} >
+                            {reservationsToday.map((reservation) => (
+                                <li key={reservation.studyGroupId}>
+                                    <Data reserva={reservation}>
                                         <button title="Cancelar reserva" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
                                             <i className="fa-solid fa-xmark text-[#052e66]"></i>
                                         </button>
-                                        <button title="Aceptar reserva" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-green-100 cursor-pointer hover:bg-green-50 transition-colors">
+                                        <button onClick={() => handleNewManagedReservation(reservation) }title="Aceptar reserva" className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-green-100 cursor-pointer hover:bg-green-50 transition-colors">
                                             <i className="fa-solid fa-check text-[#052e66]"></i>
                                         </button>
                                         <button title="Más información" className="border-1 rounded-md sm:mx-1 mx-0.5 p-0.5 px-2 font-semibold bg-gray-300 hover:bg-gray-200 transition-colors cursor-pointer">
                                             <i className="fa-solid fa-arrow-right text-[#052e66]"></i>
-                                        </button>
+                                        </button> 
                                     </Data>
                                 </li>
                             ))}

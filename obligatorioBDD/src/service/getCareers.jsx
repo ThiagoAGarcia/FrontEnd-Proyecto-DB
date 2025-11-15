@@ -3,7 +3,10 @@ const PATH = '/career'
 
 export default async function getCarrersService() {
   try {
-    const res = await fetch(`${API}${PATH}`)
+    const res = await fetch(`${API}${PATH}`, {
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+    })
+
     if (!res.ok) throw new Error(`GET ${PATH} -> ${res.status}`)
     const carrera = await res.json()
     return carrera
