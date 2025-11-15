@@ -1,6 +1,6 @@
 export default function Data({ children, reserva }) {
     return (
-        <div className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-xl text-lg">
+        <div className="w-full rounded-md bg-[#f4f7fc] border border-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-xl text-lg">
             <div className="w-1/2 text-center border-r-2 border-gray-300">
                 <h1>{reserva.start} - {reserva.end}</h1>
             </div>
