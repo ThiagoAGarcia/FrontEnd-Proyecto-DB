@@ -4,8 +4,8 @@ import {useState, useEffect} from 'react'
 import getUsersByCiService from '../service/getUsersByCiService'
 import getCareerService from '../service/getCareer'
 import getReservationsUserService from '../service/getUserReservations'
-import Data from "./UserView/components/data";
-import MisReservas from "./UserView/components/misReservas";
+import Data from './UserView/components/data'
+import MisReservas from './UserView/components/misReservas'
 
 const ROLE_LABELS = {
   student: 'Estudiante',
@@ -94,9 +94,6 @@ export default function ProfileUser() {
         <div className="w-full max-w-5xl bg-white shadow-md rounded-xl p-8">
           <div className="flex flex-col md:flex-row items-center justify-between px-1">
             <div className="flex flex-col md:flex-row text-center md:text-left items-center justify-center gap-6">
-              <div className="w-30 h-30 rounded-full bg-[#052e66] flex items-center justify-center cursor-pointer">
-                <i className="fa-solid fa-user text-white text-6xl"></i>
-              </div>
               <div>
                 <h1 className="text-3xl font-bold">
                   {user.nombre} {user.apellido}
@@ -173,46 +170,48 @@ export default function ProfileUser() {
                     <p>{user.campus}</p>
                   </div>
                 </div>
-
-                <div className="text-gray-700 text-lg overflow-y-auto scrollbar pt-10">
-                  <div className="w-full bg-white rounded-2xl p-2 flex flex-col border border-gray-400">
-                    <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
-                      <div className="w-1/2 text-center">Carrera</div>
-                      <div className="md:w-1/6 w-1/3 text-center">Plan</div>
-                      <div className="md:w-1/2 text-center hidden md:inline">
-                        Facultad
+                {localStorage.getItem('role').replace(/"/g, '') ===
+                  'student' && (
+                  <div className="text-gray-700 text-lg overflow-y-auto scrollbar pt-10">
+                    <div className="w-full bg-white rounded-2xl p-2 flex flex-col border border-gray-400">
+                      <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
+                        <div className="w-1/2 text-center">Carrera</div>
+                        <div className="md:w-1/6 w-1/3 text-center">Plan</div>
+                        <div className="md:w-1/2 text-center hidden md:inline">
+                          Facultad
+                        </div>
+                        <div className="md:w-1/6 w-1/3 text-center">Tipo</div>
                       </div>
-                      <div className="md:w-1/6 w-1/3 text-center">Tipo</div>
-                    </div>
 
-                    {careerData.map((career) => (
-                      <ul
-                        className="w-full overflow-auto scrollbar mt-1"
-                        key={career.careerId}>
-                        <li>
-                          <div className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-lg text-sm">
-                            <div className="w-1/2 text-center border-r-2 border-gray-300">
-                              <h1 className="break-words">
-                                {career.careerName}
-                              </h1>
+                      {careerData.map((career) => (
+                        <ul
+                          className="w-full overflow-auto scrollbar mt-1"
+                          key={career.careerId}>
+                          <li>
+                            <div className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-lg text-sm">
+                              <div className="w-1/2 text-center border-r-2 border-gray-300">
+                                <h1 className="break-words">
+                                  {career.careerName}
+                                </h1>
+                              </div>
+                              <div className="md:w-1/6 w-1/3 text-center border-r-2 border-gray-300">
+                                <h1>{career.planYear}</h1>
+                              </div>
+                              <div className="md:w-1/2 text-center border-r-2 hidden md:inline border-gray-300">
+                                <h1 className="break-words">
+                                  {career.facultyName}
+                                </h1>
+                              </div>
+                              <div className="md:w-1/6 w-1/3 text-center border-gray-300">
+                                <h1>{career.type}</h1>
+                              </div>
                             </div>
-                            <div className="md:w-1/6 w-1/3 text-center border-r-2 border-gray-300">
-                              <h1>{career.planYear}</h1>
-                            </div>
-                            <div className="md:w-1/2 text-center border-r-2 hidden md:inline border-gray-300">
-                              <h1 className="break-words">
-                                {career.facultyName}
-                              </h1>
-                            </div>
-                            <div className="md:w-1/6 w-1/3 text-center border-gray-300">
-                              <h1>{career.type}</h1>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    ))}
+                          </li>
+                        </ul>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
 
