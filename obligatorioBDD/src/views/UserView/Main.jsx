@@ -16,6 +16,8 @@ export default function Main() {
       if (availableRoomsRef.success) {
         const availableRoomsArray = availableRoomsRef.rooms;
         setAvailableRooms(availableRoomsArray);
+      } else {
+        setAvailableRooms([]);
       }
     }
 
