@@ -9,8 +9,7 @@ export default function NavBar() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [userData, setUserData] = useState(null)
   const [notification, setNotifications] = useState(false)
-  const [userRequest, setUserRequest] = useState(null)
-  const [punto, setPunto] = useState(false)
+  const [userRequest, setUserRequest] = useState([])
 
   const notificationRef = useRef(null)
 
@@ -42,19 +41,14 @@ export default function NavBar() {
       const ci = localStorage.getItem('ci').replace(/"/g, '')
       const userData = await getUsersByCiService(ci)
       setUserData(userData.user)
-      const requestData = await getUserGroupRequestService()
 
+      const requestData = await getUserGroupRequestService()
       const lista = requestData?.grupoRequest || []
 
       const ordenado = [...lista].sort((a, b) => {
         return new Date(b.requestDate) - new Date(a.requestDate)
       })
 
-      if (lista) {
-        setPunto(true)
-      } else {
-        setPunto(false)
-      }
       setUserRequest(ordenado)
     }
     fetchUserData()
@@ -100,8 +94,8 @@ export default function NavBar() {
                   <button
                     className="text-white text-3xl cursor-pointer relative"
                     onClick={() => setNotifications(!notification)}>
-                    {punto && (
-                      <i class="fa-solid fa-circle absolute text-red-500 text-sm -right-1"></i>
+                    {userRequest && userRequest.length > 0 && (
+                      <i className="fa-solid fa-circle absolute text-red-500 text-sm -right-1" />
                     )}
                     <i className="fa-solid fa-envelope w-6 h-6 fill-current"></i>
                   </button>
@@ -120,13 +114,28 @@ export default function NavBar() {
                         <hr className="text-gray-300 mb-3" />
 
                         {userRequest &&
-                          userRequest.map((data, i) => (
+                          userRequest.map((data) => (
                             <NotificationUser
-                              key={i}
+                              key={data.studyGroupId}
+                              id={data.studyGroupId}
                               name={data.studyGroupName}
                               date={data.requestDate}
+                              onAccepted={() => {
+                                setUserRequest((prev) =>
+                                  prev.filter(
+                                    (req) =>
+                                      req.studyGroupId !== data.studyGroupId
+                                  )
+                                )
+                              }}
                             />
                           ))}
+
+                        {userRequest && userRequest.length === 0 && (
+                          <p className="text-sm text-gray-500">
+                            No tenés notificaciones pendientes.
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
