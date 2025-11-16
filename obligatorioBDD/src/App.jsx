@@ -9,19 +9,32 @@ import Main from './views/UserView/Main.jsx'
 import MainLibrarian from './views/LibrarianView/Main.jsx'
 import ProfileUser from './views/ProfileUser.jsx'
 import SinToken from './components/SinToken.jsx'
+import {GroupsProvider} from './context/useGroup.jsx'
+import {ToastContainer} from 'react-toastify'
 
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer position="bottom-left" />
       <Routes>
         <Route element={<Login />} path="/" />
         <Route element={<Register />} path="/Register" />
+
         <Route element={<Protected allowedRoles={'administrator'} />}>
           <Route element={<MainAdmin />} path="/main-admin" />
         </Route>
+
         <Route element={<Protected allowedRoles={['student', 'professor']} />}>
-          <Route element={<Main />} path="/main" />
+          <Route
+            path="/main"
+            element={
+              <GroupsProvider>
+                <Main />
+              </GroupsProvider>
+            }
+          />
         </Route>
+
         <Route element={<Protected allowedRoles={'librarian'} />}>
           <Route element={<MainLibrarian />} path="/main-librarian" />
         </Route>
@@ -39,6 +52,7 @@ function App() {
           }>
           <Route element={<ProfileUser />} path="/profile" />
         </Route>
+
         <Route element={<SinToken />} path="/sin-token" />
       </Routes>
     </BrowserRouter>
