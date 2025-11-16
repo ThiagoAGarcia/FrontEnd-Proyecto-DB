@@ -1,12 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import NavBar from '../../components/navBar'
-import getUsersService from '../../service/getUsersService.jsx'
 import Footer from '../../components/footer'
 import Groups from './groups.jsx'
 import AvailableRooms from './availableRooms.jsx'
+import getAvailableRoomsService from '../../service/getAvailableRoomsService.jsx'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState("Grupos");
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [building, setBuilding] = useState('');
+  const [date, setDate] = useState('');
+
+  useEffect(() => {
+    const getAvailableRooms = async () => {
+      if (date === '' || building === '') {
+        return;
+      } else {
+        const availableRoomsRef = await getAvailableRoomsService(building, date);
+        if (availableRoomsRef.success) {
+          const availableRoomsArray = availableRoomsRef.rooms;
+          setAvailableRooms(availableRoomsArray);
+        } else {
+          setAvailableRooms([]);
+        }
+      }
+    }
+
+    getAvailableRooms();
+  }, [building, date])
+
+  console.log(availableRooms)
+
+  const getAvailableRoomsParameters = (building, date) => {
+    setBuilding(building);
+    setDate(date);
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -29,7 +57,7 @@ export default function Main() {
         <div className="w-full sm:max-w-9xl bg-white border border-gray-300 rounded-b-2xl rounded-tr-2xl shadow-md flex flex-col h-[70vh] relative z-10">
           <div className="sm:p-8 p-4 text-gray-700 text-lg overflow-y-auto scrollbar">
             {activeTab === "Grupos" && <Groups />}
-            {activeTab === "Salas disponibles" && <AvailableRooms />}
+            {activeTab === "Salas disponibles" && <AvailableRooms availableRooms={availableRooms} getAvailableRoomsParameters={getAvailableRoomsParameters}/>}
           </div>
         </div>
       </section>
