@@ -3,7 +3,7 @@ import './App.css'
 
 import Login from './views/LoginView/Login.jsx'
 import Protected from './navigation/Protected'
-import Admin from './views/AdminView/Admin.jsx'
+import MainAdmin from './views/AdminView/Main.jsx'
 import Register from './views/LoginView/Register.jsx'
 import Main from './views/UserView/Main.jsx'
 import MainLibrarian from './views/LibrarianView/Main.jsx'
@@ -16,10 +16,10 @@ function App() {
       <Routes>
         <Route element={<Login />} path="/" />
         <Route element={<Register />} path="/Register" />
-        <Route element={<Protected allowedRoles={'admin'} />}>
-          <Route element={<Admin />} path="/admin" />
+        <Route element={<Protected allowedRoles={'administrator'} />}>
+          <Route element={<MainAdmin />} path="/main-admin" />
         </Route>
-        <Route element={<Protected allowedRoles={'student'} />}>
+        <Route element={<Protected allowedRoles={['student', 'professor']} />}>
           <Route element={<Main />} path="/main" />
         </Route>
         <Route element={<Protected allowedRoles={'librarian'} />}>
@@ -29,7 +29,12 @@ function App() {
         <Route
           element={
             <Protected
-              allowedRoles={['admin', 'student', 'librarian', 'professor']}
+              allowedRoles={[
+                'administrator',
+                'student',
+                'librarian',
+                'professor',
+              ]}
             />
           }>
           <Route element={<ProfileUser />} path="/profile" />
