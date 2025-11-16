@@ -257,7 +257,7 @@ function Register() {
               type="button"
               disabled={isLoading}
               onClick={() => setShowSecondCareer((prev) => !prev)}
-              className="flex items-center gap-2 text-blue-900 mb-2">
+              className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer">
               {showSecondCareer ? (
                 <>
                   <IoRemoveCircleOutline size={20} />
