@@ -165,10 +165,13 @@ export default function ProfileUser() {
                     <p className="font-semibold text-[#052e66]">Email</p>
                     <p className="break-words">{user.correo}</p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-[#052e66]">Campus</p>
-                    <p>{user.campus}</p>
-                  </div>
+                  {localStorage.getItem('role').replace(/"/g, '') ===
+                    'student' && (
+                    <div>
+                      <p className="font-semibold text-[#052e66]">Campus</p>
+                      <p>{user.campus}</p>
+                    </div>
+                  )}
                 </div>
                 {localStorage.getItem('role').replace(/"/g, '') ===
                   'student' && (
