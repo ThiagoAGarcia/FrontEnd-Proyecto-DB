@@ -150,16 +150,6 @@ function Login() {
                 />
               </section>
 
-              <div className="flex mb-2 items-center justify-center w-full">
-                <input
-                  type="checkbox"
-                  id="rememberInput"
-                  className="mr-1"
-                  disabled={isLoading}
-                />
-                <label htmlFor="rememberInput">Recordar usuario</label>
-              </div>
-
               <section className="w-full flex justify-center items-center">
                 <button
                   type="submit"
@@ -182,8 +172,6 @@ function Login() {
           </div>
         </form>
       </div>
-
-      <ToastContainer />
     </>
   )
 }

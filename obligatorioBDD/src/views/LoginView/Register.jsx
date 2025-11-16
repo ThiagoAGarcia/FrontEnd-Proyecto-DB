@@ -360,8 +360,6 @@ function Register() {
           </form>
         </div>
       </div>
-
-      <ToastContainer />
     </>
   )
 }

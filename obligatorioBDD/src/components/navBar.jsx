@@ -4,6 +4,7 @@ import getUsersByCiService from '../service/getUsersByCiService'
 import './navScroll.css'
 import getUserGroupRequestService from '../service/getUserGroupRequestService'
 import NotificationUser from './Notification'
+import {useGroups} from '../context/useGroup'
 
 export default function NavBar() {
   const [menuAbierto, setMenuAbierto] = useState(false)
@@ -17,6 +18,8 @@ export default function NavBar() {
   const role = rawRole.replace(/"/g, '')
 
   const navigate = useNavigate()
+
+  const {refreshGroups} = useGroups()
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto)
 
@@ -120,13 +123,15 @@ export default function NavBar() {
                               id={data.studyGroupId}
                               name={data.studyGroupName}
                               date={data.requestDate}
-                              onAccepted={() => {
+                              onAccepted={async () => {
                                 setUserRequest((prev) =>
                                   prev.filter(
                                     (req) =>
                                       req.studyGroupId !== data.studyGroupId
                                   )
                                 )
+
+                                await refreshGroups()
                               }}
                             />
                           ))}
