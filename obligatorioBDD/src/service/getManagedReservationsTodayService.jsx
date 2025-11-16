@@ -1,7 +1,7 @@
 const API = "http://localhost:5000";
-const PATH = "/reservationsAvailableToday"
+const PATH = "/reservationsManagedToday"
 
-export default async function getReservationsTodayService() {
+export default async function getManagedReservationsTodayService() {
     try {
         const res = await fetch(`${API}${PATH}`, {
             headers: {

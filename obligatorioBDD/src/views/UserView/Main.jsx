@@ -1,12 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import NavBar from '../../components/navBar'
 import getUsersService from '../../service/getUsersService.jsx'
 import Footer from '../../components/footer'
 import Groups from './groups.jsx'
 import AvailableRooms from './availableRooms.jsx'
+import getAvailableRoomsService from '../../service/getAvailableRoomsService.jsx'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState("Grupos");
+  const [availableRooms, setAvailableRooms] = useState([]);
+
+  useEffect(() => {
+    const getAvailableRooms = async () => {
+      const availableRoomsRef = await getAvailableRoomsService('2025-11-19');
+      if (availableRoomsRef.success) {
+        const availableRoomsArray = availableRoomsRef.rooms;
+        setAvailableRooms(availableRoomsArray);
+      }
+    }
+
+    getAvailableRooms();
+  }, [])
+
+  console.log(availableRooms)
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -29,7 +45,7 @@ export default function Main() {
         <div className="w-full sm:max-w-9xl bg-white border border-gray-300 rounded-b-2xl rounded-tr-2xl shadow-md flex flex-col h-[70vh] relative z-10">
           <div className="sm:p-8 p-4 text-gray-700 text-lg overflow-y-auto scrollbar">
             {activeTab === "Grupos" && <Groups />}
-            {activeTab === "Salas disponibles" && <AvailableRooms />}
+            {activeTab === "Salas disponibles" && availableRooms.length !== 0 && <AvailableRooms availableRooms={availableRooms}/>}
           </div>
         </div>
       </section>

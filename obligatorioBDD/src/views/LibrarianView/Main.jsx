@@ -5,6 +5,7 @@ import ReservationsAvailable from "./reservationsAvailable";
 import ManagedReservations from "./managedReservations";
 import '../../index.css';
 import getReservationsTodayService from '../../service/getReservationsTodayService';
+import getManagedReservationsTodayService from '../../service/getManagedReservationsTodayService';
 import patchManageReservationService from '../../service/patchManageReservationService';
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService';
 
@@ -12,32 +13,52 @@ export default function Main() {
     const [activeTab, setActiveTab] = useState("Reservas Disponibles");
     const [availableReservations, setAvailableReservations] = useState([]);
     const [managedReservations, setManagedReservations] = useState([]);
+    const [managing, setManaging] = useState(true);
 
     useEffect(() => {
+
         const getReservationsToday = async () => {
             const reservationsRes = await getReservationsTodayService();
             if (reservationsRes.success) {
-                let reservationArray = (reservationsRes.reservations).sort((a, b) => (a.start).localeCompare(b.start));
+                let reservationArray = reservationsRes.reservations;
+                reservationArray.sort((a, b) => (a.start).localeCompare(b.start));
                 setAvailableReservations(reservationArray);
+            }
+        }
+
+        const getManagedReservationsToday = async () => {
+            const managedReservationsRes = await getManagedReservationsTodayService();
+            if (managedReservationsRes.success) {
+                let managedReservationsArray = managedReservationsRes.reservations;
+                managedReservationsArray.sort((a, b) => (a.start).localeCompare(b.start));
+                setManagedReservations(managedReservationsArray);
             }
         }
         
         getReservationsToday();
-    }, [])
+
+        getManagedReservationsToday();
+
+    }, [managing])
 
     const handleNewManagedReservation = async (newManagedReservation) => {
+        
         const BODY = {
             "librarian": localStorage.getItem('ci'),
             "studyGroupId": newManagedReservation.studyGroupId
         }
         const manageReservation = await patchManageReservationService(BODY);
         if (manageReservation.success) {
-            setAvailableReservations(availableReservations.filter((availableReservation) => availableReservation.studyGroupId !== newManagedReservation.studyGroupId));
+            /*setAvailableReservations(availableReservations.filter((availableReservation) => availableReservation.studyGroupId !== newManagedReservation.studyGroupId));
             const managedReservationsArray = managedReservations;
             managedReservationsArray.push(newManagedReservation);
             managedReservationsArray.sort((a, b) => (a.start).localeCompare(b.start));
-            setManagedReservations(managedReservationsArray);
+            setManagedReservations(managedReservationsArray);*/
+            setManaging(!managing);
         }
+
+        console.log(manageReservation)
+        console.log(availableReservations)
     }
 
     const handleRestoreAvailableReservation = async (restoredAvailableReservation) => {
@@ -47,11 +68,12 @@ export default function Main() {
         }
         const restoreReservation = await patchUnmanageReservationService(BODY);
         if (restoreReservation.success) {
-            setManagedReservations(managedReservations.filter((managedReservation) => managedReservation.studyGroupId !== restoredAvailableReservation.studyGroupId));
+            /*setManagedReservations(managedReservations.filter((managedReservation) => managedReservation.studyGroupId !== restoredAvailableReservation.studyGroupId));
             const availableReservationsArray = availableReservations;
             availableReservationsArray.push(restoredAvailableReservation);
             availableReservationsArray.sort((a, b) => (a.start).localeCompare(b.start))
-            setAvailableReservations(availableReservationsArray);
+            setAvailableReservations(availableReservationsArray);*/
+            setManaging(!managing);
         }
     }
 
@@ -82,7 +104,16 @@ export default function Main() {
                     </div>
                 </div>
             </section>
-
+            {managedReservations && managedReservations.map((reservation) => (
+                <p>
+                    {`${reservation.assignedLibrarian} ${reservation.studyGroupId}`}
+                </p>
+            ))}
+            {availableReservations && availableReservations.map((reservation) => {
+                <p>
+                    {`${reservation.assignedLibrarian} ${reservation.studyGroupId}`}
+                </p>
+            })}
             <Footer />
         </div>
     );
