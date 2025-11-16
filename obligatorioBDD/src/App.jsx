@@ -14,48 +14,44 @@ import {ToastContainer} from 'react-toastify'
 
 function App() {
   return (
-    <BrowserRouter>
-      <ToastContainer position="bottom-left" />
-      <Routes>
-        <Route element={<Login />} path="/" />
-        <Route element={<Register />} path="/Register" />
+    <GroupsProvider>
+      <BrowserRouter>
+        <ToastContainer position="bottom-left" />
+        <Routes>
+          <Route element={<Login />} path="/" />
+          <Route element={<Register />} path="/Register" />
 
-        <Route element={<Protected allowedRoles={'administrator'} />}>
-          <Route element={<MainAdmin />} path="/main-admin" />
-        </Route>
+          <Route element={<Protected allowedRoles={'administrator'} />}>
+            <Route element={<MainAdmin />} path="/main-admin" />
+          </Route>
 
-        <Route element={<Protected allowedRoles={['student', 'professor']} />}>
           <Route
-            path="/main"
+            element={<Protected allowedRoles={['student', 'professor']} />}>
+            <Route path="/main" element={<Main />} />
+          </Route>
+
+          <Route element={<Protected allowedRoles={'librarian'} />}>
+            <Route element={<MainLibrarian />} path="/main-librarian" />
+          </Route>
+
+          <Route
             element={
-              <GroupsProvider>
-                <Main />
-              </GroupsProvider>
-            }
-          />
-        </Route>
+              <Protected
+                allowedRoles={[
+                  'administrator',
+                  'student',
+                  'librarian',
+                  'professor',
+                ]}
+              />
+            }>
+            <Route element={<ProfileUser />} path="/profile" />
+          </Route>
 
-        <Route element={<Protected allowedRoles={'librarian'} />}>
-          <Route element={<MainLibrarian />} path="/main-librarian" />
-        </Route>
-
-        <Route
-          element={
-            <Protected
-              allowedRoles={[
-                'administrator',
-                'student',
-                'librarian',
-                'professor',
-              ]}
-            />
-          }>
-          <Route element={<ProfileUser />} path="/profile" />
-        </Route>
-
-        <Route element={<SinToken />} path="/sin-token" />
-      </Routes>
-    </BrowserRouter>
+          <Route element={<SinToken />} path="/sin-token" />
+        </Routes>
+      </BrowserRouter>
+    </GroupsProvider>
   )
 }
 
