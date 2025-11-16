@@ -58,7 +58,7 @@ function Login() {
 
         localStorage.setItem('ci', JSON.stringify(logged.ci))
         if (logged.role.includes('administrator')) {
-          setTimeout(() => navigate('/admin'), 2500)
+          setTimeout(() => navigate('/main-admin'), 2500)
           return
         }
 
@@ -67,7 +67,10 @@ function Login() {
           return
         }
 
-        if (logged.role.includes('student')) {
+        if (
+          logged.role.includes('student') ||
+          logged.role.includes('professor')
+        ) {
           setTimeout(() => navigate('/main'), 2500)
           return
         }
