@@ -8,7 +8,10 @@ export default async function getMyGroupsService() {
         const res = await fetch(`${API}${PATH}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${(
+                localStorage.getItem('token') || ''
+                ).replace(/"/g, '')}`,
             }
         });
 
