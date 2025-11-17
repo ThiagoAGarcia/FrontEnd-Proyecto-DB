@@ -8,15 +8,12 @@ export default function AvailableRooms( {availableRooms, getAvailableRoomsParame
 
     const getParameters = () => {
         const dateValue = document.getElementById('date').value;
-        const buildingValue = document.getElementById('buildings').value;
-        console.log(dateValue);
-        console.log(buildingValue);
+        const buildingValue = document.getElementById('buildings').value;        
 
         if (dateValue === '') {
             setError('Debes elegir una fecha.');
         } else {
             setError('');
-            console.log(availableRooms);
             getAvailableRoomsParameters(buildingValue, dateValue);
         }
     }
