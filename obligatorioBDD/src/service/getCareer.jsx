@@ -13,7 +13,7 @@ export default async function getCareerService() {
       },
     })
     if (!res.ok) throw new Error(`GET ${PATH} -> ${res.status}`)
-    const career = res.json()
+    const career = await res.json()
     return career
   } catch (error) {
     console.log(error.message)

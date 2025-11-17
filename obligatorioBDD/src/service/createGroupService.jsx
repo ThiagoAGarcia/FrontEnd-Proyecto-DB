@@ -1,16 +1,23 @@
 const API_URL = "http://localhost:5000";
+const PATH = "/createGroup";
 
-export default async function createGroup(studyGroupName) {
+export default async function createGroup() {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}/createGroup`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ studyGroupName })
-    });
+    try {
+        const res = await fetch(`${API_URL}${PATH}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(BODY),
+        })
 
-    return await response.json();
+        if (!res.ok) throw new Error(`POST ${PATH} -> ${res.status}`)
+        const career = await res.json()
+        return career
+    } catch (error) {
+        console.log(error.message)
+    }
 }

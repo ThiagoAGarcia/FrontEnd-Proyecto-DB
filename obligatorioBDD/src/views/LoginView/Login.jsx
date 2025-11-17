@@ -56,8 +56,8 @@ function Login() {
         localStorage.setItem('token', logged.access_token)
         localStorage.setItem('role', JSON.stringify(logged.role))
         localStorage.setItem('roles', JSON.stringify(logged.roles))
-
         localStorage.setItem('ci', JSON.stringify(logged.ci))
+        
         if (logged.role.includes('administrator')) {
           setTimeout(() => navigate('/main-admin'), 2500)
           return

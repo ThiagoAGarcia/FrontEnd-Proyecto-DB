@@ -160,7 +160,7 @@ export default function NavBar() {
             {menuAbierto && (
               <div className="absolute right-0 top-14 bg-white text-[#052e66] rounded-xl shadow-lg w-44 flex flex-col z-50">
                 <button
-                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-t-xl transition"
+                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-t-xl transition cursor-pointer"
                   onClick={() => {
                     if (role === 'administrator') navigate('/main-admin')
                     if (role === 'librarian') navigate('/main-librarian')
@@ -171,23 +171,23 @@ export default function NavBar() {
                 </button>
 
                 <button
-                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] transition"
+                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] transition cursor-pointer"
                   onClick={() => navigate('/profile')}>
                   Perfil
                 </button>
 
                 <button
-                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl transition"
+                  className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl transition cursor-pointer"
                   onClick={cerrarSesion}>
                   Cerrar Sesión
                 </button>
 
-                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] flex items-center gap-2 sm:hidden transition">
+                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] flex items-center gap-2 sm:hidden transition cursor-pointer">
                   <i className="fa-solid fa-envelope text-[#052e66] text-lg"></i>
                   Notificaciones
                 </button>
 
-                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl flex items-center gap-2 sm:hidden transition">
+                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl flex items-center gap-2 sm:hidden transition cursor-pointer">
                   <i className="fa-solid fa-user text-[#052e66] text-lg"></i>
                   Perfil
                 </button>

@@ -1,15 +1,21 @@
-const API_URL = "http://localhost:5000";
+const API = "http://localhost:5000";
 const PATH = "/searchUsersRequest"
 
-export default async function SearchUsers(text) {
+export default async function SearchUsers() {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}${PATH}?text=${text}`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    return await response.json();
+    try {
+        const res = await fetch(`${API}${PATH}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        if (!res.ok) throw new Error(`GET ${PATH} -> ${res.status}`)
+        const users = await res.json()
+        return users
+    } catch (error) {
+        console.log(error.message)
+    }
 }
