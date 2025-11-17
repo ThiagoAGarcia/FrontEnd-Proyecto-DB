@@ -3,21 +3,25 @@ import getUsersService from '../../service/getUsersService'
 import deleteUserByCiService from '../../service/deleteUserByCi'
 import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ModalUpdate from './modalUpdate'
 
 export default function UserView() {
   const [userSearch, setUserSearch] = useState('')
+  const [open, setOpen] = useState(false)
   const [users, setUsers] = useState([])
+  const [selectedUser, setSelectedUser] = useState(null)
+
+  const getUsuarios = async () => {
+    try {
+      const res = await getUsersService()
+      setUsers(res.users || [])
+    } catch (error) {
+      console.error(error)
+      toast.error('Error al cargar los usuarios')
+    }
+  }
 
   useEffect(() => {
-    async function getUsuarios() {
-      try {
-        const res = await getUsersService()
-        setUsers(res.users || [])
-      } catch (error) {
-        console.error(error)
-        toast.error('Error al cargar los usuarios')
-      }
-    }
     getUsuarios()
   }, [])
 
@@ -43,7 +47,16 @@ export default function UserView() {
 
   return (
     <div className="text-xl">
-      <ToastContainer position="bottom-left" className="z-50" />
+      <ModalUpdate
+        open={open}
+        onClose={() => {
+          setOpen(false)
+          setSelectedUser(null)
+        }}
+        user={selectedUser}
+        onUpdated={getUsuarios}
+      />
+
       <div className="sm:flex justify-between items-center w-full sm:pb-3">
         <h2 className="ml-1 font-semibold text-gray-800 text-2xl">Usuarios</h2>
 
@@ -51,6 +64,7 @@ export default function UserView() {
           <div className="relative flex"></div>
         </div>
       </div>
+
       <input
         type="text"
         className="bg-white h-10 flex px-5 w-full rounded-full text-sm focus:outline-none border-2 placeholder-gray-400 border-gray-500 mb-5"
@@ -58,6 +72,7 @@ export default function UserView() {
         value={userSearch}
         onChange={(e) => setUserSearch(e.target.value)}
       />
+
       <div
         className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
           !users || users.length === 0 ? 'justify-center items-center h-80' : ''
@@ -70,7 +85,7 @@ export default function UserView() {
           <>
             <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
               <div className="w-1/2 text-center">Nombre - Cédula</div>
-              <div className="w-1/4 text-center">Tipo</div>
+              <div className="w-1/4 text-center">Roles</div>
               <div className="w-1/2 text-center">Administrar</div>
             </div>
 
@@ -85,17 +100,20 @@ export default function UserView() {
                     </p>
                   </div>
 
-                  <div className="w-1/4 text-center">
-                    {data.roles.map((rol) => (
-                      <p key={rol} className="text-xs md:text-sm lg:text-lg">
-                        {rol}
-                      </p>
+                  <div className="w-1/4 text-center text-xs md:text-sm lg:text-lg">
+                    {data.roles.map((rol, i) => (
+                      <p key={i}>{rol}</p>
                     ))}
                   </div>
 
                   <div className="flex justify-center w-1/2 text-center">
                     <section className="flex gap-5 text-white justify-center items-center">
-                      <button className="p-3 flex justify-center items-center bg-yellow-300 rounded-sm cursor-pointer">
+                      <button
+                        className="p-3 flex justify-center items-center bg-yellow-300 rounded-sm cursor-pointer"
+                        onClick={() => {
+                          setSelectedUser(data)
+                          setOpen(true)
+                        }}>
                         <i className="fa-solid fa-pen text-sm lg:text-lg"></i>
                       </button>
 
