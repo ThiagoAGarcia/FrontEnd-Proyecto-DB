@@ -2,7 +2,7 @@ import {IoEye, IoEyeOff} from 'react-icons/io5'
 import {useEffect, useState} from 'react'
 import LoginService from '../../service/loginService.jsx'
 import {useNavigate} from 'react-router-dom'
-import {ToastContainer, toast} from 'react-toastify'
+import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {Oval} from 'react-loader-spinner'
 
@@ -55,6 +55,7 @@ function Login() {
         })
         localStorage.setItem('token', logged.access_token)
         localStorage.setItem('role', JSON.stringify(logged.role))
+        localStorage.setItem('roles', JSON.stringify(logged.roles))
 
         localStorage.setItem('ci', JSON.stringify(logged.ci))
         if (logged.role.includes('administrator')) {
