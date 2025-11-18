@@ -1,7 +1,7 @@
 const API = "http://localhost:5000";
 const PATH = "/searchUsersRequest"
 
-export default async function SearchUsers({text}) {
+export default async function SearchUsers(text) {
     const token = localStorage.getItem("token");
 
     try {
