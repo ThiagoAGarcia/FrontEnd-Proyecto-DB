@@ -7,9 +7,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import sendGroupRequest from '../../service/sendGroupRequest.jsx'
 import { useGroups } from '../../context/useGroup.jsx'
 import getGroupDataService from '../../service/getGroupDataService.jsx'
+import deleteGroupMemberService from '../../service/deleteGroupMemberService.jsx'
+import deleteGroupByIdService from '../../service/deleteGroupByIdService.jsx'
 
 export default function Groups() {
   const [open, setOpen] = useState(false)
+  const [deleting, setDeleting] = useState(true)
   const [infoOpen, setInfoOpen] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState('')
   const [selectedGroupData, setSelectedGroupData] = useState(null)
@@ -19,6 +22,8 @@ export default function Groups() {
   const [agregados, setAgregados] = useState({})
 
   const { grupos, refreshGroups } = useGroups()
+
+  const error = '';
 
   async function handleSearch(text) {
     const data = await SearchUsers(text)
@@ -124,7 +129,7 @@ export default function Groups() {
     }
 
     getGroupData();
-  }, [selectedGroup])
+  }, [selectedGroup, deleting])
 
   useEffect(() => {
     const detectGroupLeader = () => {
@@ -148,12 +153,26 @@ export default function Groups() {
   console.log(selectedGroupData)
   console.log(isLeader)
 
-  const handleDeleteGroupMember = (memberCi) => {
-    return;
+  const handleDeleteGroupMember = async (memberCi) => {
+    const deletedMember = await deleteGroupMemberService(selectedGroupData.id, memberCi);
+    if (deletedMember.success) {
+      setDeleting(!deleting);
+      // quiero agregarle un mensaje de toast pero no puedo
+    } else {
+      error = 'Algo salió mal.'
+    }
   }
 
-  const handleDeleteStudyGroup = (studyGroupId) => {
-    return;
+  const handleDeleteStudyGroup = async (studyGroupId) => {
+    const deletedGroup = await deleteGroupByIdService(studyGroupId);
+    console.log(deletedGroup)
+    if (deletedGroup.success) {
+      setDeleting(!deleting);
+      console.log(deleting)
+      console.log(deletedGroup.description)
+    } else {
+      console.log('hola')
+    }
   }
 
   const handleLeaveStudyGroup = (studyGroupId) => {
@@ -239,11 +258,11 @@ export default function Groups() {
                           <div className='flex flex-row justify-between'>
                             <h2 className='font-semibold text-2xl'>{selectedGroupData.studyGroupName}</h2>
                             {isLeader ? 
-                            (<button onClick={() => handleDeleteStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5'>
+                            (<button onClick={() => handleDeleteStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
                               Eliminar grupo
                             </button>) 
                             : 
-                            (<button onClick={() => handleLeaveStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5'>
+                            (<button onClick={() => handleLeaveStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
                               Salir del grupo
                             </button>)}
                           </div>
@@ -269,7 +288,7 @@ export default function Groups() {
                                 <p>{member.name} {member.lastName}</p>
                                 <p>{member.mail}</p>
                                 {isLeader && (
-                                  <button onClick={() => handleDeleteGroupMember(member.ci)} className='bg-red-500 text-white text-sm rounded-md p-1.5'>
+                                  <button onClick={() => handleDeleteGroupMember(member.ci)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
                                     Eliminar
                                   </button>)}
                               </div>

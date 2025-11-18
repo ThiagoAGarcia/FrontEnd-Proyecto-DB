@@ -1,4 +1,5 @@
 // service/deleteUserByCi.js
+// ADMIN
 const API = 'http://localhost:5000'
 const PATH = '/deleteUserByCi'
 
@@ -10,7 +11,7 @@ export default async function deleteUserByCiService(ci) {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+         Authorization: `Bearer ${token}`,
       },
     })
 
