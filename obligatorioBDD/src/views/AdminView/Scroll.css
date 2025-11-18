@@ -1,0 +1,20 @@
+.scroll-ucu::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll-ucu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-ucu::-webkit-scrollbar-thumb {
+  background: #052e66;
+  border-radius: 10px;
+}
+
+.scroll-ucu::-webkit-scrollbar-thumb:hover {
+  background: #073c88;
+}
+
+.scroll-ucu {
+  scrollbar-gutter: stable;
+}

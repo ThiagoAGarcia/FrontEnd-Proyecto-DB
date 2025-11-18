@@ -16,7 +16,6 @@ function App() {
   return (
     <GroupsProvider>
       <BrowserRouter>
-        <ToastContainer position="bottom-left" />
         <Routes>
           <Route element={<Login />} path="/" />
           <Route element={<Register />} path="/Register" />
@@ -51,6 +50,7 @@ function App() {
           <Route element={<SinToken />} path="/sin-token" />
         </Routes>
       </BrowserRouter>
+      <ToastContainer position="bottom-left" />
     </GroupsProvider>
   )
 }

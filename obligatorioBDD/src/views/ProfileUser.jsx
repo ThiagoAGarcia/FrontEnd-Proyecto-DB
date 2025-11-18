@@ -55,9 +55,11 @@ export default function ProfileUser() {
           const parsed = JSON.parse(storedRolesRaw)
           if (Array.isArray(parsed)) {
             storedRoles = parsed
+          } else {
+            storedRoles = []
           }
         } catch (e) {
-          storedRoles = []
+          storedRoles = storedRolesRaw.split(',').map((r) => r.trim())
         }
       }
 
@@ -83,8 +85,15 @@ export default function ProfileUser() {
   const handleRoleChange = (e) => {
     const newRole = e.target.value
     setCurrentRole(newRole)
+
     localStorage.setItem('role', JSON.stringify(newRole))
+
+    if (Array.isArray(roles) && roles.length) {
+      localStorage.setItem('roles', JSON.stringify(roles))
+    }
   }
+
+  console.log(roles)
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
@@ -165,16 +174,16 @@ export default function ProfileUser() {
                     <p className="font-semibold text-[#052e66]">Email</p>
                     <p className="break-words">{user.correo}</p>
                   </div>
-                  {localStorage.getItem('role').replace(/"/g, '') ===
-                    'student' && (
+
+                  {currentRole === 'student' && (
                     <div>
                       <p className="font-semibold text-[#052e66]">Campus</p>
                       <p>{user.campus}</p>
                     </div>
                   )}
                 </div>
-                {localStorage.getItem('role').replace(/"/g, '') ===
-                  'student' && (
+
+                {currentRole === 'student' && (
                   <div className="text-gray-700 text-lg overflow-y-auto scrollbar pt-10">
                     <div className="w-full bg-white rounded-2xl p-2 flex flex-col border border-gray-400">
                       <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
