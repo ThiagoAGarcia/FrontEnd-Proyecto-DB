@@ -62,6 +62,9 @@ function Register() {
     const email = document.getElementById('emailInput').value.trim()
     const carrera = document.getElementById('carreraInput').value
     const password = document.getElementById('passwordInput').value.trim()
+    const confirmPassword = document
+      .getElementById('passwordConfirmInput')
+      .value.trim()
     const campus = document.getElementById('campusInput').value
     const secondCareer = document.getElementById('secondCareerInput')
       ? document.getElementById('secondCareerInput').value
@@ -100,6 +103,11 @@ function Register() {
       erroresTemp.password = 'La contraseña debe tener al menos 8 caracteres.'
     }
 
+    if (confirmPassword.length < 8) {
+      erroresTemp.passwordConfirm =
+        'La confirmación de contraseña debe tener al menos 8 caracteres al igual que la contraseña.'
+    }
+
     setErrores(erroresTemp)
 
     if (Object.keys(erroresTemp).length === 0) {
@@ -112,6 +120,7 @@ function Register() {
         password,
         campus,
         secondCareer: showSecondCareer && secondCareer ? secondCareer : null,
+        confirmPassword: confirmPassword,
       }
 
       try {
@@ -125,7 +134,7 @@ function Register() {
             autoClose: 3000,
           })
           e.target.reset()
-          setTimeout(() => navigate('/admin'), 2500)
+          setTimeout(() => navigate('/'), 2500)
           return
         } else {
           toast.error(register?.description || 'Error al registrar', {
@@ -337,6 +346,29 @@ function Register() {
               />
               {errores.password && (
                 <p className="text-red-600 text-sm">{errores.password}</p>
+              )}
+            </section>
+
+            <section className="relative w-full text-left mb-2">
+              <label htmlFor="passwordConfirmInput" className="p-1">
+                Confirmar Contraseña
+              </label>
+              <i
+                className="absolute top-9 right-5 cursor-pointer"
+                onClick={() => !isLoading && setVerPwd(!verPwd)}>
+                {verPwd ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+              </i>
+              <input
+                type={verPwd ? 'text' : 'password'}
+                id="passwordConfirmInput"
+                disabled={isLoading}
+                className="w-full border-b mb-2 p-2 rounded-sm bg-[rgb(232,240,254)]"
+                placeholder="confirmar contraseña"
+              />
+              {errores.passwordConfirm && (
+                <p className="text-red-600 text-sm">
+                  {errores.passwordConfirm}
+                </p>
               )}
             </section>
 
