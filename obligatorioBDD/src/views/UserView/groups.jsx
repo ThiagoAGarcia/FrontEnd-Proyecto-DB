@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import Modal from '../../components/modal.jsx'
 import SearchUsers from '../../service/getUsersRequest.jsx'
 import CreateGroup from '../../service/createGroupService.jsx'
-import { ToastContainer, toast } from 'react-toastify'
+import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import sendGroupRequest from '../../service/sendGroupRequest.jsx'
-import { useGroups } from '../../context/useGroup.jsx'
+import {useGroups} from '../../context/useGroup.jsx'
 import getGroupDataService from '../../service/getGroupDataService.jsx'
 import deleteGroupMemberService from '../../service/deleteGroupMemberService.jsx'
 import deleteGroupByIdService from '../../service/deleteGroupByIdService.jsx'
+import ModalReservation from '../UserView/components/modalReservation.jsx'
 
 export default function Groups() {
   const [open, setOpen] = useState(false)
@@ -17,18 +18,22 @@ export default function Groups() {
   const [selectedGroup, setSelectedGroup] = useState('')
   const [selectedGroupData, setSelectedGroupData] = useState(null)
   const [isLeader, setIsLeader] = useState(false)
+  const [openReserva, setOpenReserva] = useState(false)
   const [usuarios, setUsuarios] = useState([])
   const [groupName, setGroupName] = useState('')
   const [agregados, setAgregados] = useState({})
 
-  const { grupos, refreshGroups } = useGroups()
+  const {grupos, refreshGroups} = useGroups()
+
+  useEffect(() => {
+    refreshGroups()
+  }, [])
 
   const error = '';
 
   async function handleSearch(text) {
     const data = await SearchUsers(text)
     console.log('DATA BACKEND:', data)
-
     if (data?.success) {
       setUsuarios(data.users)
     }
@@ -44,7 +49,10 @@ export default function Groups() {
     }
 
     try {
-      const data = await CreateGroup(groupName)
+      const BODY = {
+        studyGroupName: groupName,
+      }
+      const data = await CreateGroup(BODY)
 
       if (!data?.grupo || !data.grupo.id) {
         toast.error('No se pudo obtener el ID del grupo creado')
@@ -90,17 +98,6 @@ export default function Groups() {
     }
   }
 
-  // COMENTE ESTO PORQUE EL QUE EJECUTA ESTO AHORA ES EL CONTEXTO ENTONCES LO TRAIGO DE AHI
-  // useEffect(() => {
-  //     async function fetchGroups() {
-  //         const data = await GetMyGroups();
-  //         if (data.success) {
-  //             setGrupos(data.grupos);
-  //         }
-  //     }
-  //     fetchGroups();
-  // }, []);
-
   useEffect(() => {
     if (open) {
       handleSearch('')
@@ -111,19 +108,19 @@ export default function Groups() {
 
   const selectGroup = (open, groupId) => {
     console.log(groupId)
-    setInfoOpen(open);
-    setSelectedGroup(groupId);
+    setInfoOpen(open)
+    setSelectedGroup(groupId)
   }
 
   useEffect(() => {
     const getGroupData = async () => {
       if (selectedGroup === '') {
-        return;
+        return
       } else {
-        const groupData = await getGroupDataService(selectedGroup);
+        const groupData = await getGroupDataService(selectedGroup)
         if (groupData.success) {
-          setSelectedGroupData(groupData.grupo);
-          console.log(selectedGroup);
+          setSelectedGroupData(groupData.grupo)
+          console.log(selectedGroup)
         }
       }
     }
@@ -134,19 +131,19 @@ export default function Groups() {
   useEffect(() => {
     const detectGroupLeader = () => {
       if (selectedGroupData === null) {
-        return;
+        return
       } else {
-        const leaderCi = selectedGroupData.leader.ci;
-        const userCi = parseInt(localStorage.getItem('ci'));
+        const leaderCi = selectedGroupData.leader.ci
+        const userCi = parseInt(localStorage.getItem('ci'))
         if (leaderCi === userCi) {
-          setIsLeader(true);
+          setIsLeader(true)
         } else {
-          setIsLeader(false);
+          setIsLeader(false)
         }
       }
     }
 
-    detectGroupLeader();
+    detectGroupLeader()
   }, [selectedGroupData])
 
   console.log(selectedGroup)
@@ -173,10 +170,9 @@ export default function Groups() {
     } else {
       console.log('hola')
     }
-  }
 
   const handleLeaveStudyGroup = (studyGroupId) => {
-    return;
+    return
   }
 
   return (
@@ -196,8 +192,9 @@ export default function Groups() {
       </div>
 
       <div
-        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayGrupos ? 'justify-center items-center h-80' : ''
-          }`}>
+        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
+          !hayGrupos ? 'justify-center items-center h-80' : ''
+        }`}>
         {hayGrupos ? (
           <>
             <div className="hidden lg:flex w-full justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 text-lg">
@@ -221,10 +218,14 @@ export default function Groups() {
                       </h1>
                     </div>
                     <div className="w-1/3 flex justify-center items-center gap-2">
-                      <button className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
+                      <button
+                        onClick={() => selectGroup(true, grupo.id)}
+                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
                         Info
                       </button>
-                      <button className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
+                      <button
+                        onClick={() => setOpenReserva(true)}
+                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
                         Hacer reserva{' '}
                         <i className="fa-solid fa-plus text-[#0d9b64]"></i>
                       </button>
@@ -241,60 +242,98 @@ export default function Groups() {
                     </span>
 
                     <div className="flex gap-2 mt-2">
-                      <button onClick={() => selectGroup(true, grupo.id)} className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] shadow-md hover:bg-[#d5e4ff] transition">
+                      <button
+                        onClick={() => selectGroup(true, grupo.id)}
+                        className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] shadow-md hover:bg-[#d5e4ff] transition">
                         Info
                       </button>
 
-                      <button className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
+                      <button
+                        onClick={() => setOpenReserva(true)}
+                        className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
                         Hacer reserva{' '}
                         <i className="fa-solid !hidden lg:!inline fa-plus text-[#0d9b64]"></i>
                       </button>
                     </div>
                   </div>
                   <Modal open={infoOpen} onClose={() => setInfoOpen(false)}>
-                    <div className='p-6'>
+                    <div className="p-6">
                       {selectedGroupData && (
                         <>
-                          <div className='flex flex-row justify-between'>
-                            <h2 className='font-semibold text-2xl'>{selectedGroupData.studyGroupName}</h2>
-                            {isLeader ? 
-                            (<button onClick={() => handleDeleteStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
-                              Eliminar grupo
-                            </button>) 
-                            : 
-                            (<button onClick={() => handleLeaveStudyGroup(selectedGroupData.id)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
-                              Salir del grupo
-                            </button>)}
+                          <div className="flex flex-row justify-between">
+                            <h2 className="font-semibold text-2xl">
+                              {selectedGroupData.studyGroupName}
+                            </h2>
+                            {isLeader ? (
+                              <button
+                                onClick={() =>
+                                  handleDeleteStudyGroup(selectedGroupData.id)
+                                }
+                                className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                Eliminar grupo
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  handleLeaveStudyGroup(selectedGroupData.id)
+                                }
+                                className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                Salir del grupo
+                              </button>
+                            )}
                           </div>
-                          {selectedGroupData.status === 'Activo' ? 
-                          (
-                            <p className='text-green-500 font-semibold'>{selectedGroupData.status}</p>
-                          ):(
-                            <p className='text-red-500 font-semibold'>{selectedGroupData.status}</p>
+                          {selectedGroupData.status === 'Activo' ? (
+                            <p className="text-green-500 font-semibold">
+                              {selectedGroupData.status}
+                            </p>
+                          ) : (
+                            <p className="text-red-500 font-semibold">
+                              {selectedGroupData.status}
+                            </p>
                           )}
-                          <div className='flex flex-row justify-between items-baseline'>
-                            <p><span className='text-blue-900 font-semibold'>Líder:</span> {selectedGroupData.leader.name} {selectedGroupData.leader.lastName}</p>
-                            <p className='text-sm'>{selectedGroupData.leader.mail}</p>
+                          <div className="flex flex-row justify-between items-baseline">
+                            <p>
+                              <span className="text-blue-900 font-semibold">
+                                Líder:
+                              </span>{' '}
+                              {selectedGroupData.leader.name}{' '}
+                              {selectedGroupData.leader.lastName}
+                            </p>
+                            <p className="text-sm">
+                              {selectedGroupData.leader.mail}
+                            </p>
                           </div>
-                          <p className='text-blue-900 font-semibold'>Miembros</p>
-                          <div className='border-gray-200 border-2 rounded-xl p-2 mt-2'>
-                            <div className='flex flex-row justify-between'>
+                          <p className="text-blue-900 font-semibold">
+                            Miembros
+                          </p>
+                          <div className="border-gray-200 border-2 rounded-xl p-2 mt-2">
+                            <div className="flex flex-row justify-between">
                               <div>Nombre</div>
                               <div>Correo</div>
                               <div>Acciones</div>
                             </div>
-                            {selectedGroupData && selectedGroupData.members.map((member) => (
-                              <div key={member.ci} className='flex flex-row justify-between m-2'>
-                                <p>{member.name} {member.lastName}</p>
-                                <p>{member.mail}</p>
-                                {isLeader && (
-                                  <button onClick={() => handleDeleteGroupMember(member.ci)} className='bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer'>
-                                    Eliminar
-                                  </button>)}
-                              </div>
-                            ))}
+                            {selectedGroupData &&
+                              selectedGroupData.members.map((member) => (
+                                <div
+                                  key={member.ci}
+                                  className="flex flex-row justify-between m-2">
+                                  <p>
+                                    {member.name} {member.lastName}
+                                  </p>
+                                  <p>{member.mail}</p>
+                                  {isLeader && (
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteGroupMember(member.ci)
+                                      }
+                                      className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                      Eliminar
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
                           </div>
-                        </>          
+                        </>
                       )}
                     </div>
                   </Modal>
@@ -313,6 +352,13 @@ export default function Groups() {
           </button>
         )}
       </div>
+
+      <ModalReservation
+        open={openReserva}
+        onClose={() => {
+          setOpenReserva(false)
+        }}
+      />
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <div className="text-left w-full p-4 sm:p-6">
@@ -367,17 +413,19 @@ export default function Groups() {
 
                   <button
                     onClick={() =>
-                      setAgregados((prev) => ({ ...prev, [index]: !prev[index] }))
+                      setAgregados((prev) => ({...prev, [index]: !prev[index]}))
                     }
-                    className={`px-4 cursor-pointer border border-[#052e66] py-2 mt-3 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[index]
+                    className={`px-4 cursor-pointer border border-[#052e66] py-2 mt-3 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${
+                      agregados[index]
                         ? 'bg-white text-[#052e66]'
                         : 'bg-[#052e66] text-white hover:bg-[#073c88]'
-                      }`}>
+                    }`}>
                     <i
-                      className={`fa-solid ${agregados[index]
+                      className={`fa-solid ${
+                        agregados[index]
                           ? 'fa-xmark text-[#052e66]'
                           : 'fa-envelope text-white'
-                        } transition-all duration-300`}></i>
+                      } transition-all duration-300`}></i>
                     {agregados[index] ? 'Cancelar' : 'Enviar'}
                   </button>
                 </div>
@@ -397,15 +445,17 @@ export default function Groups() {
                           [index]: !prev[index],
                         }))
                       }
-                      className={`px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[index]
+                      className={`px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${
+                        agregados[index]
                           ? 'bg-white text-[#052e66]'
                           : 'bg-[#052e66] text-white hover:bg-[#073c88]'
-                        }`}>
+                      }`}>
                       <i
-                        className={`fa-solid ${agregados[index]
+                        className={`fa-solid ${
+                          agregados[index]
                             ? 'fa-xmark text-[#052e66]'
                             : 'fa-envelope text-white'
-                          } transition-all duration-300`}></i>
+                        } transition-all duration-300`}></i>
                       {agregados[index] ? 'Cancelar' : 'Enviar'}
                     </button>
                   </div>
@@ -427,8 +477,7 @@ export default function Groups() {
           </div>
         </div>
       </Modal>
-
-
     </>
   )
+}
 }

@@ -9,6 +9,12 @@ import {ToastContainer, toast} from 'react-toastify'
 import {Oval} from 'react-loader-spinner'
 import 'react-toastify/dist/ReactToastify.css'
 import './Scroll.css'
+import {
+  IoEye,
+  IoEyeOff,
+  IoAddCircleOutline,
+  IoRemoveCircleOutline,
+} from 'react-icons/io5'
 
 const ROLES_POSIBLES = ['student', 'professor', 'librarian', 'administrator']
 
@@ -24,6 +30,7 @@ const ModalUpdate = ({open, onClose, user, onUpdated}) => {
   const [buildings, setBuildings] = useState([])
   const [errores, setErrores] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const [showSecondCareer, setShowSecondCareer] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -244,6 +251,47 @@ const ModalUpdate = ({open, onClose, user, onUpdated}) => {
                   </select>
                   {errores.careerId && (
                     <p className="text-red-600 text-xs">{errores.careerId}</p>
+                  )}
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => setShowSecondCareer((prev) => !prev)}
+                    className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer">
+                    {showSecondCareer ? (
+                      <>
+                        <IoRemoveCircleOutline size={20} />
+                        <span>Quitar segunda carrera</span>
+                      </>
+                    ) : (
+                      <>
+                        <IoAddCircleOutline size={20} />
+                        <span>Agregar segunda carrera</span>
+                      </>
+                    )}
+                  </button>
+                  {showSecondCareer && (
+                    <>
+                      <label
+                        htmlFor="secondCareerInput"
+                        className="p-2 font-medium">
+                        Segunda carrera (opcional)
+                      </label>
+                      <div className="relative w-full mb-2">
+                        <select
+                          id="secondCareerInput"
+                          disabled={isLoading}
+                          className="bg-gray-50 border rounded-xl p-2 w-full">
+                          <option value="">
+                            Seleccione una segunda carrera
+                          </option>
+                          {careers.map((c) => (
+                            <option key={c.careerId} value={c.careerId}>
+                              {c.careerName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
                   )}
                 </div>
 

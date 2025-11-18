@@ -54,7 +54,7 @@ export default function Main() {
           ))}
         </div>
 
-        <div className="w-full sm:max-w-9xl bg-white border border-gray-300 rounded-b-2xl rounded-tr-2xl shadow-md flex flex-col h-[70vh] relative z-10">
+        <div className="w-full sm:max-w-9xl bg-white border border-gray-300 rounded-b-2xl rounded-tr-2xl shadow-md flex flex-col h-[68vh] relative z-10">
           <div className="sm:p-8 p-4 text-gray-700 text-lg overflow-y-auto scrollbar">
             {activeTab === "Grupos" && <Groups />}
             {activeTab === "Salas disponibles" && <AvailableRooms availableRooms={availableRooms} getAvailableRoomsParameters={getAvailableRoomsParameters}/>}
