@@ -44,7 +44,10 @@ export default function Groups() {
     }
 
     try {
-      const data = await CreateGroup(groupName)
+      const BODY = {
+        studyGroupName: groupName,
+      }
+      const data = await CreateGroup(BODY)
 
       if (!data?.grupo || !data.grupo.id) {
         toast.error('No se pudo obtener el ID del grupo creado')
@@ -197,10 +200,14 @@ export default function Groups() {
                       </h1>
                     </div>
                     <div className="w-1/3 flex justify-center items-center gap-2">
-                      <button onClick={() => selectGroup(true, grupo.id)} className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
+                      <button
+                        onClick={() => selectGroup(true, grupo.id)}
+                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
                         Info
                       </button>
-                      <button onClick={() => setOpenReserva(true)} className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
+                      <button
+                        onClick={() => setOpenReserva(true)}
+                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
                         Hacer reserva{' '}
                         <i className="fa-solid fa-plus text-[#0d9b64]"></i>
                       </button>
@@ -223,7 +230,9 @@ export default function Groups() {
                         Info
                       </button>
 
-                      <button onClick={() => setOpenReserva(true)} className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
+                      <button
+                        onClick={() => setOpenReserva(true)}
+                        className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
                         Hacer reserva{' '}
                         <i className="fa-solid !hidden lg:!inline fa-plus text-[#0d9b64]"></i>
                       </button>
@@ -315,15 +324,23 @@ export default function Groups() {
             </ul>
           </>
         ) : (
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer" onClick={() => setOpen(true)}>
+          <button
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer"
+            onClick={() => setOpen(true)}>
             <span className="font-medium text-[#052e66]">
-              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo grupo
+              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo
+              grupo
             </span>
           </button>
         )}
       </div>
 
-      <ModalReservation open={openReserva} onClose={() => {setOpenReserva(false) }}/>
+      <ModalReservation
+        open={openReserva}
+        onClose={() => {
+          setOpenReserva(false)
+        }}
+      />
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <div className="text-left w-full p-4 sm:p-6">
@@ -398,7 +415,9 @@ export default function Groups() {
                 <div className="hidden md:flex w-full items-center text-gray-700">
                   <div className="basis-1/4 lg:basis-1/5">{user.name}</div>
                   <div className="basis-1/4 lg:basis-1/5">{user.lastName}</div>
-                  <div className="basis-1/3 lg:basis-2/5 break-all pr-2">{user.mail}</div>
+                  <div className="basis-1/3 lg:basis-2/5 break-all pr-2">
+                    {user.mail}
+                  </div>
 
                   <div className="basis-1/5 flex justify-start">
                     <button

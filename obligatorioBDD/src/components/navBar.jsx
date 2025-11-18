@@ -133,6 +133,16 @@ export default function NavBar() {
 
                                 await refreshGroups()
                               }}
+                              onDeny={async () => {
+                                setUserRequest((prev) =>
+                                  prev.filter(
+                                    (req) =>
+                                      req.studyGroupId !== data.studyGroupId
+                                  )
+                                )
+
+                                await refreshGroups()
+                              }}
                             />
                           ))}
 
