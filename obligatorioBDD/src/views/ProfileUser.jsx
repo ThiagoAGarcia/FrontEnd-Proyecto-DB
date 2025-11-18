@@ -6,6 +6,7 @@ import getCareerService from '../service/getCareer'
 import getReservationsUserService from '../service/getUserReservations'
 import Data from './UserView/components/data'
 import MisReservas from './UserView/components/misReservas'
+import switchRole from '../service/switchRole'
 
 const ROLE_LABELS = {
   student: 'Estudiante',
@@ -82,14 +83,44 @@ export default function ProfileUser() {
     campus: userData ? userData.campus : '',
   }
 
-  const handleRoleChange = (e) => {
+  const handleRoleChange = async (e) => {
     const newRole = e.target.value
+
     setCurrentRole(newRole)
 
-    localStorage.setItem('role', JSON.stringify(newRole))
+    try {
+      const data = await switchRole(newRole)
 
-    if (Array.isArray(roles) && roles.length) {
-      localStorage.setItem('roles', JSON.stringify(roles))
+      if (!data || !data.success) {
+        const storedRoleRaw = localStorage.getItem('role')
+        const storedRole = storedRoleRaw ? storedRoleRaw.replace(/"/g, '') : ''
+        setCurrentRole(storedRole)
+        console.error('No se pudo cambiar el rol:', data?.description)
+        return
+      }
+
+      const {access_token, role, roles: newRoles} = data
+
+      if (access_token) {
+        localStorage.setItem('token', JSON.stringify(access_token))
+      }
+
+      if (role) {
+        localStorage.setItem('role', JSON.stringify(role))
+        setCurrentRole(role)
+      }
+
+      if (Array.isArray(newRoles) && newRoles.length) {
+        localStorage.setItem('roles', JSON.stringify(newRoles))
+        setRoles(newRoles)
+      } else if (Array.isArray(roles) && roles.length) {
+        localStorage.setItem('roles', JSON.stringify(roles))
+      }
+    } catch (error) {
+      console.error('Error al cambiar rol:', error)
+      const storedRoleRaw = localStorage.getItem('role')
+      const storedRole = storedRoleRaw ? storedRoleRaw.replace(/"/g, '') : ''
+      setCurrentRole(storedRole)
     }
   }
 
