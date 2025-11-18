@@ -1,11 +1,11 @@
 const API = "http://localhost:5000";
 const PATH = "/searchUsersRequest"
 
-export default async function SearchUsers() {
+export default async function SearchUsers({text}) {
     const token = localStorage.getItem("token");
 
     try {
-        const res = await fetch(`${API}${PATH}`, {
+        const res = await fetch(`${API}${PATH}?text=${text}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
