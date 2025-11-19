@@ -8,6 +8,7 @@ import getReservationsTodayService from '../../service/getReservationsTodayServi
 import getManagedReservationsTodayService from '../../service/getManagedReservationsTodayService'
 import patchManageReservationService from '../../service/patchManageReservationService'
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService'
+import Sanctions from './sanctions'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Reservas Disponibles')
@@ -129,6 +130,11 @@ export default function Main() {
               label: 'Reserva Express',
               icon: 'fa-alarm-clock',
             },
+            {
+              id: 'Sanciones',
+              label: 'Sanciones',
+              icon: 'fa-circle-exclamation'
+            }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -166,6 +172,10 @@ export default function Main() {
               <div className="animate-fadeIn">
                 <p>Reserva Express</p>
               </div>
+            )}
+
+            {activeTab === 'Sanciones' && (
+              <Sanctions />
             )}
           </div>
         </div>

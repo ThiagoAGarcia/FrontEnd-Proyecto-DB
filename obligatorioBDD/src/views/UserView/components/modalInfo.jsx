@@ -13,6 +13,8 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
     useEffect(() => {
     const getGroupData = async () => {
       if (selectedGroup === '') {
+        console.log('holi')
+        console.log(selectedGroup)
         return
       } else {
         const groupData = await getGroupDataService(selectedGroup)
@@ -46,7 +48,7 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
 
     const handleDeleteGroupMember = async (memberCi) => {
         const deletedMember = await deleteGroupMemberService(selectedGroupData.id, memberCi);
-        if (deletedMember.success) {
+        if (deletedMember) {
             setDeletingMember(!deletingMember);
         }
     }
@@ -126,7 +128,7 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
                                 <div>Correo</div>
                                 <div>Acciones</div>
                             </div>
-                            {selectedGroupData &&
+                            {selectedGroupData.members &&
                                 selectedGroupData.members.map((member) => (
                                     <div
                                         key={member.ci}
