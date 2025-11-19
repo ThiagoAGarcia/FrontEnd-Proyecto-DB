@@ -3,6 +3,7 @@ import Footer from '../../components/footer'
 import '../../index.css'
 import NavBar from '../../components/navBar'
 import UserView from './User'
+import Estadisticas from './Estadisticas'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Usuarios')
@@ -80,7 +81,11 @@ export default function Main() {
                 />
               </>
             )}
-            {activeTab === 'Estadisticas' && <></>}
+            {activeTab === 'Estadisticas' && (
+              <>
+                <Estadisticas></Estadisticas>
+              </>
+            )}
           </div>
         </div>
       </section>
