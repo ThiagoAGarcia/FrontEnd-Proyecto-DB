@@ -1,10 +1,30 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../../components/modal';
-import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx'
-import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx'
+import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx';
+import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx';
+import getGroupDataService from '../../../service/getGroupDataService.jsx';
+import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx';
 
-export default function SelectedGroupInfoModal({ selectedGroupData, open, onClose, setDeleting, deleting }) {
+export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, setDeletingGroupOrLeft }) {
     const [isLeader, setIsLeader] = useState(false)
+    const [selectedGroupData, setSelectedGroupData] = useState(null)
+    const [deletingMember, setDeletingMember] = useState(true)
+
+    useEffect(() => {
+    const getGroupData = async () => {
+      if (selectedGroup === '') {
+        return
+      } else {
+        const groupData = await getGroupDataService(selectedGroup)
+        if (groupData.success) {
+          setSelectedGroupData(groupData.grupo)
+          console.log(selectedGroup)
+        }
+      }
+    }
+
+    getGroupData();
+  }, [deletingMember, selectedGroup])
 
     useEffect(() => {
         const detectGroupLeader = () => {
@@ -27,27 +47,26 @@ export default function SelectedGroupInfoModal({ selectedGroupData, open, onClos
     const handleDeleteGroupMember = async (memberCi) => {
         const deletedMember = await deleteGroupMemberService(selectedGroupData.id, memberCi);
         if (deletedMember.success) {
-            setDeleting(!deleting);
-            // quiero agregarle un mensaje de toast pero no puedo
-        } else {
-            error = 'Algo salió mal.'
+            setDeletingMember(!deletingMember);
         }
     }
 
     const handleDeleteStudyGroup = async (studyGroupId) => {
         const deletedGroup = await deleteGroupByIdService(studyGroupId);
-        console.log(deletedGroup)
         if (deletedGroup.success) {
-            setDeleting(!deleting);
-            console.log(deleting)
+            onClose();
+            setDeletingGroupOrLeft();
             console.log(deletedGroup.description)
-        } else {
-            console.log('hola')
         }
     }
 
-    const handleLeaveStudyGroup = (studyGroupId) => {
-        return
+    const handleLeaveStudyGroup = async (studyGroupId) => {
+        const memberLeft = await deleteLeaveGroupService(studyGroupId);
+        if (memberLeft.success) {
+            onClose();
+            setDeletingGroupOrLeft();
+            console.log(memberLeft.description);
+        }
     }
 
     return (
@@ -72,7 +91,7 @@ export default function SelectedGroupInfoModal({ selectedGroupData, open, onClos
                                     onClick={() =>
                                         handleLeaveStudyGroup(selectedGroupData.id)
                                     }
-                                    className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                    className="bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer">
                                     Salir del grupo
                                 </button>
                             )}
@@ -121,7 +140,7 @@ export default function SelectedGroupInfoModal({ selectedGroupData, open, onClos
                                                 onClick={() =>
                                                     handleDeleteGroupMember(member.ci)
                                                 }
-                                                className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                                className="bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer">
                                                 Eliminar
                                             </button>
                                         )}

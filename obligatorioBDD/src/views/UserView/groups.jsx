@@ -1,49 +1,28 @@
 import { useState, useEffect } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 import { useGroups } from '../../context/useGroup.jsx'
-import getGroupDataService from '../../service/getGroupDataService.jsx'
 import ModalReservation from '../UserView/components/modalReservation.jsx'
 import ModalGroup from '../UserView/components/modalGroup.jsx'
 import ModalInfo from '../UserView/components/modalInfo.jsx'
 
 export default function Groups() {
   const [open, setOpen] = useState(false)
-  const [deleting, setDeleting] = useState(true)
+  const [deletingGroupOrLeft, setDeletingGroupOrLeft] = useState(true)
   const [infoOpen, setInfoOpen] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState('')
-  const [selectedGroupData, setSelectedGroupData] = useState(null)
   const [reservaOpen, setReservaOpen] = useState(false)
   const { grupos, refreshGroups } = useGroups()
 
   useEffect(() => {
     refreshGroups()
-  }, [])
-
-  const error = '';
-
-  const hayGrupos = Array.isArray(grupos) && grupos.length > 0
+  }, [deletingGroupOrLeft])
 
   const selectGroup = (open, groupId) => {
-    console.log(groupId)
     setInfoOpen(open)
     setSelectedGroup(groupId)
   }
 
-  useEffect(() => {
-    const getGroupData = async () => {
-      if (selectedGroup === '') {
-        return
-      } else {
-        const groupData = await getGroupDataService(selectedGroup)
-        if (groupData.success) {
-          setSelectedGroupData(groupData.grupo)
-          console.log(selectedGroup)
-        }
-      }
-    }
-
-    getGroupData();
-  }, [selectedGroup, deleting])
+  const hayGrupos = Array.isArray(grupos) && grupos.length > 0
 
   return (
     <>
@@ -139,12 +118,24 @@ export default function Groups() {
         )}
       </div>
 
-      <ModalInfo open={infoOpen} onClose={() => setInfoOpen(false)} selectedGroupData={selectedGroupData} setDeleting={setDeleting} deleting={deleting} />
+      <ModalInfo
+        selectedGroup={selectedGroup}
+        open={infoOpen} 
+        onClose={() => setInfoOpen(false)} 
+        setDeletingGroupOrLeft={() => setDeletingGroupOrLeft(!deletingGroupOrLeft)}
+      />
 
-      <ModalReservation open={reservaOpen} selectedGroup={selectedGroup} onClose={() => { setReservaOpen(false) }} />
+      <ModalReservation 
+        open={reservaOpen} 
+        selectedGroup={selectedGroup} 
+        onClose={() => { setReservaOpen(false) }} 
+      />
 
-      <ModalGroup open={open} onClose={() => setOpen(false)} refreshGroups={refreshGroups} />
-
+      <ModalGroup 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        refreshGroups={refreshGroups}
+      />
     </>
   )
 }
