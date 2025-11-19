@@ -124,8 +124,6 @@ export default function ProfileUser() {
     }
   }
 
-  console.log(roles)
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
       <NavBar />
@@ -175,15 +173,17 @@ export default function ProfileUser() {
               }`}>
               Acerca de mí
             </button>
-            <button
-              onClick={() => setTab('reservas')}
-              className={`cursor-pointer pb-2 font-medium ${
-                tab === 'reservas'
-                  ? 'border-b-2 border-[#052e66] text-[#052e66]'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}>
-              Reservas realizadas
-            </button>
+            {currentRole === 'professor' && tab === 'reservas' && (
+              <button
+                onClick={() => setTab('reservas')}
+                className={`cursor-pointer pb-2 font-medium ${
+                  tab === 'reservas'
+                    ? 'border-b-2 border-[#052e66] text-[#052e66]'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}>
+                Reservas realizadas
+              </button>
+            )}
           </div>
 
           <div className="bg-gray-50 rounded-lg p-6 mt-6 shadow-sm">
@@ -257,39 +257,39 @@ export default function ProfileUser() {
                 )}
               </>
             )}
-
-            {tab === 'reservas' && (
-              <>
-                <h2 className="text-xl font-bold mb-4 text-[#052e66]">
-                  Mis reservas
-                </h2>
-                <div className="flex flex-col gap-3">
-                  {reservas &&
-                    reservas.map((reserva, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 bg-white rounded shadow border flex justify-between">
-                        <div>
-                          <p className="font-semibold text-[#052e66]">
-                            {reserva.roomName} - {reserva.buildingName}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {reserva.studyGroupName}
-                          </p>
+            {currentRole === 'student' ||
+              (currentRole === 'professor' && tab === 'reservas' && (
+                <>
+                  <h2 className="text-xl font-bold mb-4 text-[#052e66]">
+                    Mis reservas
+                  </h2>
+                  <div className="flex flex-col gap-3">
+                    {reservas &&
+                      reservas.map((reserva, idx) => (
+                        <div
+                          key={idx}
+                          className="p-4 bg-white rounded shadow border flex justify-between">
+                          <div>
+                            <p className="font-semibold text-[#052e66]">
+                              {reserva.roomName} - {reserva.buildingName}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {reserva.studyGroupName}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-right text-[#052e66]">
+                              {reserva.date}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {reserva.startTime} - {reserva.endTime}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-right text-[#052e66]">
-                            {reserva.date}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {reserva.startTime} - {reserva.endTime}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </>
-            )}
+                      ))}
+                  </div>
+                </>
+              ))}
           </div>
         </div>
       </section>
