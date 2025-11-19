@@ -16,7 +16,7 @@ export default async function getGroupDataService(GROUPID) {
         if (!res.ok) {
             const errorJson = await res.json().catch(() => ({}));
             console.log(errorJson.error)
-            throw new Error(errorJson.description || `POST ${PATH} -> ${res.status}`);
+            throw new Error(errorJson.description || `GET ${PATH} -> ${res.status}`);
         }
 
         const groupData = res.json();

@@ -1,7 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../../../components/modal';
+import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx'
+import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx'
 
-export default function SelectedGroupInfoModal({ selectedGroupData, open, onClose, handleDeleteGroupMember, handleDeleteStudyGroup, handleLeaveStudyGroup }) {
+export default function SelectedGroupInfoModal({ selectedGroupData, open, onClose, setDeleting, deleting }) {
+    const [isLeader, setIsLeader] = useState(false)
+
+    useEffect(() => {
+        const detectGroupLeader = () => {
+            if (selectedGroupData === null) {
+                return
+            } else {
+                const leaderCi = selectedGroupData.leader.ci
+                const userCi = parseInt(localStorage.getItem('ci'))
+                if (leaderCi === userCi) {
+                    setIsLeader(true)
+                } else {
+                    setIsLeader(false)
+                }
+            }
+        }
+
+        detectGroupLeader()
+    }, [selectedGroupData])
+
+    const handleDeleteGroupMember = async (memberCi) => {
+        const deletedMember = await deleteGroupMemberService(selectedGroupData.id, memberCi);
+        if (deletedMember.success) {
+            setDeleting(!deleting);
+            // quiero agregarle un mensaje de toast pero no puedo
+        } else {
+            error = 'Algo salió mal.'
+        }
+    }
+
+    const handleDeleteStudyGroup = async (studyGroupId) => {
+        const deletedGroup = await deleteGroupByIdService(studyGroupId);
+        console.log(deletedGroup)
+        if (deletedGroup.success) {
+            setDeleting(!deleting);
+            console.log(deleting)
+            console.log(deletedGroup.description)
+        } else {
+            console.log('hola')
+        }
+    }
+
+    const handleLeaveStudyGroup = (studyGroupId) => {
+        return
+    }
+
     return (
         <Modal open={open} onClose={onClose}>
             <div className="p-6">
@@ -16,7 +64,7 @@ export default function SelectedGroupInfoModal({ selectedGroupData, open, onClos
                                     onClick={() =>
                                         handleDeleteStudyGroup(selectedGroupData.id)
                                     }
-                                    className="bg-red-500 text-white text-sm rounded-md p-1.5">
+                                    className="bg-red-500 text-white text-sm rounded-md p-1.5 cursor-pointer">
                                     Eliminar grupo
                                 </button>
                             ) : (
