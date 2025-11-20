@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../../components/modal';
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx';
 import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx';
-import SearchUsers from '../../../service/getSearchUsersOutsideRequest.jsx'
 import getGroupDataService from '../../../service/getGroupDataService.jsx';
 import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx';
 import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
+import getSearchUsersRequest from '../../../service/getSearchUsersRequest.jsx';
 
 export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, setDeletingGroupOrLeft }) {
     const [isLeader, setIsLeader] = useState(false)
@@ -15,7 +15,7 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
     const [usuarios, setUsuarios] = useState([])
 
     async function handleSearch(text) {
-        const data = await SearchUsers(text, selectedGroupData?.id)
+        const data = await getSearchUsersRequest(text, selectedGroupData?.id)
         if (data?.success) {
             setUsuarios(data.users)
         }
