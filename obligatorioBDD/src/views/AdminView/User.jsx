@@ -4,12 +4,14 @@ import deleteUserByCiService from '../../service/deleteUserByCi'
 import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ModalUpdate from './modalUpdate'
+import CreateUserModal from './CreateUserModal'
 
 export default function UserView() {
   const [userSearch, setUserSearch] = useState('')
   const [open, setOpen] = useState(false)
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
+  const [crearUserModal, setCrearUserModal] = useState(false)
 
   const getUsuarios = async () => {
     try {
@@ -56,6 +58,12 @@ export default function UserView() {
         user={selectedUser}
         onUpdated={getUsuarios}
       />
+      <CreateUserModal
+        open={crearUserModal}
+        onClose={() => {
+          setCrearUserModal(false)
+        }}
+      />
 
       <div className="sm:flex justify-between items-center w-full sm:pb-3">
         <h2 className="ml-1 font-semibold text-gray-800 text-2xl">Usuarios</h2>
@@ -72,7 +80,13 @@ export default function UserView() {
         value={userSearch}
         onChange={(e) => setUserSearch(e.target.value)}
       />
-
+      <div className="flex justify-end p-5">
+        <button
+          onClick={() => setCrearUserModal(true)}
+          className="bg-[#052e66] text-white w-full sm:w-1/5 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60">
+          Crear usuario
+        </button>
+      </div>
       <div
         className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
           !users || users.length === 0 ? 'justify-center items-center h-80' : ''
