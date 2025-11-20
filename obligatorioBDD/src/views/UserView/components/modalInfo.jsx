@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../../components/modal';
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx';
 import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx';
-import SearchUsers from '../../../service/getSearchUsersOutsideRequest.jsx'
 import getGroupDataService from '../../../service/getGroupDataService.jsx';
 import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx';
 

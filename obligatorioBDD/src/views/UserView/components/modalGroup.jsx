@@ -7,8 +7,8 @@ import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
 
 export default function modalGroup({ open, onClose, refreshGroups }) {
     const [usuarios, setUsuarios] = useState([])
-      const [groupName, setGroupName] = useState('')
-      const [agregados, setAgregados] = useState({})
+    const [groupName, setGroupName] = useState('')
+    const [agregados, setAgregados] = useState({})
 
     async function handleSearch(text) {
         const data = await SearchUsers(text)

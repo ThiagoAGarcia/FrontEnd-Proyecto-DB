@@ -194,22 +194,6 @@ export default function Main() {
           </div>
         </div>
       </section>
-
-      {/* Debug opcional para ver qué llega */}
-      {managedReservations &&
-        managedReservations.map((reservation) => (
-          <p key={`managed-${reservation.studyGroupId}`}>
-            {`${reservation.assignedLibrarian} ${reservation.studyGroupId}`}
-          </p>
-        ))}
-
-      {availableReservations &&
-        availableReservations.map((reservation) => (
-          <p key={`available-${reservation.studyGroupId}`}>
-            {`${reservation.assignedLibrarian} ${reservation.studyGroupId}`}
-          </p>
-        ))}
-
       <Footer />
     </div>
   )
