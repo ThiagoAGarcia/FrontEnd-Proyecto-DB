@@ -18,8 +18,8 @@ export default function Groups() {
   }, [deletingGroupOrLeft])
 
   const selectGroup = (open, groupId) => {
-    setInfoOpen(open)
-    setSelectedGroup(groupId)
+    setInfoOpen(open);
+    setSelectedGroup(groupId);
   }
 
   const hayGrupos = Array.isArray(grupos) && grupos.length > 0

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal';
 import getRoomShift from '../../../service/getRoomShift.jsx';
 import newReservation from '../../../service/createReservation.jsx';
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 
 export default function ModalReservation({ open, onClose, selectedGroup }) {
     const [selectedSala, setSelectedSala] = useState(null)
@@ -141,11 +141,6 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
             setSelectedTurno(turnoId);
         }
     };
-
-    console.log(selectedGroup);
-    console.log(date);
-    console.log(selectedSala);
-    console.log(selectedTurno);
 
     return (
         <Modal open={open} onClose={onClose}>

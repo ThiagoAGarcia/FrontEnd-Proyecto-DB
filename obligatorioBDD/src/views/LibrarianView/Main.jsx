@@ -144,6 +144,11 @@ export default function Main() {
               label: 'Reserva Express',
               icon: 'fa-alarm-clock',
             },
+            {
+              id: 'Sanciones',
+              label: 'Sanciones',
+              icon: 'fa-circle-exclamation'
+            }
           ].map((tab) => (
             <button
               key={tab.id}
