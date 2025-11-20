@@ -119,7 +119,7 @@ function Login() {
         />
         <form
           onSubmit={(e) => e.preventDefault()}
-          className="flex flex-col justify-center text-center items-center shadow-xl rounded-2xl w-[70%] lg:w-[30%] h-120 p-12 bg-white">
+          className="flex flex-col justify-center text-center items-center shadow-xl rounded-2xl w-full sm:w-[70%] md:w-[50%] lg:w-[30%] h-120 p-12 bg-white">
           <h1 className="text-4xl text-blue-900">Inicio de sesión</h1>
           <div className="w-full flex flex-col justify-center items-center mt-10">
             <form

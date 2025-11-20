@@ -11,7 +11,10 @@ const Estadisticas = () => {
   return (
     <>
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SalasMasReservadas />
+        <div className="w-full bg-white shadow-lg shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <SalasMasReservadas />
+        </div>
+        
         <TurnosMasDemandados />
         <PromedioPorSalas />
         <ReservacionesPorCarreraYFacultad />

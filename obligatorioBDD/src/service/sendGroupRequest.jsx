@@ -11,7 +11,7 @@ export default async function sendGroupRequest(studyGroupId, receiver) {
           localStorage.getItem('token') || ''
         ).replace(/"/g, '')}`,
       },
-      body: JSON.stringify({studyGroupId: studyGroupId, receiver: receiver}),
+      body: JSON.stringify({ studyGroupId: studyGroupId, receiver: receiver }),
     })
     if (!res.ok) {
       const errorJson = await res.json().catch(() => ({}))
@@ -20,6 +20,10 @@ export default async function sendGroupRequest(studyGroupId, receiver) {
 
     return await res.json()
   } catch (error) {
-    console.log(error.message)
+    return {
+      success: false,
+      description: error.message || 'Error de conexión con el servidor'
+    };
   }
+
 }
