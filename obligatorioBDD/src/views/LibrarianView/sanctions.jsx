@@ -1,5 +1,38 @@
+import postSanctionService from "../../service/postSanctionService";
+import { useState } from "react";
+import ModalSanction from "./components/modalSanction";
+
 export default function Sanctions({ finishedReservations }) {
     const hayReservas = Array.isArray(finishedReservations) && finishedReservations.length > 0;
+    const [selectedGroup, setSelectedGroup] = useState('')
+    const [selectedGroupData, setSelectedGroupData] = useState(null)
+
+    const selectGroup = (open, groupId) => {
+        setInfoOpen(open);
+        setSelectedGroup(groupId);
+    }
+
+    useEffect(() => {
+        const getGroupData = async () => {
+            if (selectedGroup === '') {
+                return
+            } else {
+                const groupData = await getGroupDataService(selectedGroup)
+                if (groupData.success) {
+                    setSelectedGroupData(groupData.grupo)
+                }
+            }
+        }
+
+        getGroupData();
+    }, [selectedGroup])
+
+    const handleNewSanction = async () => {
+        const newSanction = await postSanctionService();
+        if (newSanction.success) {
+
+        }
+    }
 
     return (
         <div>
@@ -21,25 +54,22 @@ export default function Sanctions({ finishedReservations }) {
                                         <Data reserva={reservation}>
                                             <button
                                                 onClick={() =>
-                                                    handleRestoreAvailableReservation(reservation)
+                                                    selectGroup(true, reservation.studyGroupId)
                                                 }
-                                                title="Dejar de gestionar"
-                                                className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
-                                                <i className="fa-solid fa-arrow-left text-[#052e66]"></i>
-                                            </button>
-                                            <button
-                                                title="Información reserva"
-                                                className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">
-                                                <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
+                                                title="Nueva sanción"
+                                                className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">                                                <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
                                             </button>
                                         </Data>
                                     </li>
                                 ))}
                         </ul>
+                        <ModalSanction
+                            selectedGroupData={selectedGroupData}
+                        />
                     </>
                 ) : (
                     <span className="font-medium text-2xl text-gray-600">
-                        No se ha gestionado ninguna reserva hoy
+                        No se ha enviado ninguna sanción hoy
                     </span>
                 )}
             </div>

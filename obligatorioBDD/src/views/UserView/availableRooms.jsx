@@ -1,10 +1,6 @@
-import { useState } from "react";
-
 export default function AvailableRooms({ availableRooms, getAvailableRoomsParameters }) {
     const date = new Date(); let day = date.getDate(); let month = date.getMonth() + 1; let year = date.getFullYear();
     let currentDate = `${year}-${month}-${day}`;
-
-    const [error, setError] = useState('');
 
     const getParameters = () => {
         const dateValue = document.getElementById('date').value;
@@ -54,7 +50,6 @@ export default function AvailableRooms({ availableRooms, getAvailableRoomsParame
                     <div className="w-1/5">Fecha</div>
                     <div className="w-1/5">Capacidad</div>
                 </div>
-                
                 <ul className="w-full overflow-auto scrollbar mt-1 hidden lg:block">
                     {availableRooms.map((room) => (
                         <li key={room.id}>
