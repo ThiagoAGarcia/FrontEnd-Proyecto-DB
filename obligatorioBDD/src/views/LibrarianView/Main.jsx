@@ -9,11 +9,13 @@ import getManagedReservationsTodayService from '../../service/getManagedReservat
 import patchManageReservationService from '../../service/patchManageReservationService'
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService'
 import Sanctions from './sanctions'
+import getFinishedReservationsService from '../../service/getFinishedReservations'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Reservas Disponibles')
   const [availableReservations, setAvailableReservations] = useState([])
   const [managedReservations, setManagedReservations] = useState([])
+  const [finishedReservations, setFinishedReservations] = useState([])
   const [managing, setManaging] = useState(true)
 
   useEffect(() => {
@@ -39,8 +41,20 @@ export default function Main() {
       }
     }
 
+    const getFinishedReservationsToday = async () => {
+      const finishedReservations = await getFinishedReservationsService()
+      if (finishedReservations?.success) {
+        let finishedReservationsArray = finishedReservations.reservations || []
+        finishedReservationsArray.sort((a, b) => a.start.localeCompare(b.start))
+        setFinishedReservations(finishedReservationsArray)
+      } else {
+        setFinishedReservations([])
+      }
+    }
+
     getReservationsToday()
     getManagedReservationsToday()
+    getFinishedReservationsToday()
   }, [managing])
 
   const handleNewManagedReservation = async (newManagedReservation) => {
@@ -175,7 +189,7 @@ export default function Main() {
             )}
 
             {activeTab === 'Sanciones' && (
-              <Sanctions />
+              <Sanctions finishedReservations={finishedReservations}/>
             )}
           </div>
         </div>
