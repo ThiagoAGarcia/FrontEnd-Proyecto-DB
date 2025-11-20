@@ -1,14 +1,14 @@
-// src/components/ModalUpdate.jsx
 import { useEffect, useState } from 'react'
 import Modal from '../../components/modal'
 import getCarrersService from '../../service/getCareers'
 import getCampusService from '../../service/getCampus'
 import getBuildingsService from '../../service/getBuildingsService'
-import patchUserService from '../../service/patchUserService'
-import { ToastContainer, toast } from 'react-toastify'
+import registerAdminService from '../../service/registerAdminService'
+import { toast } from 'react-toastify'
 import { Oval } from 'react-loader-spinner'
 import 'react-toastify/dist/ReactToastify.css'
 import './Scroll.css'
+
 import {
   IoEye,
   IoEyeOff,
@@ -18,11 +18,16 @@ import {
 
 const ROLES_POSIBLES = ['student', 'professor', 'librarian', 'administrator']
 
-const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
+const CreateUserModal = ({ open, onClose, onCreated }) => {
+  const [ci, setCi] = useState('')
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [roles, setRoles] = useState([])
   const [careerId, setCareerId] = useState('')
+  const [secondCareer, setSecondCareer] = useState('')
   const [campus, setCampus] = useState('')
   const [buildingName, setBuildingName] = useState('')
   const [careers, setCareers] = useState([])
@@ -31,9 +36,28 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
   const [errores, setErrores] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [showSecondCareer, setShowSecondCareer] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const resetForm = () => {
+    setCi('')
+    setName('')
+    setLastName('')
+    setEmail('')
+    setPassword('')
+    setConfirmPassword('')
+    setRoles([])
+    setCareerId('')
+    setSecondCareer('')
+    setCampus('')
+    setBuildingName('')
+    setErrores({})
+    setShowSecondCareer(false)
+  }
 
   useEffect(() => {
     if (!open) return
+    resetForm()
     async function fetchData() {
       const c = await getCarrersService()
       setCareers(c.careers || [])
@@ -45,29 +69,6 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
     fetchData()
   }, [open])
 
-  useEffect(() => {
-    if (user && open) {
-      setName(user.name || '')
-      setLastName(user.lastName || '')
-      setRoles(user.roles || [])
-
-      if (user.roles.includes('student')) {
-        setCareerId(user.careerId || '')
-        setCampus(user.campus || '')
-      }
-
-      if (user.roles.includes('professor')) {
-        setCampus(user.campus || '')
-      }
-
-      if (user.roles.includes('librarian')) {
-        setBuildingName(user.buildingName || '')
-      }
-
-      setErrores({})
-    }
-  }, [user, open])
-
   const toggleRole = (rol) => {
     setRoles((prev) =>
       prev.includes(rol) ? prev.filter((r) => r !== rol) : [...prev, rol]
@@ -77,6 +78,10 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
   const validarFormulario = async () => {
     const e = {}
     const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!ci.trim() || ci.trim().length !== 8 || !/^\d+$/.test(ci.trim()))
+      e.ci = 'CI inválida (8 dígitos)'
 
     if (!name.trim() || !regexNombre.test(name) || name.trim().length < 3)
       e.name = 'Nombre inválido'
@@ -88,30 +93,41 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
     )
       e.lastName = 'Apellido inválido'
 
-    if (roles.length === 0) e.roles = 'Debe seleccionar un rol'
+    if (!email.trim() || !regexEmail.test(email.trim()))
+      e.email = 'Correo inválido'
+
+    if (!password || password.length <= 8) e.password = 'Mínimo 9 caracteres'
+
+    if (password !== confirmPassword)
+      e.confirmPassword = 'Las contraseñas deben coincidir'
+
+    if (roles.length === 0) e.roles = 'Debe seleccionar al menos un rol'
 
     if (roles.includes('student')) {
       if (!careerId) e.careerId = 'Seleccione la carrera'
       if (!campus) e.campus = 'Seleccione el campus'
     }
 
-    if (roles.includes('professor')) {
-      if (!campus) e.campus = 'Seleccione el campus'
-    }
+    if (roles.includes('professor') && !campus)
+      e.campus = 'Seleccione el campus'
 
-    if (roles.includes('librarian')) {
-      if (!buildingName) e.buildingName = 'Seleccione un edificio'
-    }
+    if (roles.includes('librarian') && !buildingName)
+      e.buildingName = 'Seleccione un edificio'
 
     setErrores(e)
     if (Object.keys(e).length > 0) return
 
     const body = {
-      ci: user.ci,
-      roles,
+      ci: ci.trim(),
       name: name.trim(),
       lastName: lastName.trim(),
+      email: email.trim(),
+      password,
+      confirmPassword,
+      roles,
       careerId: roles.includes('student') ? careerId : null,
+      secondCareer:
+        roles.includes('student') && secondCareer ? secondCareer : null,
       campus:
         roles.includes('student') || roles.includes('professor')
           ? campus
@@ -121,20 +137,26 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
 
     try {
       setIsLoading(true)
-      const resp = await patchUserService(body)
+      const resp = await registerAdminService(body)
+
       if (resp.success) {
-        toast.success('Usuario actualizado correctamente')
-        if (onUpdated) onUpdated()
-        setTimeout(() => onClose(), 1500)
+        toast.success(resp.description || 'Usuario creado correctamente')
+        resetForm()
+        onClose()
+
+        if (onCreated) onCreated()
       } else {
-        toast.error(resp.description || 'Error al actualizar')
+        console.log(resp)
+        toast.error(resp.description || 'Error al crear usuario')
       }
+    } catch (err) {
+      toast.error('Error de conexión con el servidor')
     } finally {
       setIsLoading(false)
     }
   }
 
-  if (!user) return null
+  if (!open) return null
 
   return (
     <>
@@ -147,17 +169,101 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
           )}
 
           <h2 className="font-bold text-[#052e66] text-3xl mb-6">
-            Actualizar usuario
+            Crear usuario
           </h2>
+
           <div className="w-full bg-white shadow-md rounded-2xl p-4 flex flex-col border border-gray-300">
-            <section className="sm:h-[52vh] h-[64vh] overflow-y-auto scroll-ucu p-2">
+            <section className="sm:h-[52vh] h-[68vh] overflow-y-auto scroll-ucu p-2">
               <div className="mb-3">
-                <label className="font-medium text-[#052e66]">CI</label>
+                <label className="font-medium">CI</label>
                 <input
-                  disabled
-                  value={user.ci}
-                  className="bg-gray-100 border rounded-xl p-2 w-full"
+                  value={ci}
+                  onChange={(e) => setCi(e.target.value)}
+                  className="bg-gray-50 border rounded-xl p-2 w-full"
                 />
+                {errores.ci && <p className="text-red-600 text-xs">{errores.ci}</p>}
+              </div>
+
+              <div className="mb-3">
+                <label className="font-medium">Nombre</label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                />
+                {errores.name && (
+                  <p className="text-red-600 text-xs">{errores.name}</p>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label className="font-medium">Apellido</label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                />
+                {errores.lastName && (
+                  <p className="text-red-600 text-xs">{errores.lastName}</p>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label className="font-medium">Correo institucional</label>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                />
+                {errores.email && (
+                  <p className="text-red-600 text-xs">{errores.email}</p>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label className="font-medium">Contraseña</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                    {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+                  </button>
+                </div>
+                {errores.password && (
+                  <p className="text-red-600 text-xs">{errores.password}</p>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label className="font-medium">Confirmar contraseña</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((p) => !p)}
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                    {showConfirmPassword ? (
+                      <IoEyeOff size={20} />
+                    ) : (
+                      <IoEye size={20} />
+                    )}
+                  </button>
+                </div>
+                {errores.confirmPassword && (
+                  <p className="text-red-600 text-xs">{errores.confirmPassword}</p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -165,7 +271,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                   Roles del usuario
                 </label>
 
-                <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border">
+                <div className="grid sm:grid-cols-2 grid-cols-1 gap-3 bg-gray-50 p-4 rounded-xl border">
                   {ROLES_POSIBLES.map((rol) => {
                     const checked = roles.includes(rol)
                     return (
@@ -210,34 +316,10 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                 )}
               </div>
 
-              <div className="mb-3">
-                <label className="font-medium text-[#052e66]">Nombre</label>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
-                />
-                {errores.name && (
-                  <p className="text-red-600 text-xs">{errores.name}</p>
-                )}
-              </div>
-
-              <div className="mb-3">
-                <label className="font-medium text-[#052e66]">Apellido</label>
-                <input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
-                />
-                {errores.lastName && (
-                  <p className="text-red-600 text-xs">{errores.lastName}</p>
-                )}
-              </div>
-
               {roles.includes('student') && (
                 <>
                   <div className="mb-3">
-                    <label className="font-medium text-[#052e66]">Carrera</label>
+                    <label className="font-medium">Carrera</label>
                     <select
                       value={careerId}
                       onChange={(e) => setCareerId(e.target.value)}
@@ -252,11 +334,12 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                     {errores.careerId && (
                       <p className="text-red-600 text-xs">{errores.careerId}</p>
                     )}
+
                     <button
                       type="button"
                       disabled={isLoading}
                       onClick={() => setShowSecondCareer((prev) => !prev)}
-                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer">
+                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer mt-2">
                       {showSecondCareer ? (
                         <>
                           <IoRemoveCircleOutline size={20} />
@@ -269,6 +352,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                         </>
                       )}
                     </button>
+
                     {showSecondCareer && (
                       <>
                         <label
@@ -280,10 +364,10 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                           <select
                             id="secondCareerInput"
                             disabled={isLoading}
+                            value={secondCareer}
+                            onChange={(e) => setSecondCareer(e.target.value)}
                             className="bg-gray-50 border rounded-xl p-2 w-full">
-                            <option value="">
-                              Seleccione una segunda carrera
-                            </option>
+                            <option value="">Seleccione una segunda carrera</option>
                             {careers.map((c) => (
                               <option key={c.careerId} value={c.careerId}>
                                 {c.careerName}
@@ -296,7 +380,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                   </div>
 
                   <div className="mb-3">
-                    <label className="font-medium text-[#052e66]">Campus</label>
+                    <label className="font-medium">Campus</label>
                     <select
                       value={campus}
                       onChange={(e) => setCampus(e.target.value)}
@@ -317,7 +401,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
 
               {roles.includes('professor') && (
                 <div className="mb-3">
-                  <label className="font-medium text-[#052e66]">Campus</label>
+                  <label className="font-medium">Campus</label>
                   <select
                     value={campus}
                     onChange={(e) => setCampus(e.target.value)}
@@ -334,7 +418,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
 
               {roles.includes('librarian') && (
                 <div className="mb-3">
-                  <label className="font-medium text-[#052e66]">Edificio</label>
+                  <label className="font-medium">Edificio</label>
                   <select
                     value={buildingName}
                     onChange={(e) => setBuildingName(e.target.value)}
@@ -352,28 +436,32 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                 </div>
               )}
 
-
+              
             </section>
+            
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
-            <button
-              onClick={validarFormulario}
-              disabled={isLoading}
-              className="bg-[#052e66] text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 cursor-pointer">
-              Guardar cambios
-            </button>
+                <button
+                  onClick={validarFormulario}
+                  disabled={isLoading}
+                  className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60">
+                  Crear usuario
+                </button>
 
-            <button
-              onClick={onClose}
-              disabled={isLoading}
-              className="border border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 cursor-pointer">
-              Cancelar
-            </button>
-          </div>
+                <button
+                  onClick={() => {
+                    onClose()
+                    resetForm()
+                  }}
+                  disabled={isLoading}
+                  className="border cursor-pointer border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60">
+                  Cancelar
+                </button>
+              </div>
         </div>
       </Modal>
     </>
   )
 }
 
-export default ModalUpdate
+export default CreateUserModal

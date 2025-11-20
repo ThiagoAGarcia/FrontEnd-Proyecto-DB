@@ -28,11 +28,6 @@ export default function Main() {
               icon: 'fa-solid fa-people-roof',
             },
             {
-              id: 'Bibliotecario',
-              label: 'Bibliotecario',
-              icon: 'fa-regular fa-book',
-            },
-            {
               id: 'Estadisticas',
               label: 'Estadisticas',
               icon: 'fa-solid fa-chart-bar',
@@ -70,17 +65,7 @@ export default function Main() {
                 />
               </>
             )}
-            {activeTab === 'Bibliotecario' && (
-              <>
-                <input
-                  type="text"
-                  className="w-full bg-white border-1 border-black rounded-full p-2 pl-5"
-                  placeholder="Buscar..."
-                  value={librarianSearch}
-                  onChange={(e) => setLibrarianSearch(e.target.value)}
-                />
-              </>
-            )}
+
             {activeTab === 'Estadisticas' && (
               <>
                 <Estadisticas></Estadisticas>

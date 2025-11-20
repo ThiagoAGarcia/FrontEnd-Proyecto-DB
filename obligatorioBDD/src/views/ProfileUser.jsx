@@ -59,6 +59,7 @@ export default function ProfileUser() {
           } else {
             storedRoles = []
           }
+          setTab('acerca')
         } catch (e) {
           storedRoles = storedRolesRaw.split(',').map((r) => r.trim())
         }
@@ -73,7 +74,7 @@ export default function ProfileUser() {
     }
 
     fetchUserData()
-  }, [])
+  }, [localStorage.getItem('role')])
 
   const user = {
     nombre: userData ? userData.name : 'Cargando...',
@@ -116,6 +117,7 @@ export default function ProfileUser() {
       } else if (Array.isArray(roles) && roles.length) {
         localStorage.setItem('roles', JSON.stringify(roles))
       }
+      console.log(currentRole)
     } catch (error) {
       console.error('Error al cambiar rol:', error)
       const storedRoleRaw = localStorage.getItem('role')
@@ -173,7 +175,7 @@ export default function ProfileUser() {
               }`}>
               Acerca de mí
             </button>
-            {currentRole === 'professor' && tab === 'reservas' && (
+            {(currentRole === 'professor' || currentRole === 'student') && (
               <button
                 onClick={() => setTab('reservas')}
                 className={`cursor-pointer pb-2 font-medium ${
@@ -206,7 +208,7 @@ export default function ProfileUser() {
                     <p className="break-words">{user.correo}</p>
                   </div>
 
-                  {currentRole === 'student' && (
+                  {user.campus && (
                     <div>
                       <p className="font-semibold text-[#052e66]">Campus</p>
                       <p>{user.campus}</p>
@@ -257,8 +259,8 @@ export default function ProfileUser() {
                 )}
               </>
             )}
-            {currentRole === 'student' ||
-              (currentRole === 'professor' && tab === 'reservas' && (
+            {(currentRole === 'student' || currentRole === 'professor') &&
+              tab === 'reservas' && (
                 <>
                   <h2 className="text-xl font-bold mb-4 text-[#052e66]">
                     Mis reservas
@@ -289,7 +291,7 @@ export default function ProfileUser() {
                       ))}
                   </div>
                 </>
-              ))}
+              )}
           </div>
         </div>
       </section>

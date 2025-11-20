@@ -1,6 +1,13 @@
 import {Navigate, Outlet} from 'react-router-dom'
 import {useEffect, useState} from 'react'
 
+const clearAuth = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('role')
+  localStorage.removeItem('roles')
+  localStorage.removeItem('ci')
+}
+
 const Protected = ({allowedRoles}) => {
   const [valid, setValid] = useState(null)
 
@@ -27,34 +34,34 @@ const Protected = ({allowedRoles}) => {
       const expMs = payload.exp * 1000
       const now = Date.now()
 
-      if (expMs <= now) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
-        localStorage.removeItem('roles')
-        localStorage.removeItem('activeRole')
+      if (!payload.exp || expMs <= now) {
+        clearAuth()
         setValid(false)
         return
       }
 
+      const activeRole = payload.role
       const tokenRoles = Array.isArray(payload.roles)
         ? payload.roles
         : payload.role
         ? [payload.role]
         : []
 
+      if (activeRole && tokenRoles.length && !tokenRoles.includes(activeRole)) {
+        clearAuth()
+        setValid(false)
+        return
+      }
+
       if (allowedRoles && allowedRoles.length > 0) {
-        const hasPermission = tokenRoles.some((r) => allowedRoles.includes(r))
-        if (!hasPermission) {
+        if (!activeRole || !allowedRoles.includes(activeRole)) {
           setValid(false)
           return
         }
       }
 
       const timeout = setTimeout(() => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
-        localStorage.removeItem('roles')
-        localStorage.removeItem('activeRole')
+        clearAuth()
         setValid(false)
       }, expMs - now)
 
@@ -63,10 +70,7 @@ const Protected = ({allowedRoles}) => {
       return () => clearTimeout(timeout)
     } catch (err) {
       console.error('Error decodificando token:', err)
-      localStorage.removeItem('token')
-      localStorage.removeItem('role')
-      localStorage.removeItem('roles')
-      localStorage.removeItem('activeRole')
+      clearAuth()
       setValid(false)
     }
   }, [allowedRoles])

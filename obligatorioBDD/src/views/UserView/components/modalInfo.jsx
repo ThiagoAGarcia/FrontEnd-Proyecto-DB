@@ -5,11 +5,48 @@ import deleteGroupMemberService from '../../../service/deleteGroupMemberService.
 import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx';
 import getGroupDataService from '../../../service/getGroupDataService.jsx';
 import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx';
+import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
 
 export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, setDeletingGroupOrLeft }) {
     const [isLeader, setIsLeader] = useState(false)
     const [selectedGroupData, setSelectedGroupData] = useState(null)
     const [deletingMember, setDeletingMember] = useState(true)
+    const [usuarios, setUsuarios] = useState([])
+
+    async function handleSearch(text) {
+        const data = await SearchUsers(text, selectedGroupData?.id)
+        if (data?.success) {
+            setUsuarios(data.users)
+        }
+    }
+
+    async function handleSendGroupRequest(ci) {
+        try {
+            const resp = await sendGroupRequest(selectedGroupData.id, ci);
+
+            if (!resp.success) {
+                toast.error(resp.description || 'No se pudo enviar la solicitud', {
+                    position: 'bottom-left',
+                    autoClose: 3000,
+                });
+                return;
+            }
+
+            toast.success('Solicitud enviada correctamente', {
+                position: 'bottom-left',
+                autoClose: 2500,
+            });
+
+            handleSearch("");
+
+        } catch (err) {
+            toast.error('Error enviando solicitud', {
+                position: 'bottom-left',
+                autoClose: 3000,
+            });
+        }
+    }
+
 
     useEffect(() => {
         const getGroupData = async () => {
@@ -50,33 +87,17 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
     const handleDeleteGroupMember = async (memberCi) => {
         const deletedMember = await deleteGroupMemberService(selectedGroupData.id, memberCi);
 
-        if (deletedMember?.success) {
+        if (deletedMember.success) {
             toast.success('Miembro eliminado', {
                 position: 'bottom-left',
                 autoClose: 2500,
             });
             setDeletingMember(!deletingMember);
         } else {
-            const errorMsg = deletedMember?.description?.toLowerCase() || "";
-
-            if (errorMsg.includes("no pertenece") || errorMsg.includes("no encontrado") || errorMsg.includes("no existe")) {
-                toast.error('No se encontró el usuario, vuelva a intentar más tarde', {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                });
-            }
-            else if (errorMsg.includes("no sos el lider")) {
-                toast.error('No sos el líder del grupo, no podés eliminar usuarios', {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                });
-            }
-            else {
-                toast.error(deletedMember?.description || 'Error eliminando miembro', {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                });
-            }
+            toast.error(deletedMember?.description || 'Error eliminando el miembro', {
+                position: 'bottom-left',
+                autoClose: 3000,
+            })
         }
     }
 
@@ -117,6 +138,13 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
 
     }
 
+    useEffect(() => {
+        if (open && selectedGroupData) {
+            handleSearch('')
+        }
+    }, [open, selectedGroupData])
+
+
     return (
         <Modal open={open} onClose={onClose}>
             <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar">
@@ -135,7 +163,6 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
                                     </button>
                                 )}
                             </div>
-
                         </div>
                         <div className='sm:mt-3 mt-3'>
                             <div className="flex flex-col mb-6">
@@ -191,7 +218,7 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
                                                 {member.name} {member.lastName}
                                             </div>
 
-                                            <div className="basis-1/3 md:basis-2/4 break-all pr-3">
+                                            <div className="basis-1/3 md:basis-2/3 break-all pr-3">
                                                 {member.mail}
                                             </div>
                                             {isLeader && (
@@ -207,6 +234,58 @@ export default function SelectedGroupInfoModal({ selectedGroup, open, onClose, s
                                 ))}
                             </ul>
                         </div>
+                        {isLeader && (
+                            <>
+                                <div className="flex flex-col gap-2 mt-6 items-start ">
+                                    <p className="text-blue-900 font-semibold">
+                                        Enviar solicitudes
+                                    </p>
+                                    <input type="text" onChange={(e) => handleSearch(e.target.value)} className="bg-gray-50 h-12 px-5 w-full sm:w-1/2 rounded-xl text-sm focus:outline-none border border-gray-300 focus:ring-2 focus:ring-[#052e66]/30 transition" placeholder="Buscar usuarios" />
+                                </div>
+                                <div className="w-full scrollbar bg-white rounded-2xl p-4 shadow-md mt-2 border border-gray-300 max-h-72 overflow-y-auto space-y-3">
+                                    <div className="hidden md:flex w-full text-gray-600 font-medium px-2 pb-2 border-b border-gray-300">
+                                        <div className="basis-1/4 lg:basis-1/5 text-left">Nombre</div>
+                                        <div className="basis-1/4 lg:basis-1/5 text-left">Apellido</div>
+                                        <div className="basis-1/3 lg:basis-2/5 text-left">Correo</div>
+                                        <div className="basis-1/5 text-left">Solicitud</div>
+                                    </div>
+
+                                    {usuarios.map((user) => (
+                                        <div key={user.ci} className="bg-[#f4f7fc] rounded-xl p-4 border border-gray-200 hover:border-[#052e66]/40 hover:bg-[#eef3fb] transition shadow-sm flex flex-col md:flex-row md:items-center gap-3">
+                                            <div className="md:hidden flex flex-col">
+                                                <span className="font-semibold text-gray-800">
+                                                    {user.name} {user.lastName}
+                                                </span>
+                                                <span className="text-sm text-gray-600 break-all">
+                                                    {user.mail}
+                                                </span>
+
+                                                <button onClick={() => handleSendGroupRequest(user.ci)} className="px-4 cursor-pointer border-2 border-[#052e66] py-2 mt-3 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 bg-[#052e66] text-white hover:bg-[#073c88]" >
+                                                    <i className="fa-solid fa-envelope text-white"></i>
+                                                    Enviar solicitud
+                                                </button>
+
+                                            </div>
+
+                                            <div className="hidden md:flex w-full items-center text-gray-700">
+                                                <div className="basis-1/4 lg:basis-1/5">{user.name}</div>
+                                                <div className="basis-1/4 lg:basis-1/5">{user.lastName}</div>
+                                                <div className="basis-1/3 lg:basis-2/5 break-all pr-2"> {user.mail} </div>
+
+                                                <div className="basis-1/5 flex justify-start">
+                                                    <button onClick={() => handleSendGroupRequest(user.ci)} className="px-4 cursor-pointer border-2 border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 bg-[#052e66] text-white hover:bg-[#074cad]" >
+                                                        <i className="fa-solid fa-envelope text-white"></i>
+                                                        Enviar solicitud
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+
+                        )}
+
                         <div className="flex flex-col mt-3 sm:flex-row sm:justify-end">
                             {!isLeader ? (
                                 <button onClick={() => handleLeaveStudyGroup(selectedGroupData.id)} className="sm:hidden inline w-full sm:mt-0 sm:mx-5 py-3 cursor-pointer text-white bg-[#F53649] rounded-xl font-semibold shadow-md hover:bg-[#f96977] transition">

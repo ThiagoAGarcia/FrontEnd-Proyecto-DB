@@ -80,8 +80,8 @@ export default function NavBar() {
           <img src="./public/logo.png" className="h-12" alt="Logo" />
 
           <div className="px-5 flex items-center gap-6 relative">
-            <div className="hidden sm:flex items-center gap-6">
-              <div className="text-gray-300 flex flex-col leading-tight text-right">
+            <div className="flex items-center gap-6">
+              <div className="text-gray-300 flex flex-col leading-tight text-right hidden sm:flex">
                 <h1>
                   {userData
                     ? userData.name + ' ' + userData.lastName
@@ -106,7 +106,7 @@ export default function NavBar() {
                   {notification && (
                     <div
                       ref={notificationRef}
-                      className="absolute  top-full mt-3 z-50 -right-4
+                      className="absolute top-full mt-3 z-50 -right-4
                         before:content-[''] before:absolute before:-top-3 before:right-6
                         before:border-l-10 before:border-r-10 before:border-b-[14px]
                         before:border-l-transparent before:border-r-transparent before:border-b-white">
@@ -130,7 +130,6 @@ export default function NavBar() {
                                       req.studyGroupId !== data.studyGroupId
                                   )
                                 )
-
                                 await refreshGroups()
                               }}
                               onDeny={async () => {
@@ -140,7 +139,6 @@ export default function NavBar() {
                                       req.studyGroupId !== data.studyGroupId
                                   )
                                 )
-
                                 await refreshGroups()
                               }}
                             />
@@ -190,16 +188,6 @@ export default function NavBar() {
                   className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl transition cursor-pointer"
                   onClick={cerrarSesion}>
                   Cerrar Sesión
-                </button>
-
-                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] flex items-center gap-2 sm:hidden transition cursor-pointer">
-                  <i className="fa-solid fa-envelope text-[#052e66] text-lg"></i>
-                  Notificaciones
-                </button>
-
-                <button className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-b-xl flex items-center gap-2 sm:hidden transition cursor-pointer">
-                  <i className="fa-solid fa-user text-[#052e66] text-lg"></i>
-                  Perfil
                 </button>
               </div>
             )}

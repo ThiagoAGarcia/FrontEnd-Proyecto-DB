@@ -26,19 +26,21 @@ export default function Groups() {
 
   return (
     <>
-      <div className="flex justify-between items-end pb-3">
-        <h2 className="ml-1 font-semibold text-gray-800 text-2xl">Grupos</h2>
+      <div className="flex sm:justify-between sm:items-end sm:flex-row flex-col pb-3">
+        <h2 className="ml-1 font-semibold text-gray-800 text-2xl pb-2 sm:pb-0">Grupos</h2>
+
         {hayGrupos && (
           <button
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer"
-            onClick={() => setOpen(true)}>
+            onClick={() => setOpen(true)}
+          >
             <span className="font-medium text-[#052e66]">
-              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo
-              grupo
+              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo grupo
             </span>
           </button>
         )}
       </div>
+
 
       <div
         className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayGrupos ? 'justify-center items-center h-80' : ''
@@ -120,20 +122,20 @@ export default function Groups() {
 
       <ModalInfo
         selectedGroup={selectedGroup}
-        open={infoOpen} 
-        onClose={() => setInfoOpen(false)} 
+        open={infoOpen}
+        onClose={() => setInfoOpen(false)}
         setDeletingGroupOrLeft={() => setDeletingGroupOrLeft(!deletingGroupOrLeft)}
       />
 
-      <ModalReservation 
-        open={reservaOpen} 
-        selectedGroup={selectedGroup} 
-        onClose={() => { setReservaOpen(false) }} 
+      <ModalReservation
+        open={reservaOpen}
+        selectedGroup={selectedGroup}
+        onClose={() => { setReservaOpen(false) }}
       />
 
-      <ModalGroup 
-        open={open} 
-        onClose={() => setOpen(false)} 
+      <ModalGroup
+        open={open}
+        onClose={() => setOpen(false)}
         refreshGroups={refreshGroups}
       />
     </>
