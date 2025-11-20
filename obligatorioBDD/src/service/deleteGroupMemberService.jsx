@@ -3,16 +3,34 @@ const PATH = "/deleteUser";
 
 export default async function deleteGroupMemberService(GROUPID, USERID) {
     try {
-        const res = await fetch(`${API}${PATH}/${GROUPID}/${USERID}`, { method: "DELETE", headers: {
+        const res = await fetch(`${API}${PATH}/${GROUPID}/${USERID}`, { 
+            method: "DELETE",
+            headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${(
-                localStorage.getItem('token') || ''
-                ).replace(/"/g, '')}`,
+                'Authorization': `Bearer ${
+                    (localStorage.getItem('token') || '').replace(/"/g, '')
+                }`,
             },
         });
-        if (!res.ok) throw new Error(`DELETE ${PATH} -> ${res.status}`);
-        return true;
-    } catch(error) {
-        console.log(error.message);
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+            return data || {
+                success: false,
+                description: `Error ${res.status}`
+            };
+        }
+
+        return data;
+
+    } catch (error) {
+        console.log("Service error:", error.message);
+
+        return {
+            success: false,
+            description: "Error de conexión con el servidor"
+        };
     }
 }
+

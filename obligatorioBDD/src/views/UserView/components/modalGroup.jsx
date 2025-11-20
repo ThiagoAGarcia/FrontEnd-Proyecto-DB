@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal';
 import {ToastContainer, toast} from 'react-toastify'
-import SearchUsers from '../../../service/getUsersRequest.jsx'
+import SearchUsers from '../../../service/getSearchUsersRequest.jsx'
 import CreateGroup from '../../../service/createGroupService.jsx'
 import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
 
@@ -12,7 +12,6 @@ export default function modalGroup({ open, onClose, refreshGroups }) {
 
     async function handleSearch(text) {
         const data = await SearchUsers(text)
-        console.log('DATA BACKEND:', data)
         if (data?.success) {
             setUsuarios(data.users)
         }
@@ -42,7 +41,7 @@ export default function modalGroup({ open, onClose, refreshGroups }) {
                 const studyGroupId = data.grupo.id
                 const seleccionados = Object.entries(agregados)
                     .filter(([_, marcado]) => marcado)
-                    .map(([index]) => usuarios[index])
+                    .map(([ci]) => usuarios.find(user => user.ci === parseInt(ci)))
 
                 for (const user of seleccionados) {
                     const resp = await sendGroupRequest(studyGroupId, user.ci)
@@ -113,8 +112,8 @@ export default function modalGroup({ open, onClose, refreshGroups }) {
                         <div className="basis-1/5 text-left">Solicitud</div>
                     </div>
 
-                    {usuarios.map((user, index) => (
-                        <div key={index} className="bg-[#f4f7fc] rounded-xl p-4 border border-gray-200 hover:border-[#052e66]/40 hover:bg-[#eef3fb] transition shadow-sm flex flex-col md:flex-row md:items-center gap-3">
+                    {usuarios.map((user) => (
+                        <div key={user.ci} className="bg-[#f4f7fc] rounded-xl p-4 border border-gray-200 hover:border-[#052e66]/40 hover:bg-[#eef3fb] transition shadow-sm flex flex-col md:flex-row md:items-center gap-3">
                             <div className="md:hidden flex flex-col">
                                 <span className="font-semibold text-gray-800">
                                     {user.name} {user.lastName}
@@ -123,48 +122,35 @@ export default function modalGroup({ open, onClose, refreshGroups }) {
                                     {user.mail}
                                 </span>
 
-                                <button
-                                    onClick={() =>
-                                        setAgregados((prev) => ({ ...prev, [index]: !prev[index] }))
-                                    }
-                                    className={`px-4 cursor-pointer border border-[#052e66] py-2 mt-3 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[index]
+                                <button onClick={() => setAgregados((prev) => ({ ...prev, [user.ci]: !prev[user.ci] }))}
+                                    className={`px-4 cursor-pointer border border-[#052e66] py-2 mt-3 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[user.ci]
                                             ? 'bg-white text-[#052e66]'
                                             : 'bg-[#052e66] text-white hover:bg-[#073c88]'
                                         }`}>
-                                    <i
-                                        className={`fa-solid ${agregados[index]
+                                    <i className={`fa-solid ${agregados[user.ci]
                                                 ? 'fa-xmark text-[#052e66]'
                                                 : 'fa-envelope text-white'
                                             } transition-all duration-300`}></i>
-                                    {agregados[index] ? 'Cancelar' : 'Enviar'}
+                                    {agregados[user.ci] ? 'Cancelar' : 'Enviar'}
                                 </button>
                             </div>
 
                             <div className="hidden md:flex w-full items-center text-gray-700">
                                 <div className="basis-1/4 lg:basis-1/5">{user.name}</div>
                                 <div className="basis-1/4 lg:basis-1/5">{user.lastName}</div>
-                                <div className="basis-1/3 lg:basis-2/5 break-all pr-2">
-                                    {user.mail}
-                                </div>
+                                <div className="basis-1/3 lg:basis-2/5 break-all pr-2"> {user.mail} </div>
 
                                 <div className="basis-1/5 flex justify-start">
-                                    <button
-                                        onClick={() =>
-                                            setAgregados((prev) => ({
-                                                ...prev,
-                                                [index]: !prev[index],
-                                            }))
-                                        }
-                                        className={`px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[index]
+                                    <button onClick={() => setAgregados((prev) => ({ ...prev, [user.ci]: !prev[user.ci], }))}
+                                        className={`px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center gap-2 ${agregados[user.ci]
                                                 ? 'bg-white text-[#052e66]'
                                                 : 'bg-[#052e66] text-white hover:bg-[#073c88]'
                                             }`}>
-                                        <i
-                                            className={`fa-solid ${agregados[index]
+                                        <i className={`fa-solid ${agregados[user.ci]
                                                     ? 'fa-xmark text-[#052e66]'
                                                     : 'fa-envelope text-white'
                                                 } transition-all duration-300`}></i>
-                                        {agregados[index] ? 'Cancelar' : 'Enviar'}
+                                        {agregados[user.ci] ? 'Cancelar' : 'Enviar'}
                                     </button>
                                 </div>
                             </div>
