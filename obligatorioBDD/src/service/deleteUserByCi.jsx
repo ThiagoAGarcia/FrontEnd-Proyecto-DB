@@ -1,24 +1,24 @@
 // service/deleteUserByCi.js
 // ADMIN
 const API = 'http://localhost:5000'
-const PATH = '/deleteUserByCi'
+const PATH = '/deactivateUser'
 
 export default async function deleteUserByCiService(ci) {
   try {
     const token = (localStorage.getItem('token') || '').replace(/"/g, '')
 
     const res = await fetch(`${API}${PATH}/${ci}`, {
-      method: 'DELETE',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-         Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
 
     const data = await res.json()
 
     if (!res.ok) {
-      throw new Error(data.description || `DELETE ${PATH} -> ${res.status}`)
+      throw new Error(data.description || `PATCH ${PATH} -> ${res.status}`)
     }
 
     return data
