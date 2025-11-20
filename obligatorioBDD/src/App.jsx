@@ -50,7 +50,7 @@ function App() {
           <Route element={<SinToken />} path="/sin-token" />
         </Routes>
       </BrowserRouter>
-      <ToastContainer position="bottom-left" />
+      <ToastContainer position="bottom-left" style={{zIndex: 1000}} />
     </GroupsProvider>
   )
 }
