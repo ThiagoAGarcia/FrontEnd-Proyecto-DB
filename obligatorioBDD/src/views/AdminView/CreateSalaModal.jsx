@@ -84,7 +84,7 @@ export default function CreateSalaModal({ open, onClose, selectedBuilding }) {
               resetForm()
             }
       }>
-      <div className="relative max-h-screen sm:max-h-[60vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
+      <div className="relative max-h-screen sm:max-h-[65vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
         {isLoading && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-xl">
             <Oval
@@ -102,7 +102,7 @@ export default function CreateSalaModal({ open, onClose, selectedBuilding }) {
         <h2 className="font-bold text-[#052e66] text-3xl mb-6">Crear sala</h2>
 
         <div className="w-full bg-white shadow-md rounded-2xl p-4 flex flex-col border border-gray-300">
-          <section className="sm:h-[35vh] h-[40vh] overflow-y-auto scroll-ucu p-2">
+          <section className="sm:h-[40vh] h-[40vh] overflow-y-auto scroll-ucu p-2">
             <div className="mb-3">
               <label className="font-medium">Nombre de la sala</label>
               <input
