@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import Modal from '../../components/modal'
 import getCarrersService from '../../service/getCareers'
 import getCampusService from '../../service/getCampus'
 import getBuildingsService from '../../service/getBuildingsService'
 import registerAdminService from '../../service/registerAdminService'
-import { toast } from 'react-toastify'
-import { Oval } from 'react-loader-spinner'
+import {toast} from 'react-toastify'
+import {Oval} from 'react-loader-spinner'
 import 'react-toastify/dist/ReactToastify.css'
 import './Scroll.css'
 
@@ -18,7 +18,7 @@ import {
 
 const ROLES_POSIBLES = ['student', 'professor', 'librarian', 'administrator']
 
-const CreateUserModal = ({ open, onClose, onCreated }) => {
+const CreateUserModal = ({open, onClose, onCreated}) => {
   const [ci, setCi] = useState('')
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -53,6 +53,8 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
     setBuildingName('')
     setErrores({})
     setShowSecondCareer(false)
+    setShowPassword(false)
+    setShowConfirmPassword(false)
   }
 
   useEffect(() => {
@@ -70,12 +72,15 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
   }, [open])
 
   const toggleRole = (rol) => {
+    if (isLoading) return
     setRoles((prev) =>
       prev.includes(rol) ? prev.filter((r) => r !== rol) : [...prev, rol]
     )
   }
 
   const validarFormulario = async () => {
+    if (isLoading) return
+
     const e = {}
     const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -140,17 +145,24 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
       const resp = await registerAdminService(body)
 
       if (resp.success) {
-        toast.success(resp.description || 'Usuario creado correctamente')
+        toast.success(resp.description || 'Usuario creado correctamente', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
         resetForm()
         onClose()
-
         if (onCreated) onCreated()
       } else {
-        console.log(resp)
-        toast.error(resp.description || 'Error al crear usuario')
+        toast.error(resp.description || 'Error al crear usuario', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
       }
     } catch (err) {
-      toast.error('Error de conexión con el servidor')
+      toast.error('Error de conexión con el servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -160,11 +172,28 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
 
   return (
     <>
-      <Modal open={open} onClose={onClose}>
+      <Modal
+        open={open}
+        onClose={
+          isLoading
+            ? () => {}
+            : () => {
+                onClose()
+                resetForm()
+              }
+        }>
         <div className="relative max-h-screen sm:max-h-[80vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
           {isLoading && (
             <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-xl">
-              <Oval height={40} width={40} color="#052e66" />
+              <Oval
+                height={40}
+                width={40}
+                color="#052e66"
+                secondaryColor="#e5e7eb"
+                strokeWidth={4}
+                strokeWidthSecondary={4}
+                ariaLabel="loading-create-user"
+              />
             </div>
           )}
 
@@ -178,18 +207,22 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                 <label className="font-medium">CI</label>
                 <input
                   value={ci}
-                  onChange={(e) => setCi(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setCi(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
-                {errores.ci && <p className="text-red-600 text-xs">{errores.ci}</p>}
+                {errores.ci && (
+                  <p className="text-red-600 text-xs">{errores.ci}</p>
+                )}
               </div>
 
               <div className="mb-3">
                 <label className="font-medium">Nombre</label>
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setName(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 {errores.name && (
                   <p className="text-red-600 text-xs">{errores.name}</p>
@@ -200,8 +233,9 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                 <label className="font-medium">Apellido</label>
                 <input
                   value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setLastName(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 {errores.lastName && (
                   <p className="text-red-600 text-xs">{errores.lastName}</p>
@@ -212,8 +246,9 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                 <label className="font-medium">Correo institucional</label>
                 <input
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setEmail(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 {errores.email && (
                   <p className="text-red-600 text-xs">{errores.email}</p>
@@ -226,14 +261,20 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10"
+                    onChange={(e) => !isLoading && setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((p) => !p)}
-                    className="absolute inset-y-0 right-2 flex items-center text-gray-500">
-                    {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+                    onClick={() => !isLoading && setShowPassword((p) => !p)}
+                    disabled={isLoading}
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-500 disabled:opacity-60">
+                    {showPassword ? (
+                      <IoEyeOff size={20} />
+                    ) : (
+                      <IoEye size={20} />
+                    )}
                   </button>
                 </div>
                 {errores.password && (
@@ -247,13 +288,19 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10"
+                    onChange={(e) =>
+                      !isLoading && setConfirmPassword(e.target.value)
+                    }
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full pr-10 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword((p) => !p)}
-                    className="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                    onClick={() =>
+                      !isLoading && setShowConfirmPassword((p) => !p)
+                    }
+                    disabled={isLoading}
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-500 disabled:opacity-60">
                     {showConfirmPassword ? (
                       <IoEyeOff size={20} />
                     ) : (
@@ -262,7 +309,9 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                   </button>
                 </div>
                 {errores.confirmPassword && (
-                  <p className="text-red-600 text-xs">{errores.confirmPassword}</p>
+                  <p className="text-red-600 text-xs">
+                    {errores.confirmPassword}
+                  </p>
                 )}
               </div>
 
@@ -278,12 +327,15 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                       <div
                         key={rol}
                         onClick={() => toggleRole(rol)}
-                        className="flex items-center gap-3 cursor-pointer select-none">
+                        className={`flex items-center gap-3 cursor-pointer select-none ${
+                          isLoading ? 'opacity-60 cursor-not-allowed' : ''
+                        }`}>
                         <div
-                          className={`w-6 h-6 flex items-center justify-center rounded-md border-2 transition-all duration-200 ${checked
-                            ? 'bg-[#052e66] border-[#052e66]'
-                            : 'border-gray-400 bg-white'
-                            }`}>
+                          className={`w-6 h-6 flex items-center justify-center rounded-md border-2 transition-all duration-200 ${
+                            checked
+                              ? 'bg-[#052e66] border-[#052e66]'
+                              : 'border-gray-400 bg-white'
+                          }`}>
                           {checked && (
                             <svg
                               className="w-4 h-4 text-white pointer-events-none"
@@ -322,8 +374,11 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                     <label className="font-medium">Carrera</label>
                     <select
                       value={careerId}
-                      onChange={(e) => setCareerId(e.target.value)}
-                      className="bg-gray-50 border rounded-xl p-2 w-full">
+                      onChange={(e) =>
+                        !isLoading && setCareerId(e.target.value)
+                      }
+                      disabled={isLoading}
+                      className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                       <option value="">Seleccione una carrera</option>
                       {careers.map((c) => (
                         <option key={c.careerId} value={c.careerId}>
@@ -338,8 +393,10 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                     <button
                       type="button"
                       disabled={isLoading}
-                      onClick={() => setShowSecondCareer((prev) => !prev)}
-                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer mt-2">
+                      onClick={() =>
+                        !isLoading && setShowSecondCareer((prev) => !prev)
+                      }
+                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
                       {showSecondCareer ? (
                         <>
                           <IoRemoveCircleOutline size={20} />
@@ -365,9 +422,13 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                             id="secondCareerInput"
                             disabled={isLoading}
                             value={secondCareer}
-                            onChange={(e) => setSecondCareer(e.target.value)}
-                            className="bg-gray-50 border rounded-xl p-2 w-full">
-                            <option value="">Seleccione una segunda carrera</option>
+                            onChange={(e) =>
+                              !isLoading && setSecondCareer(e.target.value)
+                            }
+                            className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
+                            <option value="">
+                              Seleccione una segunda carrera
+                            </option>
                             {careers.map((c) => (
                               <option key={c.careerId} value={c.careerId}>
                                 {c.careerName}
@@ -383,8 +444,9 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                     <label className="font-medium">Campus</label>
                     <select
                       value={campus}
-                      onChange={(e) => setCampus(e.target.value)}
-                      className="bg-gray-50 border rounded-xl p-2 w-full">
+                      onChange={(e) => !isLoading && setCampus(e.target.value)}
+                      disabled={isLoading}
+                      className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                       <option value="">Seleccione un campus</option>
                       {campusList.map((c) => (
                         <option key={c.campusName} value={c.campusName}>
@@ -404,8 +466,9 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                   <label className="font-medium">Campus</label>
                   <select
                     value={campus}
-                    onChange={(e) => setCampus(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full">
+                    onChange={(e) => !isLoading && setCampus(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                     <option value="">Seleccione un campus</option>
                     {campusList.map((c) => (
                       <option key={c.campusName} value={c.campusName}>
@@ -421,8 +484,11 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                   <label className="font-medium">Edificio</label>
                   <select
                     value={buildingName}
-                    onChange={(e) => setBuildingName(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full">
+                    onChange={(e) =>
+                      !isLoading && setBuildingName(e.target.value)
+                    }
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                     <option value="">Seleccione un edificio</option>
                     {buildings.map((b) => (
                       <option key={b.buildingName} value={b.buildingName}>
@@ -431,33 +497,34 @@ const CreateUserModal = ({ open, onClose, onCreated }) => {
                     ))}
                   </select>
                   {errores.buildingName && (
-                    <p className="text-red-600 text-xs">{errores.buildingName}</p>
+                    <p className="text-red-600 text-xs">
+                      {errores.buildingName}
+                    </p>
                   )}
                 </div>
               )}
-
-              
             </section>
-            
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
-                <button
-                  onClick={validarFormulario}
-                  disabled={isLoading}
-                  className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60">
-                  Crear usuario
-                </button>
 
-                <button
-                  onClick={() => {
-                    onClose()
-                    resetForm()
-                  }}
-                  disabled={isLoading}
-                  className="border cursor-pointer border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60">
-                  Cancelar
-                </button>
-              </div>
+          <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
+            <button
+              onClick={validarFormulario}
+              disabled={isLoading}
+              className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
+              Crear usuario
+            </button>
+
+            <button
+              onClick={() => {
+                if (isLoading) return
+                onClose()
+                resetForm()
+              }}
+              disabled={isLoading}
+              className="border cursor-pointer border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
+              Cancelar
+            </button>
+          </div>
         </div>
       </Modal>
     </>
