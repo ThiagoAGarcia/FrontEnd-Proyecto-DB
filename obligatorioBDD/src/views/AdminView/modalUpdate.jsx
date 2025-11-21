@@ -1,12 +1,11 @@
-// src/components/ModalUpdate.jsx
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import Modal from '../../components/modal'
 import getCarrersService from '../../service/getCareers'
 import getCampusService from '../../service/getCampus'
 import getBuildingsService from '../../service/getBuildingsService'
 import patchUserService from '../../service/patchUserService'
-import { ToastContainer, toast } from 'react-toastify'
-import { Oval } from 'react-loader-spinner'
+import {ToastContainer, toast} from 'react-toastify'
+import {Oval} from 'react-loader-spinner'
 import 'react-toastify/dist/ReactToastify.css'
 import './Scroll.css'
 import {
@@ -18,7 +17,7 @@ import {
 
 const ROLES_POSIBLES = ['student', 'professor', 'librarian', 'administrator']
 
-const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
+const ModalUpdate = ({open, onClose, user, onUpdated}) => {
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [roles, setRoles] = useState([])
@@ -69,12 +68,15 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
   }, [user, open])
 
   const toggleRole = (rol) => {
+    if (isLoading) return
     setRoles((prev) =>
       prev.includes(rol) ? prev.filter((r) => r !== rol) : [...prev, rol]
     )
   }
 
   const validarFormulario = async () => {
+    if (isLoading) return
+
     const e = {}
     const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/
 
@@ -123,12 +125,24 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
       setIsLoading(true)
       const resp = await patchUserService(body)
       if (resp.success) {
-        toast.success('Usuario actualizado correctamente')
+        toast.success('Usuario actualizado correctamente', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
         if (onUpdated) onUpdated()
         setTimeout(() => onClose(), 1500)
       } else {
-        toast.error(resp.description || 'Error al actualizar')
+        toast.error(resp.description || 'Error al actualizar', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
       }
+    } catch (err) {
+      console.error(err)
+      toast.error('Error de conexión con el servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -138,11 +152,19 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
 
   return (
     <>
-      <Modal open={open} onClose={onClose}>
+      <Modal open={open} onClose={isLoading ? () => {} : onClose}>
         <div className="relative max-h-screen sm:max-h-[80vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
           {isLoading && (
             <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-xl">
-              <Oval height={40} width={40} color="#052e66" />
+              <Oval
+                height={40}
+                width={40}
+                color="#052e66"
+                secondaryColor="#e5e7eb"
+                strokeWidth={4}
+                strokeWidthSecondary={4}
+                ariaLabel="loading-update-user"
+              />
             </div>
           )}
 
@@ -172,12 +194,15 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                       <div
                         key={rol}
                         onClick={() => toggleRole(rol)}
-                        className="flex items-center gap-3 cursor-pointer select-none">
+                        className={`flex items-center gap-3 cursor-pointer select-none ${
+                          isLoading ? 'opacity-60 cursor-not-allowed' : ''
+                        }`}>
                         <div
-                          className={`w-6 h-6 flex items-center justify-center rounded-md border-2 transition-all duration-200 ${checked
-                            ? 'bg-[#052e66] border-[#052e66]'
-                            : 'border-gray-400 bg-white'
-                            }`}>
+                          className={`w-6 h-6 flex items-center justify-center rounded-md border-2 transition-all duration-200 ${
+                            checked
+                              ? 'bg-[#052e66] border-[#052e66]'
+                              : 'border-gray-400 bg-white'
+                          }`}>
                           {checked && (
                             <svg
                               className="w-4 h-4 text-white pointer-events-none"
@@ -214,8 +239,9 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                 <label className="font-medium text-[#052e66]">Nombre</label>
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setName(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 {errores.name && (
                   <p className="text-red-600 text-xs">{errores.name}</p>
@@ -226,8 +252,9 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                 <label className="font-medium text-[#052e66]">Apellido</label>
                 <input
                   value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="bg-gray-50 border rounded-xl p-2 w-full"
+                  onChange={(e) => !isLoading && setLastName(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 {errores.lastName && (
                   <p className="text-red-600 text-xs">{errores.lastName}</p>
@@ -237,11 +264,16 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
               {roles.includes('student') && (
                 <>
                   <div className="mb-3">
-                    <label className="font-medium text-[#052e66]">Carrera</label>
+                    <label className="font-medium text-[#052e66]">
+                      Carrera
+                    </label>
                     <select
                       value={careerId}
-                      onChange={(e) => setCareerId(e.target.value)}
-                      className="bg-gray-50 border rounded-xl p-2 w-full">
+                      onChange={(e) =>
+                        !isLoading && setCareerId(e.target.value)
+                      }
+                      disabled={isLoading}
+                      className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                       <option value="">Seleccione una carrera</option>
                       {careers.map((c) => (
                         <option key={c.careerId} value={c.careerId}>
@@ -255,8 +287,10 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                     <button
                       type="button"
                       disabled={isLoading}
-                      onClick={() => setShowSecondCareer((prev) => !prev)}
-                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer">
+                      onClick={() =>
+                        !isLoading && setShowSecondCareer((prev) => !prev)
+                      }
+                      className="flex items-center gap-2 text-blue-900 mb-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
                       {showSecondCareer ? (
                         <>
                           <IoRemoveCircleOutline size={20} />
@@ -280,7 +314,7 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                           <select
                             id="secondCareerInput"
                             disabled={isLoading}
-                            className="bg-gray-50 border rounded-xl p-2 w-full">
+                            className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                             <option value="">
                               Seleccione una segunda carrera
                             </option>
@@ -299,8 +333,9 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                     <label className="font-medium text-[#052e66]">Campus</label>
                     <select
                       value={campus}
-                      onChange={(e) => setCampus(e.target.value)}
-                      className="bg-gray-50 border rounded-xl p-2 w-full">
+                      onChange={(e) => !isLoading && setCampus(e.target.value)}
+                      disabled={isLoading}
+                      className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                       <option value="">Seleccione un campus</option>
                       {campusList.map((c) => (
                         <option key={c.campusName} value={c.campusName}>
@@ -320,8 +355,9 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                   <label className="font-medium text-[#052e66]">Campus</label>
                   <select
                     value={campus}
-                    onChange={(e) => setCampus(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full">
+                    onChange={(e) => !isLoading && setCampus(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                     <option value="">Seleccione un campus</option>
                     {campusList.map((c) => (
                       <option key={c.campusName} value={c.campusName}>
@@ -337,8 +373,11 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                   <label className="font-medium text-[#052e66]">Edificio</label>
                   <select
                     value={buildingName}
-                    onChange={(e) => setBuildingName(e.target.value)}
-                    className="bg-gray-50 border rounded-xl p-2 w-full">
+                    onChange={(e) =>
+                      !isLoading && setBuildingName(e.target.value)
+                    }
+                    disabled={isLoading}
+                    className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                     <option value="">Seleccione un edificio</option>
                     {buildings.map((b) => (
                       <option key={b.buildingName} value={b.buildingName}>
@@ -347,26 +386,26 @@ const ModalUpdate = ({ open, onClose, user, onUpdated }) => {
                     ))}
                   </select>
                   {errores.buildingName && (
-                    <p className="text-red-600 text-xs">{errores.buildingName}</p>
+                    <p className="text-red-600 text-xs">
+                      {errores.buildingName}
+                    </p>
                   )}
                 </div>
               )}
-
-
             </section>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
             <button
               onClick={validarFormulario}
               disabled={isLoading}
-              className="bg-[#052e66] text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 cursor-pointer">
+              className="bg-[#052e66] text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
               Guardar cambios
             </button>
 
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="border border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 cursor-pointer">
+              className="border border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
               Cancelar
             </button>
           </div>

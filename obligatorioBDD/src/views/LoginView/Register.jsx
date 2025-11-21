@@ -129,12 +129,9 @@ function Register() {
         const register = await postRegisterService(BODY)
 
         if (register?.success) {
-          toast.success('Registro exitoso', {
-            position: 'bottom-left',
-            autoClose: 3000,
-          })
+          navigate('/')
           e.target.reset()
-          setTimeout(() => navigate('/'), 2500)
+
           return
         } else {
           toast.error(register?.description || 'Error al registrar', {

@@ -10,6 +10,7 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
   const [open, setOpen] = useState(false)
   const [group, setGroup] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const formattedDate = new Date(date).toLocaleDateString('es-ES', {
     day: '2-digit',
@@ -18,42 +19,70 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
   })
 
   const acceptGroupRequest = async (id) => {
+    if (isProcessing) return
     try {
+      setIsProcessing(true)
       const result = await patchAcceptRequestService(id)
 
       if (result?.success) {
-        toast.success('Solicitud aceptada correctamente')
+        toast.success('Solicitud aceptada correctamente', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
 
         if (onAccepted) onAccepted()
 
         setOpen(false)
       } else {
         if (onAccepted) onAccepted()
-        toast.error(result?.description || 'Error al aceptar la solicitud')
+        toast.error(result?.description || 'Error al aceptar la solicitud', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
       }
     } catch (error) {
-      toast.error('Error del servidor')
+      toast.error('Error del servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
   const cancelGroupRequest = async (id) => {
+    if (isProcessing) return
     try {
+      setIsProcessing(true)
       const result = await patchDenyRequestService(id)
 
       if (result?.success) {
-        toast.success('Solicitud rechazada correctamente')
+        toast.success('Solicitud rechazada correctamente', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
 
         if (onDeny) onDeny()
         setOpen(false)
       } else {
-        toast.error(result?.description || 'Error al rechazar la solicitud')
+        toast.error(result?.description || 'Error al rechazar la solicitud', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
       }
     } catch (error) {
-      toast.error('Error del servidor')
+      toast.error('Error del servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
   const handleOpenModal = async () => {
+    if (loading || isProcessing) return
+
     try {
       setOpen(true)
       setLoading(true)
@@ -63,12 +92,19 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
         setGroup(data.group)
       } else {
         toast.error(
-          data?.description || 'Error al obtener la información del grupo'
+          data?.description || 'Error al obtener la información del grupo',
+          {
+            position: 'bottom-left',
+            autoClose: 3000,
+          }
         )
         setOpen(false)
       }
     } catch (error) {
-      toast.error('Error del servidor')
+      toast.error('Error del servidor', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
       setOpen(false)
     } finally {
       setLoading(false)
@@ -78,7 +114,9 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
   return (
     <>
       <div
-        className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-50 transition cursor-pointer"
+        className={`flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-50 transition cursor-pointer ${
+          isProcessing ? 'opacity-60 cursor-not-allowed' : ''
+        }`}
         onClick={handleOpenModal}>
         <div className="flex flex-col">
           <span className="text-xs text-gray-500">Solicitud de grupo</span>
@@ -88,7 +126,8 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
 
         <div className="flex items-center gap-2">
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
+            disabled={isProcessing}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={(e) => {
               e.stopPropagation()
               cancelGroupRequest(id)
@@ -97,7 +136,8 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
           </button>
 
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition"
+            disabled={isProcessing}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={(e) => {
               e.stopPropagation()
               acceptGroupRequest(id)
@@ -107,7 +147,9 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
         </div>
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal
+        open={open}
+        onClose={isProcessing ? () => {} : () => setOpen(false)}>
         <div className="text-left w-full p-4 sm:p-6">
           <h2 className="font-bold text-[#052e66] text-2xl sm:text-3xl mb-4">
             Detalles del grupo
@@ -188,15 +230,17 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
 
               <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-4">
                 <button
-                  className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-red-500 rounded-xl font-semibold shadow-md hover:bg-red-600 transition text-sm"
+                  disabled={isProcessing}
+                  className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-red-500 rounded-xl font-semibold shadow-md hover:bg-red-600 transition text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                   onClick={() => cancelGroupRequest(id)}>
-                  Rechazar solicitud
+                  {isProcessing ? 'Procesando...' : 'Rechazar solicitud'}
                 </button>
 
                 <button
-                  className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#073c88] transition text-sm"
+                  disabled={isProcessing}
+                  className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#073c88] transition text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                   onClick={() => acceptGroupRequest(id)}>
-                  Aceptar solicitud
+                  {isProcessing ? 'Procesando...' : 'Aceptar solicitud'}
                 </button>
               </div>
             </div>

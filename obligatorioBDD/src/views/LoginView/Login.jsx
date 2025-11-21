@@ -10,6 +10,7 @@ function Login() {
   const [verPwd, setVerPwd] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+
   useEffect(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('role')
@@ -18,6 +19,9 @@ function Login() {
   }, [])
 
   const commitLogin = async () => {
+    // Evita múltiples clics mientras está cargando
+    if (isLoading) return
+
     const email = document.getElementById('emailInput').value.trim()
     const password = document.getElementById('passwordInput').value.trim()
 
@@ -48,23 +52,18 @@ function Login() {
       const logged = await LoginService(BODY)
 
       if (logged?.success) {
-        console.log(logged.role)
-        toast.success('Inicio de sesión exitoso', {
-          position: 'bottom-left',
-          autoClose: 2500,
-        })
         localStorage.setItem('token', logged.access_token)
         localStorage.setItem('role', JSON.stringify(logged.role))
         localStorage.setItem('roles', JSON.stringify(logged.roles))
         localStorage.setItem('ci', JSON.stringify(logged.ci))
-        
+
         if (logged.role.includes('administrator')) {
-          setTimeout(() => navigate('/main-admin'), 2500)
+          navigate('/main-admin')
           return
         }
 
         if (logged.role.includes('librarian')) {
-          setTimeout(() => navigate('/main-librarian'), 2500)
+          navigate('/main-librarian')
           return
         }
 
@@ -72,7 +71,7 @@ function Login() {
           logged.role.includes('student') ||
           logged.role.includes('professor')
         ) {
-          setTimeout(() => navigate('/main'), 2500)
+          navigate('/main')
           return
         }
       } else {
