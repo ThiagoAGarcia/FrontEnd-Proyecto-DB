@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import 'react-toastify/dist/ReactToastify.css'
-import { useGroups } from '../../context/useGroup.jsx'
+import {useGroups} from '../../context/useGroup.jsx'
 import ModalReservation from '../UserView/components/modalReservation.jsx'
 import ModalGroup from '../UserView/components/modalGroup.jsx'
 import ModalInfo from '../UserView/components/modalInfo.jsx'
@@ -11,15 +11,16 @@ export default function Groups() {
   const [infoOpen, setInfoOpen] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState('')
   const [reservaOpen, setReservaOpen] = useState(false)
-  const { grupos, refreshGroups } = useGroups()
+  const {grupos, refreshGroups} = useGroups()
 
   useEffect(() => {
     refreshGroups()
+    console.log(grupos)
   }, [deletingGroupOrLeft])
 
   const selectGroup = (open, groupId) => {
-    setInfoOpen(open);
-    setSelectedGroup(groupId);
+    setInfoOpen(open)
+    setSelectedGroup(groupId)
   }
 
   const hayGrupos = Array.isArray(grupos) && grupos.length > 0
@@ -27,24 +28,26 @@ export default function Groups() {
   return (
     <>
       <div className="flex sm:justify-between sm:items-end sm:flex-row flex-col pb-3">
-        <h2 className="ml-1 font-semibold text-gray-800 text-2xl pb-2 sm:pb-0">Grupos</h2>
+        <h2 className="ml-1 font-semibold text-gray-800 text-2xl pb-2 sm:pb-0">
+          Grupos
+        </h2>
 
         {hayGrupos && (
           <button
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer"
-            onClick={() => setOpen(true)}
-          >
+            onClick={() => setOpen(true)}>
             <span className="font-medium text-[#052e66]">
-              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo grupo
+              <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo
+              grupo
             </span>
           </button>
         )}
       </div>
 
-
       <div
-        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayGrupos ? 'justify-center items-center h-80' : ''
-          }`}>
+        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
+          !hayGrupos ? 'justify-center items-center h-80' : ''
+        }`}>
         {hayGrupos ? (
           <>
             <div className="hidden lg:flex w-full justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 text-lg">
@@ -73,12 +76,17 @@ export default function Groups() {
                         className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
                         Info
                       </button>
-                      <button
-                        onClick={() => { setReservaOpen(true); setSelectedGroup(grupo.id); }}
-                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
-                        Hacer reserva{' '}
-                        <i className="fa-solid fa-plus text-[#0d9b64]"></i>
-                      </button>
+                      {grupo.myRole === 'leader' && (
+                        <button
+                          onClick={() => {
+                            setReservaOpen(true)
+                            setSelectedGroup(grupo.id)
+                          }}
+                          className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
+                          Hacer reserva{' '}
+                          <i className="fa-solid fa-plus text-[#0d9b64]"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -97,13 +105,17 @@ export default function Groups() {
                         className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] shadow-md hover:bg-[#d5e4ff] transition">
                         Info
                       </button>
-
-                      <button
-                        onClick={() => { setReservaOpen(true); setSelectedGroup(grupo.id); }}
-                        className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
-                        Hacer reserva{' '}
-                        <i className="fa-solid !hidden lg:!inline fa-plus text-[#0d9b64]"></i>
-                      </button>
+                      {grupo.myRole === 'leader' && (
+                        <button
+                          onClick={() => {
+                            setReservaOpen(true)
+                            setSelectedGroup(grupo.id)
+                          }}
+                          className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
+                          Hacer reserva{' '}
+                          <i className="fa-solid !hidden lg:!inline fa-plus text-[#0d9b64]"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -111,7 +123,9 @@ export default function Groups() {
             </ul>
           </>
         ) : (
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer" onClick={() => setOpen(true)}>
+          <button
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:bg-[#e9f0fd] transition cursor-pointer"
+            onClick={() => setOpen(true)}>
             <span className="font-medium text-[#052e66]">
               <i className="fa-solid fa-plus text-green-600"></i> Crear nuevo
               grupo
@@ -124,13 +138,17 @@ export default function Groups() {
         selectedGroup={selectedGroup}
         open={infoOpen}
         onClose={() => setInfoOpen(false)}
-        setDeletingGroupOrLeft={() => setDeletingGroupOrLeft(!deletingGroupOrLeft)}
+        setDeletingGroupOrLeft={() =>
+          setDeletingGroupOrLeft(!deletingGroupOrLeft)
+        }
       />
 
       <ModalReservation
         open={reservaOpen}
         selectedGroup={selectedGroup}
-        onClose={() => { setReservaOpen(false) }}
+        onClose={() => {
+          setReservaOpen(false)
+        }}
       />
 
       <ModalGroup
