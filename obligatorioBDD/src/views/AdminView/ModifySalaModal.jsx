@@ -104,7 +104,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
         </h2>
 
         <div className="w-full bg-white shadow-md rounded-2xl p-4 flex flex-col border border-gray-300">
-          <section className="sm:h-[46vh] h-[40vh] overflow-y-auto scroll-ucu p-2">
+          <section className="sm:h-[52vh] h-[40vh] overflow-y-auto scroll-ucu p-2">
             <div className="mb-3">
               <label className="font-medium text-[#052e66]">Nombre de la sala</label>
               <input
@@ -116,6 +116,15 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
               {errores.roomName && (
                 <p className="text-red-600 text-xs">{errores.roomName}</p>
               )}
+            </div>
+
+            <div className="mb-3">
+              <label className="font-medium text-[#052e66]">Edificio</label>
+              <input
+                value={selectedRoom.buildingName}
+                disabled
+                className="bg-gray-100 border rounded-xl p-2 w-full"
+              />
             </div>
 
             <div className="mb-3">
@@ -149,15 +158,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
                 <p className="text-red-600 text-xs">{errores.type}</p>
               )}
             </div>
-
-            <div className="mb-3">
-              <label className="font-medium text-[#052e66]">Edificio</label>
-              <input
-                value={selectedRoom.buildingName}
-                disabled
-                className="bg-gray-100 border rounded-xl p-2 w-full"
-              />
-            </div>
+            
           </section>
         </div>
 
