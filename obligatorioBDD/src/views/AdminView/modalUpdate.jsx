@@ -398,14 +398,14 @@ const ModalUpdate = ({open, onClose, user, onUpdated}) => {
             <button
               onClick={validarFormulario}
               disabled={isLoading}
-              className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
+              className="bg-[#052e66] text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
               Guardar cambios
             </button>
 
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="border border-[#052e66] cursor-pointer text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
+              className="border border-[#052e66] text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
               Cancelar
             </button>
           </div>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import getReservasPorProfesoresYAlumnosService from '../../../service/getReservasPorProfesoresYAlumnosService'
+import getReservasPorProfesoresYAlumnosService from '../../service/getReservasPorProfesoresYAlumnosService'
 
 const TotalReservas = () => {
   const [cantidad, setCantidad] = useState(null)

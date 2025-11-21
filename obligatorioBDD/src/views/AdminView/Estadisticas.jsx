@@ -1,11 +1,11 @@
-import CantidadReservasAlumnosYProfesores from './consultas/CantidadReservasAlumnosYProfesores'
-import CantidadSancionesProfesoresYAlumnos from './consultas/CantidadSancionesProfesoresYAlumnos'
-import PorcentajeDeOcupacionPorSala from './consultas/PorcentajeDeOcupacionPorSala'
-import PorcentajeReservasEfectivasYNoEfectivas from './consultas/porcentajeReservasEfectivasYNoEfectivas'
-import PromedioPorSalas from './consultas/PromediosPorSalas'
-import ReservacionesPorCarreraYFacultad from './consultas/ReservacionesPorCarreraYFacultad'
-import SalasMasReservadas from './consultas/SalasMasReservadas'
-import TurnosMasDemandados from './consultas/TurnosMasDemandadas'
+import CantidadReservasAlumnosYProfesores from './CantidadReservasAlumnosYProfesores'
+import CantidadSancionesProfesoresYAlumnos from './CantidadSancionesProfesoresYAlumnos'
+import PorcentajeDeOcupacionPorSala from './porcentajeDeOcupacionPorSala'
+import PorcentajeReservasEfectivasYNoEfectivas from './porcentajeReservasEfectivasYNoEfectivas'
+import PromedioPorSalas from './promediosPorSalas'
+import ReservacionesPorCarreraYFacultad from './ReservacionesPorCarreraYFacultad'
+import SalasMasReservadas from './SalasMasReservadas'
+import TurnosMasDemandados from './TurnosMasDemandadas'
 
 const Estadisticas = () => {
   return (

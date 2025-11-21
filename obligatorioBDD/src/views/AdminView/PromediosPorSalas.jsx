@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getSancionesProfesoresYAlumnos from '../../../service/getSancionesAlumnosYProfesoresService'
+import getPromedioPorSalasService from '../../service/getPromediosPorSalas'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-const CantidadSancionesProfesoresYAlumnos = () => {
+const PromedioPorSalas = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,15 +11,15 @@ const CantidadSancionesProfesoresYAlumnos = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getSancionesProfesoresYAlumnos()
+        const res = await getPromedioPorSalasService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
 
-        const puntos = res.sanciones.map((item) => ({
-          label: `${item.ci} - ${item.name} ${item.lastName}`,
-          y: parseFloat(item.sanciones),
+        const puntos = res.promedioPorSalas.map((item) => ({
+          label: `${item.name}`,
+          y: parseFloat(item.promedio_participantes),
         }))
 
         setDataPoints(puntos)
@@ -39,7 +39,7 @@ const CantidadSancionesProfesoresYAlumnos = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Sanciones',
+      text: 'Promedio por salas reservadas',
     },
     axisY: {
       includeZero: true,
@@ -70,4 +70,4 @@ const CantidadSancionesProfesoresYAlumnos = () => {
   )
 }
 
-export default CantidadSancionesProfesoresYAlumnos
+export default PromedioPorSalas

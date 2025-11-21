@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getSalasMasReservadasService from '../../../service/getSalasMasReservadasService'
+import getSancionesProfesoresYAlumnos from '../../service/getSancionesAlumnosYProfesoresService'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-const SalasMasReservadas = () => {
+const CantidadSancionesProfesoresYAlumnos = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,15 +11,15 @@ const SalasMasReservadas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getSalasMasReservadasService()
+        const res = await getSancionesProfesoresYAlumnos()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
 
-        const puntos = res.salasMasReservadas.map((item) => ({
-          label: `${item.Sala} (${item.Edificio})`,
-          y: item.CantidadDeReservasPor,
+        const puntos = res.sanciones.map((item) => ({
+          label: `${item.ci} - ${item.name} ${item.lastName}`,
+          y: parseFloat(item.sanciones),
         }))
 
         setDataPoints(puntos)
@@ -39,18 +39,18 @@ const SalasMasReservadas = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Salas más reservadas',
+      text: 'Sanciones',
     },
     axisY: {
       includeZero: true,
-      title: 'Cantidad de reservas',
+      title: 'Promedio',
     },
     axisX: {
       title: 'Sala',
     },
     data: [
       {
-        type: 'column',
+        type: 'bar',
         indexLabelFontColor: '#5A5757',
         indexLabelPlacement: 'outside',
         dataPoints: dataPoints,
@@ -70,4 +70,4 @@ const SalasMasReservadas = () => {
   )
 }
 
-export default SalasMasReservadas
+export default CantidadSancionesProfesoresYAlumnos

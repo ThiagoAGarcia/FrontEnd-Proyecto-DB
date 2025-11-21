@@ -76,12 +76,7 @@ export default function AvailableRooms() {
             }
             return acc;
         }, {})
-    ).sort((a, b) => {
-        const numA = parseInt(a.studyRoom.replace(/\D/g, ""));
-        const numB = parseInt(b.studyRoom.replace(/\D/g, ""));
-        return numA - numB;
-    });
-
+    );
 
     return (
         <div className="w-full overflow-hidden">
@@ -120,12 +115,6 @@ export default function AvailableRooms() {
 
                             <div className="p-4 bg-gray-100 rounded-xl shadow border border-gray-200">
                                 <div className="w-full flex flex-col gap-6">
-                                    {!date && (
-                                        <div className="w-full text-center py-6 text-gray-600 text-lg font-medium">
-                                            Seleccione una fecha para ver las salas disponibles
-                                        </div>
-                                    )}
-
                                     {salasUnicas.map((sala, index) => (
                                         <details key={index} className="w-full bg-white shadow-md rounded-xl border border-gray-200 open:shadow-lg transition-all" >
                                             <summary className="cursor-pointer select-none flex justify-between items-center px-4 py-3">

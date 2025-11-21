@@ -4,7 +4,6 @@ import '../../index.css'
 import NavBar from '../../components/navBar'
 import UserView from './User'
 import Estadisticas from './Estadisticas'
-import Salas from './Salas'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Usuarios')
@@ -57,7 +56,13 @@ export default function Main() {
             )}
             {activeTab === 'Salas' && (
               <>
-                <Salas></Salas>
+                <input
+                  type="text"
+                  className="w-full bg-white border-1 border-black rounded-full p-2 pl-5"
+                  placeholder="Buscar..."
+                  value={roomSearch}
+                  onChange={(e) => setRoomSearch(e.target.value)}
+                />
               </>
             )}
 

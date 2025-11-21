@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getPorcentajeReservasEfectivasYNoEfectivas from '../../../service/getPorcentajeReservasEfectivasYNoEfectivas'
+import getReservasPorCarreraYFacultadService from '../../service/getReservasPorCarreraYFacultadService'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-
-const PorcentajeReservasEfectivasYNoEfectivas = () => {
+const ReservacionesPorCarreraYFacultad = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,22 +11,20 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getPorcentajeReservasEfectivasYNoEfectivas()
+        const res = await getReservasPorCarreraYFacultadService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
-        console.log(res)
 
-        const datos = res.reservas[0]
-
-        const puntos = [
-          {label: 'Finalizadas', y: parseFloat(datos.Finalizada)},
-          {label: 'Canceladas', y: parseFloat(datos.Cancelada)},
-        ]
+        const puntos = res.reservasPorCarreraYFacultad.map((item) => ({
+          label: `${item.Carrera} - ${item.Facultad}`,
+          y: parseFloat(item.CantidadReservasPor),
+        }))
 
         setDataPoints(puntos)
       } catch (err) {
+        console.error(err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -42,30 +39,35 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Reservas Efectivas vs Canceladas',
+      text: 'Reservaciones por carrera y facultad',
+    },
+    axisY: {
+      includeZero: true,
+      title: 'cantidad',
+    },
+    axisX: {
+      title: 'carrera y facultad',
     },
     data: [
       {
-        type: 'doughnut',
-        indexLabel: '{label}: {y}%',
-        yValueFormatString: '#,##0',
-        explodeOnClick: true,
-        startAngle: -90,
+        type: 'bar',
+        indexLabelFontColor: '#5A5757',
+        indexLabelPlacement: 'outside',
         dataPoints: dataPoints,
       },
     ],
   }
 
   if (loading) return <p>Cargando estadísticas...</p>
-  if (error) return <p className="text-red-500">Error: {error}</p>
+  if (error) return <p style={{color: 'red'}}>Error: {error}</p>
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-full max-w-[500px]">
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[600px] max-w-[900px]" style={{margin: '0 auto'}}>
         <CanvasJSChart options={options} />
       </div>
     </div>
   )
 }
 
-export default PorcentajeReservasEfectivasYNoEfectivas
+export default ReservacionesPorCarreraYFacultad
