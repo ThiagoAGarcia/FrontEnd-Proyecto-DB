@@ -4,6 +4,7 @@ import {useGroups} from '../../context/useGroup.jsx'
 import ModalReservation from '../UserView/components/modalReservation.jsx'
 import ModalGroup from '../UserView/components/modalGroup.jsx'
 import ModalInfo from '../UserView/components/modalInfo.jsx'
+import ModalMasInfoReserva from './components/ModalMasInfoReserva.jsx'
 
 export default function Groups() {
   const [open, setOpen] = useState(false)
@@ -11,6 +12,7 @@ export default function Groups() {
   const [infoOpen, setInfoOpen] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState('')
   const [reservaOpen, setReservaOpen] = useState(false)
+  const [reservaInfoOpen, setReservaInfoOpen] = useState(false)
   const {grupos, refreshGroups} = useGroups()
 
   useEffect(() => {
@@ -61,6 +63,7 @@ export default function Groups() {
                 <div
                   key={index}
                   className="w-full rounded-md bg-[#f4f7fc] border border-gray-200 text-black p-3 my-2">
+                  {/* Versión escritorio */}
                   <div className="hidden lg:flex justify-between items-center text-xl">
                     <div className="w-1/2 text-center border-r-2 border-gray-300">
                       <h1>{grupo.groupName}</h1>
@@ -76,7 +79,8 @@ export default function Groups() {
                         className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
                         Info
                       </button>
-                      {grupo.myRole === 'leader' && (
+
+                      {grupo.myRole === 'leader' && !grupo.hasReservation && (
                         <button
                           onClick={() => {
                             setReservaOpen(true)
@@ -87,9 +91,22 @@ export default function Groups() {
                           <i className="fa-solid fa-plus text-[#0d9b64]"></i>
                         </button>
                       )}
+
+                      {grupo.myRole === 'leader' && grupo.hasReservation && (
+                        <button
+                          onClick={() => {
+                            setReservaInfoOpen(true)
+                            setSelectedGroup(grupo.id)
+                          }}
+                          className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#d9fffd] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#c9fffb] transition">
+                          Info reserva{' '}
+                          <i className="fa-solid fa-circle-info text-[#0d9b92]"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
 
+                  {/* Versión mobile */}
                   <div className="flex flex-col lg:hidden gap-2">
                     <span className="font-semibold text-gray-800">
                       {grupo.groupName}
@@ -105,7 +122,8 @@ export default function Groups() {
                         className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] shadow-md hover:bg-[#d5e4ff] transition">
                         Info
                       </button>
-                      {grupo.myRole === 'leader' && (
+
+                      {grupo.myRole === 'leader' && !grupo.hasReservation && (
                         <button
                           onClick={() => {
                             setReservaOpen(true)
@@ -114,6 +132,18 @@ export default function Groups() {
                           className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition">
                           Hacer reserva{' '}
                           <i className="fa-solid !hidden lg:!inline fa-plus text-[#0d9b64]"></i>
+                        </button>
+                      )}
+
+                      {grupo.myRole === 'leader' && grupo.hasReservation && (
+                        <button
+                          onClick={() => {
+                            setReservaInfoOpen(true)
+                            setSelectedGroup(grupo.id)
+                          }}
+                          className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#d9fffd] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#c9fffb] transition">
+                          Info reserva{' '}
+                          <i className="fa-solid fa-circle-info text-[#0d9b92]"></i>
                         </button>
                       )}
                     </div>
@@ -148,6 +178,7 @@ export default function Groups() {
         selectedGroup={selectedGroup}
         onClose={() => {
           setReservaOpen(false)
+          refreshGroups()
         }}
       />
 
@@ -155,6 +186,12 @@ export default function Groups() {
         open={open}
         onClose={() => setOpen(false)}
         refreshGroups={refreshGroups}
+      />
+
+      <ModalMasInfoReserva
+        open={reservaInfoOpen}
+        selectedGroup={selectedGroup}
+        onClose={() => setReservaInfoOpen(false)}
       />
     </>
   )
