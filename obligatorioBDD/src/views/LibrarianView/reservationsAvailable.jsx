@@ -33,6 +33,7 @@ export default function ReservationsAvailable({
             <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
               <div className="w-1/2 text-center">Turno</div>
               <div className="w-1/4 text-center">Salas</div>
+              <div className="w-1/4 text-center">Estado</div>
               <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
             </div>
 
@@ -48,7 +49,7 @@ export default function ReservationsAvailable({
                     <button
                       onClick={() => handleNewManagedReservation(reservation)}
                       title="Aceptar reserva"
-                      className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-green-100 cursor-pointer hover:bg-green-50 transition-colors">
+                      className="border-1 border-blue-900 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
                       <i className="fa-solid fa-check text-[#052e66]"></i>
                     </button>
                     <button

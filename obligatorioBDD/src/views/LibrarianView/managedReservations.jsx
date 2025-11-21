@@ -1,12 +1,11 @@
 import Data from './components/data'
+import { useState } from 'react'
 
-export default function ReservationsAvailable({
-  managedReservations,
-  handleRestoreAvailableReservation,
-}) {
-  const reservas = [managedReservations]
+export default function ReservationsAvailable({ managedReservations, handleRestoreAvailableReservation }) {
+  const reservas = [managedReservations];
+  const [open, setOpen] = useState(false);
 
-  const hayReservas = reservas.length > 0
+  const hayReservas = reservas.length > 0;
 
   return (
     <div className="text-xl">
@@ -34,7 +33,9 @@ export default function ReservationsAvailable({
           <>
             <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
               <div className="w-1/2 text-center">Turno</div>
+              <div className="w-1/4 text-center">Edificio</div>
               <div className="w-1/4 text-center">Salas</div>
+              <div className="w-1/4 text-center">Estado</div>
               <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
             </div>
 
@@ -54,7 +55,7 @@ export default function ReservationsAvailable({
                       <button
                         title="Información reserva"
                         className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">
-                        <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
+                        <i className="fa-solid fa-circle-info text-[#052e66]"></i>
                       </button>
                     </Data>
                   </li>
