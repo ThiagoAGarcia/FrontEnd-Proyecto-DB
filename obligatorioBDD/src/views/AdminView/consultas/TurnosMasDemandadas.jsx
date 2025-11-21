@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getSalasMasReservadasService from '../../service/getSalasMasReservadasService'
+import getTurnosMasDemandadosService from '../../../service/getTurnosMasDemandados'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-const SalasMasReservadas = () => {
+const TurnosMasDemandados = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,15 +11,14 @@ const SalasMasReservadas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getSalasMasReservadasService()
+        const res = await getTurnosMasDemandadosService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
-
-        const puntos = res.salasMasReservadas.map((item) => ({
-          label: `${item.Sala} (${item.Edificio})`,
-          y: item.CantidadDeReservasPor,
+        const puntos = res.shiftMostDemanded.map((item) => ({
+          label: `${item.start} - ${item.end}`,
+          y: item.reservas,
         }))
 
         setDataPoints(puntos)
@@ -39,14 +38,14 @@ const SalasMasReservadas = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Salas más reservadas',
+      text: 'Turnos más demandados',
     },
     axisY: {
       includeZero: true,
-      title: 'Cantidad de reservas',
+      title: 'Demanda',
     },
     axisX: {
-      title: 'Sala',
+      title: 'Turno',
     },
     data: [
       {
@@ -62,7 +61,7 @@ const SalasMasReservadas = () => {
   if (error) return <p style={{color: 'red'}}>Error: {error}</p>
 
   return (
-    <div className="w-full overflow-x-auto h-[70vh]">
+    <div className="w-full overflow-x-auto">
       <div className="min-w-[600px] max-w-[900px]" style={{margin: '0 auto'}}>
         <CanvasJSChart options={options} />
       </div>
@@ -70,4 +69,4 @@ const SalasMasReservadas = () => {
   )
 }
 
-export default SalasMasReservadas
+export default TurnosMasDemandados

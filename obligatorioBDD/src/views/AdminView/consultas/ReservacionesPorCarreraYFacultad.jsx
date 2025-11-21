@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getPorcentajeOcupacionPorSalaService from '../../service/getPorcentajeOcupacionPorSalaService'
+import getReservasPorCarreraYFacultadService from '../../../service/getReservasPorCarreraYFacultadService'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-
-const PorcentajeDeOcupacionPorSala = () => {
+const ReservacionesPorCarreraYFacultad = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,19 +11,20 @@ const PorcentajeDeOcupacionPorSala = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getPorcentajeOcupacionPorSalaService()
+        const res = await getReservasPorCarreraYFacultadService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
 
-        const puntos = res.porcentajeDeOcupacion.map((item) => ({
-          label: item.buildingName,
-          y: parseFloat(item.porcentaje_ocupacion),
+        const puntos = res.reservasPorCarreraYFacultad.map((item) => ({
+          label: `${item.Carrera} - ${item.Facultad}`,
+          y: parseFloat(item.CantidadReservasPor),
         }))
 
         setDataPoints(puntos)
       } catch (err) {
+        console.error(err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -39,14 +39,20 @@ const PorcentajeDeOcupacionPorSala = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Porcentaje de Ocupación por Sala',
+      text: 'Reservaciones por carrera y facultad',
+    },
+    axisY: {
+      includeZero: true,
+      title: 'cantidad',
+    },
+    axisX: {
+      title: 'carrera y facultad',
     },
     data: [
       {
-        type: 'doughnut',
-        indexLabel: '{label}: {y}%',
-        yValueFormatString: "#,##0.##'%'",
-        explodeOnClick: true,
+        type: 'bar',
+        indexLabelFontColor: '#5A5757',
+        indexLabelPlacement: 'outside',
         dataPoints: dataPoints,
       },
     ],
@@ -56,12 +62,12 @@ const PorcentajeDeOcupacionPorSala = () => {
   if (error) return <p style={{color: 'red'}}>Error: {error}</p>
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-full max-w-[500px]">
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[600px] max-w-[900px]" style={{margin: '0 auto'}}>
         <CanvasJSChart options={options} />
       </div>
     </div>
   )
 }
 
-export default PorcentajeDeOcupacionPorSala
+export default ReservacionesPorCarreraYFacultad
