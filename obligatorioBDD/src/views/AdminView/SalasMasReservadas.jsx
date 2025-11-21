@@ -62,7 +62,7 @@ const SalasMasReservadas = () => {
   if (error) return <p style={{color: 'red'}}>Error: {error}</p>
 
   return (
-    <div className="w-full overflow-x-auto h-[70vh]">
+    <div className="w-full overflow-x-auto">
       <div className="min-w-[600px] max-w-[900px]" style={{margin: '0 auto'}}>
         <CanvasJSChart options={options} />
       </div>

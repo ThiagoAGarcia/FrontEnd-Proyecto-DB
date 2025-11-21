@@ -15,13 +15,34 @@ const Estadisticas = () => {
           <SalasMasReservadas />
         </div>
 
-        <TurnosMasDemandados />
-        <PromedioPorSalas />
-        <ReservacionesPorCarreraYFacultad />
-        <PorcentajeDeOcupacionPorSala />
-        <CantidadReservasAlumnosYProfesores />
-        <CantidadSancionesProfesoresYAlumnos />
-        <PorcentajeReservasEfectivasYNoEfectivas />
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <TurnosMasDemandados />
+        </div>
+
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <PromedioPorSalas />
+        </div>
+        
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <ReservacionesPorCarreraYFacultad />
+        </div>
+        
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <PorcentajeDeOcupacionPorSala />
+        </div>
+        
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <CantidadReservasAlumnosYProfesores />
+        </div>
+        
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <CantidadSancionesProfesoresYAlumnos />
+        </div>
+        
+        <div className="w-full bg-white shadow-inner rounded-2xl p-4 flex flex-col border-2 border-gray-300">
+          <PorcentajeReservasEfectivasYNoEfectivas />
+        </div>
+        
       </section>
     </>
   )
