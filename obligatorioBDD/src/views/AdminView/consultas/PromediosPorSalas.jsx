@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getTurnosMasDemandadosService from '../../service/getTurnosMasDemandados'
+import getPromedioPorSalasService from '../../../service/getPromediosPorSalas'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-const TurnosMasDemandados = () => {
+const PromedioPorSalas = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,14 +11,15 @@ const TurnosMasDemandados = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getTurnosMasDemandadosService()
+        const res = await getPromedioPorSalasService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
-        const puntos = res.shiftMostDemanded.map((item) => ({
-          label: `${item.start} - ${item.end}`,
-          y: item.reservas,
+
+        const puntos = res.promedioPorSalas.map((item) => ({
+          label: `${item.name}`,
+          y: parseFloat(item.promedio_participantes),
         }))
 
         setDataPoints(puntos)
@@ -38,18 +39,18 @@ const TurnosMasDemandados = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Turnos más demandados',
+      text: 'Promedio por salas reservadas',
     },
     axisY: {
       includeZero: true,
-      title: 'Demanda',
+      title: 'Promedio',
     },
     axisX: {
-      title: 'Turno',
+      title: 'Sala',
     },
     data: [
       {
-        type: 'column',
+        type: 'bar',
         indexLabelFontColor: '#5A5757',
         indexLabelPlacement: 'outside',
         dataPoints: dataPoints,
@@ -69,4 +70,4 @@ const TurnosMasDemandados = () => {
   )
 }
 
-export default TurnosMasDemandados
+export default PromedioPorSalas

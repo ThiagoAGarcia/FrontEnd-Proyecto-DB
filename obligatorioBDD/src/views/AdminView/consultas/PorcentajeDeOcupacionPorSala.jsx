@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getPorcentajeReservasEfectivasYNoEfectivas from '../../service/getPorcentajeReservasEfectivasYNoEfectivas'
+import getPorcentajeOcupacionPorSalaService from '../../../service/getPorcentajeOcupacionPorSalaService'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
 
-const PorcentajeReservasEfectivasYNoEfectivas = () => {
+const PorcentajeDeOcupacionPorSala = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,19 +12,16 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getPorcentajeReservasEfectivasYNoEfectivas()
+        const res = await getPorcentajeOcupacionPorSalaService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
-        console.log(res)
 
-        const datos = res.reservas[0]
-
-        const puntos = [
-          {label: 'Finalizadas', y: parseFloat(datos.Finalizada)},
-          {label: 'Canceladas', y: parseFloat(datos.Cancelada)},
-        ]
+        const puntos = res.porcentajeDeOcupacion.map((item) => ({
+          label: item.buildingName,
+          y: parseFloat(item.porcentaje_ocupacion),
+        }))
 
         setDataPoints(puntos)
       } catch (err) {
@@ -42,22 +39,21 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Reservas Efectivas vs Canceladas',
+      text: 'Porcentaje de Ocupación por Sala',
     },
     data: [
       {
         type: 'doughnut',
         indexLabel: '{label}: {y}%',
-        yValueFormatString: '#,##0',
+        yValueFormatString: "#,##0.##'%'",
         explodeOnClick: true,
-        startAngle: -90,
         dataPoints: dataPoints,
       },
     ],
   }
 
   if (loading) return <p>Cargando estadísticas...</p>
-  if (error) return <p className="text-red-500">Error: {error}</p>
+  if (error) return <p style={{color: 'red'}}>Error: {error}</p>
 
   return (
     <div className="w-full flex justify-center">
@@ -68,4 +64,4 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
   )
 }
 
-export default PorcentajeReservasEfectivasYNoEfectivas
+export default PorcentajeDeOcupacionPorSala
