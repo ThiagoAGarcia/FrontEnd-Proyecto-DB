@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import CanvasJSReact from '@canvasjs/react-charts'
-import getSancionesProfesoresYAlumnos from '../../service/getSancionesAlumnosYProfesoresService'
+import getSalasMasReservadasService from '../../../service/getSalasMasReservadasService'
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart
-const CantidadSancionesProfesoresYAlumnos = () => {
+const SalasMasReservadas = () => {
   const [dataPoints, setDataPoints] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,15 +11,15 @@ const CantidadSancionesProfesoresYAlumnos = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getSancionesProfesoresYAlumnos()
+        const res = await getSalasMasReservadasService()
 
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
 
-        const puntos = res.sanciones.map((item) => ({
-          label: `${item.ci} - ${item.name} ${item.lastName}`,
-          y: parseFloat(item.sanciones),
+        const puntos = res.salasMasReservadas.map((item) => ({
+          label: `${item.Sala} (${item.Edificio})`,
+          y: item.CantidadDeReservasPor,
         }))
 
         setDataPoints(puntos)
@@ -39,18 +39,18 @@ const CantidadSancionesProfesoresYAlumnos = () => {
     exportEnabled: true,
     theme: 'light2',
     title: {
-      text: 'Sanciones',
+      text: 'Salas más reservadas',
     },
     axisY: {
       includeZero: true,
-      title: 'Promedio',
+      title: 'Cantidad de reservas',
     },
     axisX: {
       title: 'Sala',
     },
     data: [
       {
-        type: 'bar',
+        type: 'column',
         indexLabelFontColor: '#5A5757',
         indexLabelPlacement: 'outside',
         dataPoints: dataPoints,
@@ -70,4 +70,4 @@ const CantidadSancionesProfesoresYAlumnos = () => {
   )
 }
 
-export default CantidadSancionesProfesoresYAlumnos
+export default SalasMasReservadas
