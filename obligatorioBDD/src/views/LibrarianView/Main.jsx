@@ -142,11 +142,6 @@ export default function Main() {
               icon: 'fa-hourglass-end'
             },
             {
-              id: 'Reserva Express',
-              label: 'Express',
-              icon: 'fa-alarm-clock',
-            },
-            {
               id: 'Sanciones',
               label: 'Sanciones',
               icon: 'fa-circle-exclamation',
