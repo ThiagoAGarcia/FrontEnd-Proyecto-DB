@@ -39,8 +39,8 @@ export default function ReservationsAvailable({ managedReservations, handleResto
           Reservas Gestionadas
         </h2>
 
-        <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300 sm:w-1/4">
-          <button onClick={() => setDoubleCheckOpen(true)}className="mt-4 w-full py-1 cursor-pointer duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#0b49a1] transition">
+        <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300">
+          <button onClick={() => setDoubleCheckOpen(true)} className="bg-[#052e66] text-white px-5 p-2 rounded-xl cursor-pointer text-lg">
             Finalizar reservas
           </button>
         </div>

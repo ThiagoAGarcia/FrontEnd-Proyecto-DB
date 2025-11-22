@@ -19,19 +19,9 @@ export default function ReservationsAvailable({
             Reservas Disponibles
           </h2>
 
-          <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300 sm:w-1/2">
-            <div className="relative flex">
-              <input
-                type="text"
-                className="bg-white h-10 flex px-5 w-full rounded-full text-sm focus:outline-none border-2 placeholder-gray-400 border-gray-500"
-                placeholder="Buscar reservas"
-              />
-            </div>
-          </div>
-
           <button
             onClick={() => setOpenExpress(true)}
-            className="bg-[#052e66] text-white px-5 p-2 rounded-full cursor-pointer text-lg">
+            className="bg-[#052e66] text-white px-5 p-2 rounded-xl cursor-pointer text-lg">
             Reserva express
           </button>
         </div>
