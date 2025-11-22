@@ -1,11 +1,11 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal'
 import getRoomShift from '../../../service/getRoomShift.jsx'
 import newReservation from '../../../service/createReservation.jsx'
-import {toast} from 'react-toastify'
-import {Oval} from 'react-loader-spinner'
+import { toast } from 'react-toastify'
+import { Oval } from 'react-loader-spinner'
 
-export default function ModalReservation({open, onClose, selectedGroup}) {
+export default function ModalReservation({ open, onClose, selectedGroup }) {
   const [selectedSala, setSelectedSala] = useState(null)
   const [selectedTurno, setSelectedTurno] = useState(null)
   const [salas, setSalas] = useState([])
@@ -13,6 +13,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   const [date, setDate] = useState('')
   const [building, setBuilding] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('');
 
   const today = new Date()
   today.setDate(today.getDate() + 1)
@@ -22,11 +23,13 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   let minDate = `${year}-${month}-${day}`
 
   useEffect(() => {
-    setSalas([])
-    setTurnos([])
-    setSelectedSala(null)
-    setSelectedTurno(null)
-  }, [date, building])
+    setSalas([]);
+    setTurnos([]);
+    setSelectedSala(null);
+    setSelectedTurno(null);
+    setErrorMsg("");
+  }, [date, building]);
+
 
   useEffect(() => {
     if (!date || !building) return
@@ -34,18 +37,36 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
     let cancelled = false
 
     const fetchData = async () => {
-      const shiftToSend = selectedTurno ?? 'null'
-      const roomToSend = selectedSala ?? 'null'
-      try {
-        const res = await getRoomShift(building, date, shiftToSend, roomToSend)
-        if (cancelled || !res || !res.success) return
-        setSalas((prev) => (res.salas !== undefined ? res.salas : prev))
-        setTurnos((prev) => (res.turnos !== undefined ? res.turnos : prev))
-      } catch (err) {
-        if (cancelled) return
-        console.error('Error fetching room/shift:', err)
-      }
+  const shiftToSend = selectedTurno ?? 'null';
+  const roomToSend = selectedSala ?? 'null';
+
+  try {
+    const res = await getRoomShift(building, date, shiftToSend, roomToSend);
+
+    if (cancelled) return;
+
+    if (!res?.success) {
+      setErrorMsg(res?.description || "Error al obtener información.");
+      return; // ← NO borra las listas como querías
     }
+
+    setErrorMsg("");
+
+    if (res.salas !== undefined) {
+      setSalas(res.salas);
+    }
+
+    if (res.turnos !== undefined) {
+      setTurnos(res.turnos);
+    }
+
+  } catch (err) {
+    if (cancelled) return;
+    setErrorMsg("Error de conexión con el servidor.");
+  }
+};
+
+
 
     fetchData()
 
@@ -170,7 +191,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   }
 
   return (
-    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
+    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
       <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar relative">
         {isLoading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
@@ -217,77 +238,87 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <h3 className="font-bold text-[#052e66] text-xl mb-4">Salas</h3>
-            <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
-              {salas.map((sala) => (
-                <label
-                  key={sala.roomId}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    toggleSala(sala.roomId)
-                  }}
-                  className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                    selectedSala === sala.roomId
-                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                  } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                  <input
-                    type="radio"
-                    name="sala"
-                    className="hidden"
-                    value={sala.roomId}
-                    checked={selectedSala === sala.roomId}
-                    readOnly
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-lg font-semibold">
-                      {sala.roomName}
-                    </span>
-                  </div>
-                  <span className="text-sm text-gray-600">
-                    {' '}
-                    Capacidad: {sala.capacity}{' '}
-                  </span>
-                </label>
-              ))}
-            </div>
+        {errorMsg && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-xl">
+            {errorMsg}
           </div>
+        )}
 
-          <div>
-            <h3 className="font-bold text-[#052e66] text-xl mb-4">Turnos</h3>
-            <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
-              {turnos.map((turno) => (
-                <label
-                  key={turno.shiftId}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    toggleTurno(turno.shiftId)
-                  }}
-                  className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                    selectedTurno === turno.shiftId
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {salas.length > 0 && (
+            <div>
+              <h3 className="font-bold text-[#052e66] text-xl mb-4">Salas</h3>
+              <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
+                {salas.map((sala) => (
+                  <label
+                    key={sala.roomId}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      toggleSala(sala.roomId)
+                    }}
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
                       ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                       : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                  } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                  <input
-                    type="radio"
-                    name="turno"
-                    className="hidden"
-                    value={turno.shiftId}
-                    checked={selectedTurno === turno.shiftId}
-                    readOnly
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-gray-800">
-                      {turno.start} - {turno.end}
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    <input
+                      type="radio"
+                      name="sala"
+                      className="hidden"
+                      value={sala.roomId}
+                      checked={selectedSala === sala.roomId}
+                      readOnly
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-lg font-semibold">
+                        {sala.roomName}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-600">
+                      {' '}
+                      Capacidad: {sala.capacity}{' '}
                     </span>
-                  </div>
-                </label>
-              ))}
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {turnos.length > 0 && (
+            <div>
+              <h3 className="font-bold text-[#052e66] text-xl mb-4">Turnos</h3>
+              <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
+                {turnos.map((turno) => (
+                  <label
+                    key={turno.shiftId}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      toggleTurno(turno.shiftId)
+                    }}
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
+                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    <input
+                      type="radio"
+                      name="turno"
+                      className="hidden"
+                      value={turno.shiftId}
+                      checked={selectedTurno === turno.shiftId}
+                      readOnly
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-gray-800">
+                        {turno.start} - {turno.end}
+                      </span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+
 
         <div className="flex lg:justify-end justify-center mt-6">
           <button
