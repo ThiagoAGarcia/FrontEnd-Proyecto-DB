@@ -6,8 +6,8 @@ import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx'
 import getGroupDataService from '../../../service/getGroupDataService.jsx'
 import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx'
 import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
-import getSearchUsersRequest from '../../../service/getSearchUsersRequest.jsx'
 import {Oval} from 'react-loader-spinner'
+import getSearchUsersOutsideRequest from '../../../service/getSearchUsersOutsideRequest.jsx'
 
 export default function SelectedGroupInfoModal({
   selectedGroup,
@@ -23,7 +23,7 @@ export default function SelectedGroupInfoModal({
 
   async function handleSearch(text) {
     if (isLoading || !selectedGroupData?.id) return
-    const data = await getSearchUsersRequest(text, selectedGroupData.id)
+    const data = await getSearchUsersOutsideRequest(text, selectedGroupData.id)
     if (data?.success) {
       setUsuarios(data.users)
     }
