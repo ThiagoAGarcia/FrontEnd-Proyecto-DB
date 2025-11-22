@@ -1,7 +1,7 @@
 const API = "http://localhost:5000";
 const PATH = "/patchFinishedReservations";
 
-export default async function patchFinishedReservationsService() {
+export default async function patchFinishedReservationsService(BODY) {
     try {
         const res = await fetch(`${API}${PATH}`, {
             method: "PATCH",

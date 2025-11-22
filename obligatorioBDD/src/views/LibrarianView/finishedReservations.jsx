@@ -1,33 +1,32 @@
 import { useState, useEffect } from "react";
 import ModalSanction from "./components/modalSanction";
-import Data from './components/data'
+import Data from "./components/data";
+import getGroupMembersService from '../../service/getGroupMembersService';
 
 export default function FinishedReservations({ finishedReservations }) {
-    const hayReservas = finishedReservations.length > 0;
+    const hayReservas = Array.isArray(finishedReservations) && finishedReservations.length > 0;
     const [selectedGroup, setSelectedGroup] = useState('');
-    const [selectedGroupData, setSelectedGroupData] = useState(null);
+    const [groupMembers, setGroupMembers] = useState(null);
     const [sanctionOpen, setSanctionOpen] = useState(false);
 
     const selectGroup = (groupId) => {
-        setInfoOpen(true);
+        setSanctionOpen(true);
         setSelectedGroup(groupId);
     }
 
-    console.log(finishedReservations)
-
     useEffect(() => {
-        const getGroupData = async () => {
+        const getGroupMembers = async () => {
             if (selectedGroup === '') {
                 return
             } else {
-                const groupData = await getGroupDataService(selectedGroup)
-                if (groupData.success) {
-                    setSelectedGroupData(groupData.grupo)
+                const groupMembers = await getGroupMembersService(selectedGroup)
+                if (groupMembers.success) {
+                    setGroupMembers(groupMembers.members)
                 }
             }
         }
 
-        getGroupData();
+        getGroupMembers();
     }, [selectedGroup])
 
     return (
@@ -64,7 +63,7 @@ export default function FinishedReservations({ finishedReservations }) {
                         <ModalSanction
                             open={sanctionOpen}
                             onClose={() => setSanctionOpen(false)}
-                            selectedGroupData={selectedGroupData}
+                            groupMembers={groupMembers}
                         />
                     </>
                 ) : (

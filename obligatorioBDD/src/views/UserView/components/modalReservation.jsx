@@ -151,7 +151,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
       })
 
       return
-    }
+    } 
 
     try {
       setIsLoading(true)

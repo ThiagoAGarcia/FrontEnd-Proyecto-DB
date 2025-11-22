@@ -8,7 +8,7 @@ import getReservationsTodayService from '../../service/getReservationsTodayServi
 import getManagedReservationsTodayService from '../../service/getManagedReservationsTodayService'
 import patchManageReservationService from '../../service/patchManageReservationService'
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService'
-import Sanctions from './finishedReservations'
+import Sanctions from './sanctions'
 import getFinishedReservationsService from '../../service/getFinishedReservations'
 import FinishedReservations from './finishedReservations'
 
@@ -128,22 +128,22 @@ export default function Main() {
           {[
             {
               id: 'Reservas Disponibles',
-              label: 'Reservas Disponibles',
+              label: 'Disponibles',
               icon: 'fa-calendar',
             },
             {
               id: 'Reservas Gestionadas',
-              label: 'Reservas Gestionadas',
+              label: 'Gestionadas',
               icon: 'fa-check',
             },
             {
               id: 'Reservas finalizadas',
-              label: 'Reservas finalizadas',
-              icon: 'fa-circle-exclamation'
+              label: 'Finalizadas',
+              icon: 'fa-hourglass-end'
             },
             {
               id: 'Reserva Express',
-              label: 'Reserva Express',
+              label: 'Express',
               icon: 'fa-alarm-clock',
             },
             {

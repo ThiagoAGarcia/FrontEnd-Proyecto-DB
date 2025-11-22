@@ -7,25 +7,26 @@ import { toast } from 'react-toastify';
 export default function ReservationsAvailable({ managedReservations, handleRestoreAvailableReservation, managing, setManaging }) {
   const hayReservas = managedReservations && managedReservations.length > 0
 
-  const [doubleCheck, setDoubleCheck] = useState(true);
   const [doubleCheckOpen, setDoubleCheckOpen] = useState(false);
-
-  const handleDoubleCheck = () => {
-    if (doubleCheck) {
-      setDoubleCheckOpen(true);
-    }
-  }
+  const [shift, setShift] = useState('');
 
   console.log(managedReservations)
 
   const handleFinishManagedReservations = async () => {
-    const finishedReservations = await patchFinishedReservationsService()
+    console.log(shift)
+    const BODY = {
+      "shift": shift
+    }
+
+    console.log(BODY)
+    const finishedReservations = await patchFinishedReservationsService(BODY)
     if (finishedReservations.success) {
       setManaging(!managing)
       toast.success(finishedReservations.description, {
         position: 'bottom-left',
         autoClose: 2500,
       })
+      setDoubleCheckOpen(false);
     } else {
       console.log(finishedReservations.description)
     }
@@ -39,7 +40,7 @@ export default function ReservationsAvailable({ managedReservations, handleResto
         </h2>
 
         <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300 sm:w-1/4">
-          <button onClick={() => handleFinishManagedReservations()}className="mt-4 w-full py-1 cursor-pointer duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#0b49a1] transition">
+          <button onClick={() => setDoubleCheckOpen(true)}className="mt-4 w-full py-1 cursor-pointer duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#0b49a1] transition">
             Finalizar reservas
           </button>
         </div>
@@ -85,20 +86,38 @@ export default function ReservationsAvailable({ managedReservations, handleResto
               <div className='flex flex-col items-center p-2'>
                 <div className='flex items-center'>
                   <h2>
-                  ¿Estás seguro que quieres finalizar
-                  <br></br>
-                  todas las reservas del turno de las {}?
+                  Elige el horario de las reservas terminadas
                   </h2>
                 </div>
                 
+                <div>
+                  <label className="font-medium text-gray-700">Turno</label>
+                  <select 
+                    id='shifts'
+                    onChange={(e) => setShift(e.target.value)}
+                    >
+                    <option value='1'>08:00</option>
+                    <option value='2'>09:00</option>
+                    <option value='3'>10:00</option>
+                    <option value='4'>11:00</option>
+                    <option value='5'>12:00</option>
+                    <option value='6'>13:00</option>
+                    <option value='7'>14:00</option>
+                    <option value='8'>15:00</option>
+                    <option value='9'>16:00</option>
+                    <option value='10'>17:00</option>
+                    <option value='11'>18:00</option>
+                    <option value='12'>19:00</option>
+                    <option value='13'>20:00</option>
+                    <option value='14'>21:00</option>
+                    <option value='15'>22:00</option>
+                  </select>
+                </div>
+
                 <div className='w-full flex flex-row justify-center'>
-                  <button type='submit' onClick={() => handleFinishManagedReservations()} className='w-1/4 bg-blue-900 rounded-md p-2 m-1 text-white font-semibold hover:bg-blue-800 cursor-pointer transition-colors'>Aceptar</button>
+                  <button onClick={() => handleFinishManagedReservations()} className='w-1/4 bg-blue-900 rounded-md p-2 m-1 text-white font-semibold hover:bg-blue-800 cursor-pointer transition-colors'>Aceptar</button>
                   <button onClick={() => setDoubleCheckOpen(false)} className='w-1/4 bg-red-500 border-2 rounded-md p-2 m-1 text-white font-semibold hover:bg-red-600 cursor-pointer transition-colors'>Cancelar</button>
                 </div>
-                <form onSubmit={() => setDoubleCheckOpen(false)}>
-                  <input type='checkbox' name='remember'/>
-                  <label htmlFor='remember'>No volver a mostrar</label>
-                </form>
               </div>
               
             </Modal>
