@@ -9,6 +9,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
   const [roomName, setRoomName] = useState('')
   const [capacity, setCapacity] = useState('')
   const [type, setType] = useState('')
+  const [status, setStatus] = useState('')
   const [errores, setErrores] = useState({})
 
   useEffect(() => {
@@ -16,13 +17,16 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
     setRoomName(selectedRoom.roomName || '')
     setCapacity(selectedRoom.capacity || '')
     setType(selectedRoom.roomType || '')
+    setStatus(selectedRoom.status || '')
     setErrores({})
   }, [open, selectedRoom])
+
 
   const resetForm = () => {
     setRoomName(selectedRoom.roomName || '')
     setCapacity(selectedRoom.capacity || '')
     setType(selectedRoom.roomType || '')
+    setStatus(selectedRoom.status || '')
     setErrores({})
   }
 
@@ -34,10 +38,12 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
       e.roomName = 'Nombre inválido, es muy corto'
 
     const capNumber = Number(capacity)
-    if (!capNumber || capNumber <= 3)
-      e.capacity = 'La capacidad debe ser mayor a 3'
+    if (!capNumber || capNumber < 6)
+      e.capacity = 'La capacidad debe ser mayor o igual a 6'
 
     if (!type) e.type = 'Seleccione un tipo de sala'
+
+    if (!status) e.status = 'Seleccione un estado para la sala'
 
     setErrores(e)
     if (Object.keys(e).length > 0) return
@@ -47,6 +53,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
       roomName: roomName.trim(),
       capacity: capNumber,
       roomType: type,
+      status: status,
       buildingName: selectedRoom.buildingName
     }
 
@@ -82,7 +89,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
   return (
     <Modal
       open={open}
-      onClose={isLoading ? () => {} : () => { onClose(); resetForm() }}
+      onClose={isLoading ? () => { } : () => { onClose(); resetForm() }}
     >
       <div className="relative max-h-screen sm:max-h-[80vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
         {isLoading && (
@@ -158,7 +165,24 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
                 <p className="text-red-600 text-xs">{errores.type}</p>
               )}
             </div>
-            
+
+            <div className="mb-3">
+              <label className="font-medium text-[#052e66]">Estado de la sala</label>
+              <select
+                value={status}
+                onChange={(e) => !isLoading && setStatus(e.target.value)}
+                disabled={isLoading}
+                className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                <option value="">Seleccione un estado para la sala</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+              {errores.status && (
+                <p className="text-red-600 text-xs">{errores.status}</p>
+              )}
+            </div>
+
           </section>
         </div>
 

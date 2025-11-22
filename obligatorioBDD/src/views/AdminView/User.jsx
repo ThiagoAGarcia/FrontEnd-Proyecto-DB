@@ -3,7 +3,7 @@ import getUsersService from '../../service/getUsersService'
 import deleteUserByCiService from '../../service/deleteUserByCi'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import ModalUpdate from './modalUpdate'
+import ModalUpdate from './ModifyUserModal'
 import CreateUserModal from './CreateUserModal'
 
 export default function UserView() {

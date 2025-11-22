@@ -140,9 +140,10 @@ export default function Salas() {
                                         <>
                                             <div className="hidden lg:flex w-full px-4 text-left justify-between text-gray-700 font-semibold pb-1 border-b border-gray-300 md:text-lg text-base">
                                                 <div className="w-1/4 text-center">Nombre</div>
-                                                <div className="w-1/5 text-center">Capacidad</div>
+                                                <div className="w-1/5 text-center">Status</div>
+                                                <div className="w-1/4 text-center">Capacidad</div>
                                                 <div className="w-1/4 text-center">Tipo</div>
-                                                <div className="w-1/2 text-center">Acciones</div>
+                                                <div className="w-1/5 text-center">Acciones</div>
                                             </div>
 
                                             <ul className="w-full overflow-auto scrollbar mt-1 p-2">
@@ -155,6 +156,12 @@ export default function Salas() {
                                                         </div>
 
                                                         <div className="lg:w-1/5 w-full lg:border-r-2 border-gray-300">
+                                                            <p className={`text-sm lg:text-lg text-gray-800 font-semibold break-all text-left lg:text-center ${data.status === 'Activo' ? 'text-green-600' : 'text-red-600'}`}>
+                                                                {data.status}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="lg:w-1/4 w-full lg:border-r-2 border-gray-300">
                                                             <p className="text-base lg:text-xl text-gray-600 lg:text-gray-800 font-semibold text-left lg:text-center">
                                                                 <span className="lg:hidden inline">Capacidad: </span>{data.capacity}
                                                             </p>
@@ -167,18 +174,13 @@ export default function Salas() {
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex flex-col sm:flex-row justify-start lg:justify-center items-stretch gap-3 lg:w-1/2 w-full text-center">
+                                                        <div className="flex flex-col sm:flex-row justify-start lg:justify-center items-stretch gap-3 lg:w-1/5 w-full text-center">
                                                             <button className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-[#052e66] text-white hover:bg-[#073c88]" onClick={() => {
                                                                 setSelectedRoom(data)
                                                                 setOpenModify(true)
                                                             }}>
                                                                 <i className="fa-solid fa-pen text-white"></i>
                                                                 <span className="sm:hidden">Modificar</span>
-                                                            </button>
-
-                                                            <button onClick={() => deleteUser(data.ci)} className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-white text-[#052e66] hover:bg-[#f4f7fc]">
-                                                                <i className="fa-solid fa-trash text-[#052e66]"></i>
-                                                                <span className="sm:hidden">Eliminar</span>
                                                             </button>
                                                         </div>
                                                     </li>
