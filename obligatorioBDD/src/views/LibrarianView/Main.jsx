@@ -8,8 +8,9 @@ import getReservationsTodayService from '../../service/getReservationsTodayServi
 import getManagedReservationsTodayService from '../../service/getManagedReservationsTodayService'
 import patchManageReservationService from '../../service/patchManageReservationService'
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService'
-import Sanctions from './sanctions'
+import Sanctions from './finishedReservations'
 import getFinishedReservationsService from '../../service/getFinishedReservations'
+import FinishedReservations from './finishedReservations'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Reservas Disponibles')
@@ -140,6 +141,11 @@ export default function Main() {
               icon: 'fa-check',
             },
             {
+              id: 'Reservas finalizadas',
+              label: 'Reservas finalizadas',
+              icon: 'fa-circle-exclamation'
+            },
+            {
               id: 'Reserva Express',
               label: 'Reserva Express',
               icon: 'fa-alarm-clock',
@@ -176,9 +182,15 @@ export default function Main() {
             {activeTab === 'Reservas Gestionadas' && (
               <ManagedReservations
                 managedReservations={managedReservations}
-                handleRestoreAvailableReservation={
-                  handleRestoreAvailableReservation
-                }
+                handleRestoreAvailableReservation={handleRestoreAvailableReservation}
+                managing={managing}
+                setManaging={setManaging}
+              />
+            )}
+
+            {activeTab === 'Reservas finalizadas' && (
+              <FinishedReservations 
+                finishedReservations={finishedReservations}
               />
             )}
 
@@ -189,7 +201,7 @@ export default function Main() {
             )}
 
             {activeTab === 'Sanciones' && (
-              <Sanctions finishedReservations={finishedReservations}/>
+              <Sanctions />
             )}
           </div>
         </div>

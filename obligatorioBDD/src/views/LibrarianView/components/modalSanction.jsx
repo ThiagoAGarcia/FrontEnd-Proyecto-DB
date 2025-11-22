@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import Modal from '../../../components/modal';
 import postSanctionService from '../../../service/postSanctionService';
+import { toast } from "react-toastify";
 
 export default function ModalSanction({ open, onClose, selectedGroupMembers }) {
     const date = new Date(); let day = date.getDate(); let month = date.getMonth() + 1; let year = date.getFullYear();
-    let currentDate = `${year}-${month}-${day}`; let maxEndDate = `${year}-${month + 2}-${day}`;
+    let currentDate = `${year}-${month}-${day}`;
 
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [selectedDescription, setSelectedDescription] = useState('');
@@ -29,10 +30,13 @@ export default function ModalSanction({ open, onClose, selectedGroupMembers }) {
 
         if (descriptionSelect === 'Comer') {
             endDate.setUTCDate(endDate.getDay() + 15);
+            console.log(`Fecha fin comer: ${endDate}`)
         } else if (descriptionSelect === 'Ruidoso') {
             endDate.setUTCMonth(endDate.getMonth() + 1);
+            console.log(`Fecha fin ruidoso: ${endDate}`)
         } else {
             endDate.setUTCMonth(endDate.getMonth() + 2);
+            console.log(`Fecha fin otros: ${endDate}`)
         }
 
         let endDateDay = endDate.getDay(); let endDateMonth = endDate.getMonth(); let endDateYear = endDate.getFullYear();
@@ -72,6 +76,13 @@ export default function ModalSanction({ open, onClose, selectedGroupMembers }) {
                     const sanctions = await Promise.all(sanctionsSent);
                     console.log(sanctions);
                     setTrigger(false);
+
+                    if (sanctions.success) {
+                        toast.success('Sanción enviada', {
+                            position: 'bottom-left',
+                            autoClose: 2500,
+                        })
+                    }
                 } catch (error) {
                     console.log(error);
                     setTrigger(false);
@@ -95,7 +106,11 @@ export default function ModalSanction({ open, onClose, selectedGroupMembers }) {
             </form>
 
             <select id='description'>
-                <option></option>
+                <option value='Comer'>Comer</option>
+                <option value='Ruidoso'>Ruidoso</option>
+                <option value='Vandalismo'>Vandalismo</option>
+                <option value='Imprudencia'>Imprudencia</option>
+                <option value='Ocupar'>Ocupar</option>
             </select>
 
             <div className="flex flex-col">
@@ -105,7 +120,7 @@ export default function ModalSanction({ open, onClose, selectedGroupMembers }) {
 
             <div className="flex flex-col">
                 <label className="text-sm font-semibold text-gray-600 mb-1">Fecha de finalización</label>
-                <input id="endDate" type="date" min={currentDate} max={maxEndDate} className="bg-gray-100 border rounded-xl px-3 py-2 shadow-sm focus:outline-none border-gray-500 focus:ring-2 focus:ring-[#052e66]/50 transition-all" />
+                <p>{selectedEndDate}</p>
             </div>
         </Modal>
     )
