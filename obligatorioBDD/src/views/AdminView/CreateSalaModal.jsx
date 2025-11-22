@@ -1,4 +1,4 @@
-import Modal from '../../components/Modal'
+import Modal from '../../components/modal'
 import { Oval } from 'react-loader-spinner'
 import { useState } from 'react'
 import createStudyRoom from '../../service/createStudyRoom'

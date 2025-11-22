@@ -1,78 +1,55 @@
-import postSanctionService from "../../service/postSanctionService";
-import { useState } from "react";
-import ModalSanction from "./components/modalSanction";
+import { useEffect, useState } from "react"
+import getDaySanctionsService from "../../service/getDaySanctionsService"
 
-export default function Sanctions({ finishedReservations }) {
-    const hayReservas = Array.isArray(finishedReservations) && finishedReservations.length > 0;
-    const [selectedGroup, setSelectedGroup] = useState('')
-    const [selectedGroupData, setSelectedGroupData] = useState(null)
-
-    const selectGroup = (open, groupId) => {
-        setInfoOpen(open);
-        setSelectedGroup(groupId);
-    }
+export default function Sanctions() {
+    const [sanctions, setSanctions] = useState([]);
 
     useEffect(() => {
-        const getGroupData = async () => {
-            if (selectedGroup === '') {
-                return
+        const getTodaySanctions = async () => {
+            const todaySanctions = await getDaySanctionsService();
+            console.log(todaySanctions)
+            if (todaySanctions?.success) {
+                let todaySanctionsArray = todaySanctions.sanciones || [];
+                console.log(todaySanctionsArray)
+                setSanctions(todaySanctionsArray);
             } else {
-                const groupData = await getGroupDataService(selectedGroup)
-                if (groupData.success) {
-                    setSelectedGroupData(groupData.grupo)
-                }
+                setSanctions([]);
             }
         }
 
-        getGroupData();
-    }, [selectedGroup])
-
-    const handleNewSanction = async () => {
-        const newSanction = await postSanctionService();
-        if (newSanction.success) {
-
-        }
-    }
+        getTodaySanctions();
+    }, [])
 
     return (
-        <div>
-            <div
-                className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : ''
-                    }`}>
-                {hayReservas ? (
-                    <>
-                        <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
-                            <div className="w-1/2 text-center">Turno</div>
-                            <div className="w-1/4 text-center">Salas</div>
-                            <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
-                        </div>
+        <>
+            {sanctions.length > 0 ?
+                (
+                    <div className="flex flex-col gap-5 items-start">
+                        <h2 className="ml-1 font-semibold text-gray-800 text-2xl">
+                            Sanciones
+                        </h2>
+                        {sanctions.map((sanction) => (
+                            <div key={sanction.id} className="border-grey-400 border-1 p-2 rounded-lg w-full">
+                                <h2 className="font-semibold text-blue-900 text-xl">{sanction.name} {sanction.lastName}</h2>
 
-                        <ul className="w-full overflow-auto scrollbar mt-1">
-                            {finishedReservations &&
-                                finishedReservations.map((reservation) => (
-                                    <li key={reservation.studyGroupId}>
-                                        <Data reserva={reservation}>
-                                            <button
-                                                onClick={() =>
-                                                    selectGroup(true, reservation.studyGroupId)
-                                                }
-                                                title="Nueva sanción"
-                                                className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">                                                <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
-                                            </button>
-                                        </Data>
-                                    </li>
-                                ))}
-                        </ul>
-                        <ModalSanction
-                            selectedGroupData={selectedGroupData}
-                        />
-                    </>
-                ) : (
+                                <p><span className="font-semibold">Correo: </span>{sanction.mail}</p>
+                                <p><span className="font-semibold">Cédula: </span>{sanction.ci}</p>
+
+                                <p><span className="text-blue-900 font-semibold">Bibliotecario: </span> {sanction.librarian}</p>
+                                <div className="w-1/2 flex flex-row justify-between p-8">
+                                    <p><span className="text-grey-800">Fecha de inicio</span> <br></br> {sanction.start}</p>
+                                    <p><span className="text-grey-800">Fecha de finalización</span> <br></br> {sanction.end}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+                :
+                (
                     <span className="font-medium text-2xl text-gray-600">
                         No se ha enviado ninguna sanción hoy
                     </span>
                 )}
-            </div>
-        </div>
+        </>
     )
 }

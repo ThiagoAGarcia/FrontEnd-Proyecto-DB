@@ -1,12 +1,36 @@
 import Data from './components/data'
+import patchFinishedReservationsService from '../../service/patchFinishedReservationsService';
+import { useState } from 'react';
+import Modal from '../../components/modal';
+import { toast } from 'react-toastify';
 
-export default function ReservationsAvailable({
-  managedReservations,
-  handleRestoreAvailableReservation,
-}) {
-  const reservas = [managedReservations]
+export default function ReservationsAvailable({ managedReservations, handleRestoreAvailableReservation, managing, setManaging }) {
+  const hayReservas = managedReservations && managedReservations.length > 0
 
-  const hayReservas = reservas.length > 0
+  const [doubleCheckOpen, setDoubleCheckOpen] = useState(false);
+  const [shift, setShift] = useState('');
+
+  console.log(managedReservations)
+
+  const handleFinishManagedReservations = async () => {
+    console.log(shift)
+    const BODY = {
+      "shift": shift
+    }
+
+    console.log(BODY)
+    const finishedReservations = await patchFinishedReservationsService(BODY)
+    if (finishedReservations.success) {
+      setManaging(!managing)
+      toast.success(finishedReservations.description, {
+        position: 'bottom-left',
+        autoClose: 2500,
+      })
+      setDoubleCheckOpen(false);
+    } else {
+      console.log(finishedReservations.description)
+    }
+  }
 
   return (
     <div className="text-xl">
@@ -15,14 +39,10 @@ export default function ReservationsAvailable({
           Reservas Gestionadas
         </h2>
 
-        <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300 sm:w-1/2">
-          <div className="relative flex">
-            <input
-              type="text"
-              className="bg-white h-10 flex px-5 w-full rounded-full text-sm focus:outline-none border-2 placeholder-gray-400 border-gray-500"
-              placeholder="Buscar reservas"
-            />
-          </div>
+        <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300">
+          <button onClick={() => setDoubleCheckOpen(true)} className="bg-[#052e66] text-white px-5 p-2 rounded-xl cursor-pointer text-lg">
+            Finalizar reservas
+          </button>
         </div>
       </div>
 
@@ -35,6 +55,8 @@ export default function ReservationsAvailable({
             <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
               <div className="w-1/2 text-center">Turno</div>
               <div className="w-1/4 text-center">Salas</div>
+              <div className="w-1/4 text-center">Edificio</div>
+              <div className="w-1/4 text-center">Estado</div>
               <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
             </div>
 
@@ -60,6 +82,45 @@ export default function ReservationsAvailable({
                   </li>
                 ))}
             </ul>
+            <Modal open={doubleCheckOpen} onClose={() => setDoubleCheckOpen(false)}>
+              <div className='flex flex-col items-center p-2'>
+                <div className='flex items-center'>
+                  <h2>
+                  Elige el horario de las reservas terminadas
+                  </h2>
+                </div>
+                
+                <div>
+                  <label className="font-medium text-gray-700">Turno</label>
+                  <select 
+                    id='shifts'
+                    onChange={(e) => setShift(e.target.value)}
+                    >
+                    <option value='1'>08:00</option>
+                    <option value='2'>09:00</option>
+                    <option value='3'>10:00</option>
+                    <option value='4'>11:00</option>
+                    <option value='5'>12:00</option>
+                    <option value='6'>13:00</option>
+                    <option value='7'>14:00</option>
+                    <option value='8'>15:00</option>
+                    <option value='9'>16:00</option>
+                    <option value='10'>17:00</option>
+                    <option value='11'>18:00</option>
+                    <option value='12'>19:00</option>
+                    <option value='13'>20:00</option>
+                    <option value='14'>21:00</option>
+                    <option value='15'>22:00</option>
+                  </select>
+                </div>
+
+                <div className='w-full flex flex-row justify-center'>
+                  <button onClick={() => handleFinishManagedReservations()} className='w-1/4 bg-blue-900 rounded-md p-2 m-1 text-white font-semibold hover:bg-blue-800 cursor-pointer transition-colors'>Aceptar</button>
+                  <button onClick={() => setDoubleCheckOpen(false)} className='w-1/4 bg-red-500 border-2 rounded-md p-2 m-1 text-white font-semibold hover:bg-red-600 cursor-pointer transition-colors'>Cancelar</button>
+                </div>
+              </div>
+              
+            </Modal>
           </>
         ) : (
           <span className="font-medium text-2xl text-gray-600">

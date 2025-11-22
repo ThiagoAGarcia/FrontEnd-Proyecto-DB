@@ -7,6 +7,12 @@ export default function Data({ children, reserva }) {
             <div className="w-1/4 text-center border-r-2 border-gray-300">
                 <span><h1 className="hidden sm:inline"></h1> {reserva.studyRoom}</span>
             </div>
+            <div className="w-1/4 text-center border-r-2 border-gray-300">
+                <span><h1 className="hidden sm:inline"></h1> {reserva.building}</span>
+            </div>
+            <div className="w-1/4 text-center border-r-2 border-gray-300">
+                <span><h1 className="hidden sm:inline"></h1> {reserva.state}</span>
+            </div>
             <div className="w-1/2 sm:w-1/3 flex justify-center items-center text-sm md:text-xl">
                 {children}
             </div>

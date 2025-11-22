@@ -10,6 +10,7 @@ import patchManageReservationService from '../../service/patchManageReservationS
 import patchUnmanageReservationService from '../../service/patchUnmanageReservationService'
 import Sanctions from './sanctions'
 import getFinishedReservationsService from '../../service/getFinishedReservations'
+import FinishedReservations from './finishedReservations'
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState('Reservas Disponibles')
@@ -127,13 +128,18 @@ export default function Main() {
           {[
             {
               id: 'Reservas Disponibles',
-              label: 'Reservas Disponibles',
+              label: 'Disponibles',
               icon: 'fa-calendar',
             },
             {
               id: 'Reservas Gestionadas',
-              label: 'Reservas Gestionadas',
+              label: 'Gestionadas',
               icon: 'fa-check',
+            },
+            {
+              id: 'Reservas finalizadas',
+              label: 'Finalizadas',
+              icon: 'fa-hourglass-end'
             },
             {
               id: 'Sanciones',
@@ -168,14 +174,20 @@ export default function Main() {
             {activeTab === 'Reservas Gestionadas' && (
               <ManagedReservations
                 managedReservations={managedReservations}
-                handleRestoreAvailableReservation={
-                  handleRestoreAvailableReservation
-                }
+                handleRestoreAvailableReservation={handleRestoreAvailableReservation}
+                managing={managing}
+                setManaging={setManaging}
+              />
+            )}
+
+            {activeTab === 'Reservas finalizadas' && (
+              <FinishedReservations 
+                finishedReservations={finishedReservations}
               />
             )}
 
             {activeTab === 'Sanciones' && (
-              <Sanctions finishedReservations={finishedReservations} />
+              <Sanctions />
             )}
           </div>
         </div>
