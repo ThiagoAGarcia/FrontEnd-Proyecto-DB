@@ -18,40 +18,40 @@ export default function Main() {
   const [finishedReservations, setFinishedReservations] = useState([])
   const [managing, setManaging] = useState(true)
 
+  const getReservationsToday = async () => {
+    const reservationsRes = await getReservationsTodayService()
+    if (reservationsRes?.success) {
+      let reservationArray = reservationsRes.reservations || []
+      reservationArray.sort((a, b) => a.start.localeCompare(b.start))
+      setAvailableReservations(reservationArray)
+    } else {
+      setAvailableReservations([])
+    }
+  }
+
+  const getManagedReservationsToday = async () => {
+    const managedReservationsRes = await getManagedReservationsTodayService()
+    if (managedReservationsRes?.success) {
+      let managedReservationsArray = managedReservationsRes.reservations || []
+      managedReservationsArray.sort((a, b) => a.start.localeCompare(b.start))
+      setManagedReservations(managedReservationsArray)
+    } else {
+      setManagedReservations([])
+    }
+  }
+
+  const getFinishedReservationsToday = async () => {
+    const finishedReservations = await getFinishedReservationsService()
+    if (finishedReservations?.success) {
+      let finishedReservationsArray = finishedReservations.reservations || []
+      finishedReservationsArray.sort((a, b) => a.start.localeCompare(b.start))
+      setFinishedReservations(finishedReservationsArray)
+    } else {
+      setFinishedReservations([])
+    }
+  }
+
   useEffect(() => {
-    const getReservationsToday = async () => {
-      const reservationsRes = await getReservationsTodayService()
-      if (reservationsRes?.success) {
-        let reservationArray = reservationsRes.reservations || []
-        reservationArray.sort((a, b) => a.start.localeCompare(b.start))
-        setAvailableReservations(reservationArray)
-      } else {
-        setAvailableReservations([])
-      }
-    }
-
-    const getManagedReservationsToday = async () => {
-      const managedReservationsRes = await getManagedReservationsTodayService()
-      if (managedReservationsRes?.success) {
-        let managedReservationsArray = managedReservationsRes.reservations || []
-        managedReservationsArray.sort((a, b) => a.start.localeCompare(b.start))
-        setManagedReservations(managedReservationsArray)
-      } else {
-        setManagedReservations([])
-      }
-    }
-
-    const getFinishedReservationsToday = async () => {
-      const finishedReservations = await getFinishedReservationsService()
-      if (finishedReservations?.success) {
-        let finishedReservationsArray = finishedReservations.reservations || []
-        finishedReservationsArray.sort((a, b) => a.start.localeCompare(b.start))
-        setFinishedReservations(finishedReservationsArray)
-      } else {
-        setFinishedReservations([])
-      }
-    }
-
     getReservationsToday()
     getManagedReservationsToday()
     getFinishedReservationsToday()
@@ -66,7 +66,6 @@ export default function Main() {
     const manageReservation = await patchManageReservationService(BODY)
 
     if (manageReservation?.success) {
-      // saco de disponibles
       setAvailableReservations((prev) => {
         const updated = prev.filter(
           (availableReservation) =>
@@ -77,7 +76,6 @@ export default function Main() {
         return updated
       })
 
-      // agrego a gestionadas
       setManagedReservations((prev) => {
         const updated = [...prev, newManagedReservation]
         updated.sort((a, b) => a.start.localeCompare(b.start))
@@ -101,7 +99,6 @@ export default function Main() {
     const restoreReservation = await patchUnmanageReservationService(BODY)
 
     if (restoreReservation?.success) {
-      // saco de gestionadas
       setManagedReservations((prev) => {
         const updated = prev.filter(
           (managedReservation) =>
@@ -112,7 +109,6 @@ export default function Main() {
         return updated
       })
 
-      // agrego a disponibles
       setAvailableReservations((prev) => {
         const updated = [...prev, restoredAvailableReservation]
         updated.sort((a, b) => a.start.localeCompare(b.start))
@@ -140,20 +136,15 @@ export default function Main() {
               icon: 'fa-check',
             },
             {
-              id: 'Reserva Express',
-              label: 'Reserva Express',
-              icon: 'fa-alarm-clock',
-            },
-            {
               id: 'Sanciones',
               label: 'Sanciones',
-              icon: 'fa-circle-exclamation'
-            }
+              icon: 'fa-circle-exclamation',
+            },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`cursor-pointer relative z-30 border-b-white -mb-[4px] px-6 py-3 text-lg font-medium transition-all duration-200 rounded-t-2xl border ${
+              className={`cursor-pointer relative border-b-white -mb-[4px] px-6 py-3 text-lg font-medium transition-all duration-200 rounded-t-2xl border ${
                 activeTab === tab.id
                   ? 'bg-white border-gray-300 border-b-white text-[#052e66] '
                   : 'bg-gray-200 border-transparent text-gray-600 hover:bg-gray-200'
@@ -169,6 +160,7 @@ export default function Main() {
             {activeTab === 'Reservas Disponibles' && (
               <ReservationsAvailable
                 reservationsToday={availableReservations}
+                refreshReservationsToday={getReservationsToday}
                 handleNewManagedReservation={handleNewManagedReservation}
               />
             )}
@@ -182,14 +174,8 @@ export default function Main() {
               />
             )}
 
-            {activeTab === 'Reserva Express' && (
-              <div className="animate-fadeIn">
-                <p>Reserva Express</p>
-              </div>
-            )}
-
             {activeTab === 'Sanciones' && (
-              <Sanctions finishedReservations={finishedReservations}/>
+              <Sanctions finishedReservations={finishedReservations} />
             )}
           </div>
         </div>
