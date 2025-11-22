@@ -47,7 +47,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
 
     if (!res?.success) {
       setErrorMsg(res?.description || "Error al obtener información.");
-      return; // ← NO borra las listas como querías
+      return;
     }
 
     setErrorMsg("");
