@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import Modal from '../../../components/modal'
 import getRoomShift from '../../../service/getRoomShift.jsx'
 import newReservation from '../../../service/createReservation.jsx'
-import { toast } from 'react-toastify'
-import { Oval } from 'react-loader-spinner'
+import {toast} from 'react-toastify'
+import {Oval} from 'react-loader-spinner'
+import getBuildingsService from '../../../service/getBuildingsService.jsx'
 
-export default function ModalReservation({ open, onClose, selectedGroup }) {
+export default function ModalReservation({open, onClose, selectedGroup}) {
   const [selectedSala, setSelectedSala] = useState(null)
   const [selectedTurno, setSelectedTurno] = useState(null)
   const [salas, setSalas] = useState([])
@@ -13,7 +14,8 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
   const [date, setDate] = useState('')
   const [building, setBuilding] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('')
+  const [buildingData, setBuildingData] = useState(null)
 
   const today = new Date()
   today.setDate(today.getDate() + 1)
@@ -23,13 +25,24 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
   let minDate = `${year}-${month}-${day}`
 
   useEffect(() => {
-    setSalas([]);
-    setTurnos([]);
-    setSelectedSala(null);
-    setSelectedTurno(null);
-    setErrorMsg("");
-  }, [date, building]);
+    if (!open) {
+      setSelectedSala(null)
+      setSelectedTurno(null)
+      setDate('')
+      setBuilding('')
+      setSalas([])
+      setTurnos([])
+      setIsLoading(false)
+    }
+  }, [open])
 
+  useEffect(() => {
+    setSalas([])
+    setTurnos([])
+    setSelectedSala(null)
+    setSelectedTurno(null)
+    setErrorMsg('')
+  }, [date, building])
 
   useEffect(() => {
     if (!date || !building) return
@@ -37,34 +50,33 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
     let cancelled = false
 
     const fetchData = async () => {
-      const shiftToSend = selectedTurno ?? 'null';
-      const roomToSend = selectedSala ?? 'null';
+      const shiftToSend = selectedTurno ?? 'null'
+      const roomToSend = selectedSala ?? 'null'
 
       try {
-        const res = await getRoomShift(building, date, shiftToSend, roomToSend);
+        const res = await getRoomShift(building, date, shiftToSend, roomToSend)
 
-        if (cancelled) return;
+        if (cancelled) return
 
         if (!res?.success) {
-          setErrorMsg(res?.description || "Error al obtener información.");
-          return;
+          setErrorMsg(res?.description || 'Error al obtener información.')
+          return
         }
 
-        setErrorMsg("");
+        setErrorMsg('')
 
         if (res.salas !== undefined) {
-          setSalas(res.salas);
+          setSalas(res.salas)
         }
 
         if (res.turnos !== undefined) {
-          setTurnos(res.turnos);
+          setTurnos(res.turnos)
         }
-
       } catch (err) {
-        if (cancelled) return;
-        setErrorMsg("Error de conexión con el servidor.");
+        if (cancelled) return
+        setErrorMsg('Error de conexión con el servidor.')
       }
-    };
+    }
 
     fetchData()
 
@@ -74,11 +86,23 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
   }, [date, building, selectedSala, selectedTurno])
 
   useEffect(() => {
+    async function build() {
+      const resBuilding = await getBuildingsService()
+
+      if (resBuilding?.success) {
+        setBuildingData(resBuilding.buildings)
+        console.log(building)
+      }
+    }
+    build()
+  }, [])
+
+  useEffect(() => {
     if (!open) {
       setSelectedSala(null)
       setSelectedTurno(null)
       setDate('')
-      setBuilding('')
+      setBuilding(0)
       setSalas([])
       setTurnos([])
       setIsLoading(false)
@@ -96,7 +120,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
       return
     }
 
-    if (!building.trim()) {
+    if (!building.trim() || building == 0) {
       toast.error('El edificio es obligatorio', {
         position: 'bottom-left',
         autoClose: 3000,
@@ -125,6 +149,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
         position: 'bottom-left',
         autoClose: 3000,
       })
+
       return
     }
 
@@ -189,7 +214,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
   }
 
   return (
-    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
+    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
       <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar relative">
         {isLoading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
@@ -215,6 +240,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
             id="date"
             type="date"
             min={minDate}
+            value={date}
             onChange={(e) => setDate(e.target.value)}
             disabled={isLoading}
             className="bg-gray-100 border rounded-xl px-3 py-2 shadow-sm focus:outline-none border-gray-500 focus:ring-2 focus:ring-[#052e66]/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
@@ -225,14 +251,17 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
           <label className="font-medium text-gray-700">Edificio</label>
           <select
             id="buildings"
+            value={building}
             onChange={(e) => setBuilding(e.target.value)}
             className="bg-gray-100 border rounded-xl px-3 py-2 shadow-sm focus:outline-none border-gray-500 focus:ring-2 focus:ring-[#052e66]/50 transition-all">
-            <option>Athanasius</option>
-            <option>Semprún</option>
-            <option>Central</option>
-            <option>Mullin</option>
-            <option>San Ignacio</option>
-            <option>San José</option>
+            <option disabled="true" value={0}>
+              {' '}
+              Seleccionar edificio
+            </option>
+            {buildingData &&
+              buildingData.map((data) => (
+                <option key={data.buildingName}>{data.buildingName}</option>
+              ))}
           </select>
         </div>
 
@@ -241,7 +270,6 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
             {errorMsg}
           </div>
         )}
-
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {salas.length > 0 && (
@@ -255,10 +283,11 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                       e.preventDefault()
                       toggleSala(sala.roomId)
                     }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
-                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
+                      selectedSala === sala.roomId
+                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="sala"
@@ -293,10 +322,11 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                       e.preventDefault()
                       toggleTurno(turno.shiftId)
                     }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
-                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
+                      selectedTurno === turno.shiftId
+                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="turno"
@@ -316,7 +346,6 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
             </div>
           )}
         </div>
-
 
         <div className="flex lg:justify-end justify-center mt-6">
           <button
