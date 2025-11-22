@@ -12,7 +12,7 @@ export default async function getRoomShift(BUILDING, DATE, SHIFTID, ROOMID) {
                     .replace(/"/g, '')}`,
             },
         })
-        if (!res.ok) throw new Error(`GET ${PATH} -> ${res.status}`)
+        
         const rooms = await res.json();
         return rooms
     } catch (error) {

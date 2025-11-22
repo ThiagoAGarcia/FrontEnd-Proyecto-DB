@@ -20,9 +20,5 @@ export default async function newReservation(body) {
     return data
   } catch (error) {
     console.error('Error creando la reserva', error)
-    return {
-      success: false,
-      description: 'Error de conexión al crear la reserva',
-    }
   }
 }

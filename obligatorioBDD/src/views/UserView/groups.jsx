@@ -63,7 +63,7 @@ export default function Groups() {
                 <div
                   key={index}
                   className="w-full rounded-md bg-[#f4f7fc] border border-gray-200 text-black p-3 my-2">
-                  {/* Versión escritorio */}
+                  {/* Versión computadora */}
                   <div className="hidden lg:flex justify-between items-center text-xl">
                     <div className="w-1/2 text-center border-r-2 border-gray-300">
                       <h1>{grupo.groupName}</h1>
@@ -76,7 +76,7 @@ export default function Groups() {
                     <div className="w-1/3 flex justify-center items-center gap-2">
                       <button
                         onClick={() => selectGroup(true, grupo.id)}
-                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] hover:bg-[#d5e4ff] transition-colors">
+                        className="rounded-md px-3 py-1 cursor-pointer bg-[#e3edff] border border-[#bfd4ff] text-[#052e66] shadow-md hover:bg-[#d5e4ff] transition-colors">
                         Info
                       </button>
 
@@ -86,7 +86,7 @@ export default function Groups() {
                             setReservaOpen(true)
                             setSelectedGroup(grupo.id)
                           }}
-                          className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] hover:bg-[#d4f5e8] transition-colors">
+                          className="rounded-md px-3 py-1 cursor-pointer bg-[#e6f9f0] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d4f5e8] transition-colors">
                           Hacer reserva{' '}
                           <i className="fa-solid fa-plus text-[#0d9b64]"></i>
                         </button>
@@ -98,7 +98,7 @@ export default function Groups() {
                             setReservaInfoOpen(true)
                             setSelectedGroup(grupo.id)
                           }}
-                          className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#d9fffd] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#c9fffb] transition">
+                          className="rounded-md px-3 py-1 cursor-pointer bg-[#d9fffd] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#c9fffb] transition">
                           Info reserva{' '}
                           <i className="fa-solid fa-circle-info text-[#0d9b92]"></i>
                         </button>
@@ -143,7 +143,7 @@ export default function Groups() {
                           }}
                           className="flex-1 rounded-xl px-4 py-2 cursor-pointer bg-[#d9fffd] border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#c9fffb] transition">
                           Info reserva{' '}
-                          <i className="fa-solid fa-circle-info text-[#0d9b92]"></i>
+                          <i className="fa-solid !hidden lg:!inline fa-circle-info text-[#0d9b92]"></i>
                         </button>
                       )}
                     </div>

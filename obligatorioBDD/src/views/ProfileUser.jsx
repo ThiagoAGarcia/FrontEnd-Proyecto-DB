@@ -1,6 +1,6 @@
 import NavBar from '../components/navBar'
 import Footer from '../components/footer'
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import getUsersByCiService from '../service/getUsersByCiService'
 import getCareerService from '../service/getCareer'
 import getReservationsUserService from '../service/getUserReservations'
@@ -35,13 +35,13 @@ export default function ProfileUser() {
       const userRes = await getUsersByCiService(ci)
       if (userRes && userRes.user) {
         setUserData(userRes.user)
-        console.log(userRes.user);
+        console.log(userRes.user)
       }
 
       const careerRes = await getCareerService()
       if (careerRes && careerRes.careers) {
         setCareerData(careerRes.careers)
-        console.log(careerRes);
+        console.log(careerRes)
       }
 
       const reservationData = await getReservationsUserService()
@@ -104,7 +104,7 @@ export default function ProfileUser() {
         return
       }
 
-      const { access_token, role, roles: newRoles } = data
+      const {access_token, role, roles: newRoles} = data
 
       if (access_token) {
         localStorage.setItem('token', JSON.stringify(access_token))
@@ -136,6 +136,7 @@ export default function ProfileUser() {
         open={open}
         onClose={() => setOpen(false)}
         user={userData}
+        onUpdated={(updatedUser) => setUserData(updatedUser)}
       />
 
       <NavBar />
@@ -178,19 +179,21 @@ export default function ProfileUser() {
           <div className="flex gap-6 mt-6 border-b">
             <button
               onClick={() => setTab('acerca')}
-              className={`cursor-pointer pb-2 font-medium ${tab === 'acerca'
-                ? 'border-b-2 border-[#052e66] text-[#052e66]'
-                : 'text-gray-500 hover:text-gray-700'
-                }`}>
+              className={`cursor-pointer pb-2 font-medium ${
+                tab === 'acerca'
+                  ? 'border-b-2 border-[#052e66] text-[#052e66]'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}>
               Acerca de mí
             </button>
             {(currentRole === 'professor' || currentRole === 'student') && (
               <button
                 onClick={() => setTab('reservas')}
-                className={`cursor-pointer pb-2 font-medium ${tab === 'reservas'
-                  ? 'border-b-2 border-[#052e66] text-[#052e66]'
-                  : 'text-gray-500 hover:text-gray-700'
-                  }`}>
+                className={`cursor-pointer pb-2 font-medium ${
+                  tab === 'reservas'
+                    ? 'border-b-2 border-[#052e66] text-[#052e66]'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}>
                 Reservas realizadas
               </button>
             )}
@@ -199,15 +202,16 @@ export default function ProfileUser() {
           <div className="bg-gray-50 rounded-lg p-6 mt-6 shadow-sm">
             {tab === 'acerca' && (
               <>
-                <div className='flex justify-between mb-4'>
+                <div className="flex justify-between mb-4">
                   <h2 className="text-xl font-bold text-[#052e66]">
                     Acerca de mí
                   </h2>
-                  <button onClick={() => setOpen(true)} className="px-4 cursor-pointer duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-lg font-semibold shadow-md hover:bg-[#0b49a1] transition">
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="px-4 cursor-pointer duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-lg font-semibold shadow-md hover:bg-[#0b49a1] transition p-2">
                     Editar perfil
                   </button>
                 </div>
-
 
                 <div className="grid grid-cols-1 pl-2 md:grid-cols-2 gap-4">
                   <div>
@@ -237,21 +241,29 @@ export default function ProfileUser() {
                       <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
                         <div className="w-1/2 text-center">Carrera</div>
                         <div className="md:w-1/6 w-1/3 text-center">Plan</div>
-                        <div className="md:w-1/2 text-center hidden md:inline">Facultad</div>
+                        <div className="md:w-1/2 text-center hidden md:inline">
+                          Facultad
+                        </div>
                         <div className="md:w-1/6 w-1/3 text-center">Tipo</div>
                       </div>
 
                       <ul className="w-full overflow-auto scrollbar mt-1">
                         {careerData.map((career) => (
-                          <li key={career.careerName} className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-lg text-sm">
+                          <li
+                            key={career.careerName}
+                            className="w-full rounded-md bg-gray-200 text-black p-2 my-1 flex justify-between items-center md:text-lg text-sm">
                             <div className="w-1/2 text-center border-r-2 border-gray-300">
-                              <h1 className="break-words">{career.careerName}</h1>
+                              <h1 className="break-words">
+                                {career.careerName}
+                              </h1>
                             </div>
                             <div className="md:w-1/6 w-1/3 text-center border-r-2 border-gray-300">
                               <h1>{career.planYear}</h1>
                             </div>
                             <div className="md:w-1/2 text-center border-r-2 hidden md:inline border-gray-300">
-                              <h1 className="break-words">{career.facultyName}</h1>
+                              <h1 className="break-words">
+                                {career.facultyName}
+                              </h1>
                             </div>
                             <div className="md:w-1/6 w-1/3 text-center border-gray-300">
                               <h1>{career.type}</h1>
@@ -260,7 +272,6 @@ export default function ProfileUser() {
                         ))}
                       </ul>
                     </div>
-
                   </div>
                 )}
               </>

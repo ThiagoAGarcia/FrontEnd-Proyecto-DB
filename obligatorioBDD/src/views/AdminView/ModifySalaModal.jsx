@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import Modal from '../../components/Modal'
-import { Oval } from 'react-loader-spinner'
-import { toast } from 'react-toastify'
+import {Oval} from 'react-loader-spinner'
+import {toast} from 'react-toastify'
 import patchStudyRoomService from '../../service/patchStudyRoom'
 
-export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated }) {
+export default function ModifySalaModal({
+  open,
+  onClose,
+  selectedRoom,
+  onUpdated,
+  onRefresh,
+}) {
   const [isLoading, setIsLoading] = useState(false)
   const [roomName, setRoomName] = useState('')
   const [capacity, setCapacity] = useState('')
@@ -20,7 +26,6 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
     setStatus(selectedRoom.status || '')
     setErrores({})
   }, [open, selectedRoom])
-
 
   const resetForm = () => {
     setRoomName(selectedRoom.roomName || '')
@@ -54,13 +59,14 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
       capacity: capNumber,
       roomType: type,
       status: status,
-      buildingName: selectedRoom.buildingName
+      buildingName: selectedRoom.buildingName,
     }
 
     try {
       setIsLoading(true)
       const resp = await patchStudyRoomService(body)
       if (resp.success) {
+        onRefresh()
         toast.success(resp.description || 'Sala actualizada correctamente', {
           position: 'bottom-left',
           autoClose: 2500,
@@ -89,8 +95,14 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
   return (
     <Modal
       open={open}
-      onClose={isLoading ? () => { } : () => { onClose(); resetForm() }}
-    >
+      onClose={
+        isLoading
+          ? () => {}
+          : () => {
+              onClose()
+              resetForm()
+            }
+      }>
       <div className="relative max-h-screen sm:max-h-[80vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
         {isLoading && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-xl">
@@ -113,7 +125,9 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
         <div className="w-full bg-white shadow-md rounded-2xl p-4 flex flex-col border border-gray-300">
           <section className="sm:h-[52vh] h-[40vh] overflow-y-auto scroll-ucu p-2">
             <div className="mb-3">
-              <label className="font-medium text-[#052e66]">Nombre de la sala</label>
+              <label className="font-medium text-[#052e66]">
+                Nombre de la sala
+              </label>
               <input
                 value={roomName}
                 onChange={(e) => !isLoading && setRoomName(e.target.value)}
@@ -154,8 +168,7 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
                 value={type}
                 onChange={(e) => !isLoading && setType(e.target.value)}
                 disabled={isLoading}
-                className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
-              >
+                className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                 <option value="">Seleccione un tipo para la sala</option>
                 <option value="Libre">Libre</option>
                 <option value="Posgrado">Posgrado</option>
@@ -167,13 +180,14 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
             </div>
 
             <div className="mb-3">
-              <label className="font-medium text-[#052e66]">Estado de la sala</label>
+              <label className="font-medium text-[#052e66]">
+                Estado de la sala
+              </label>
               <select
                 value={status}
                 onChange={(e) => !isLoading && setStatus(e.target.value)}
                 disabled={isLoading}
-                className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed"
-              >
+                className="bg-gray-50 border rounded-xl p-2 w-full disabled:opacity-60 disabled:cursor-not-allowed">
                 <option value="">Seleccione un estado para la sala</option>
                 <option value="Activo">Activo</option>
                 <option value="Inactivo">Inactivo</option>
@@ -182,7 +196,6 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
                 <p className="text-red-600 text-xs">{errores.status}</p>
               )}
             </div>
-
           </section>
         </div>
 
@@ -190,16 +203,17 @@ export default function ModifySalaModal({ open, onClose, selectedRoom, onUpdated
           <button
             onClick={validarFormulario}
             disabled={isLoading}
-            className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed"
-          >
+            className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
             Guardar cambios
           </button>
 
           <button
-            onClick={() => { onClose(); resetForm() }}
+            onClick={() => {
+              onClose()
+              resetForm()
+            }}
             disabled={isLoading}
-            className="border border-[#052e66] cursor-pointer text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed"
-          >
+            className="border border-[#052e66] cursor-pointer text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
             Cancelar
           </button>
         </div>
