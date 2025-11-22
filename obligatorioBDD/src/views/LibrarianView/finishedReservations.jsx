@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ModalSanction from "./components/modalSanction";
+import Data from './components/data'
 
 export default function FinishedReservations({ finishedReservations }) {
     const hayReservas = finishedReservations.length > 0;

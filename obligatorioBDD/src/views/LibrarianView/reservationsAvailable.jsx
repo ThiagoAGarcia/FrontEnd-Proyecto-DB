@@ -43,51 +43,6 @@ export default function ReservationsAvailable({
           {hayReservas ? (
             <>
               <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
-                <div className="w-1/2 text-center">Turno</div>
-                <div className="w-1/4 text-center">Salas</div>
-                <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
-              </div>
-
-              <ul className="w-full overflow-auto scrollbar mt-1">
-                {reservationsToday.map((reservation) => (
-                  <li key={reservation.studyGroupId}>
-                    <Data reserva={reservation}>
-                      <button
-                        title="Cancelar reserva"
-                        className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
-                        <i className="fa-solid fa-xmark text-[#052e66]"></i>
-                      </button>
-                      <button
-                        onClick={() => handleNewManagedReservation(reservation)}
-                        title="Aceptar reserva"
-                        className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-green-100 cursor-pointer hover:bg-green-50 transition-colors">
-                        <i className="fa-solid fa-check text-[#052e66]"></i>
-                      </button>
-                      <button
-                        title="Más información"
-                        className="border-1 rounded-md sm:mx-1 mx-0.5 p-0.5 px-2 font-semibold bg-gray-300 hover:bg-gray-200 transition-colors cursor-pointer">
-                        <i className="fa-solid fa-arrow-right text-[#052e66]"></i>
-                      </button>
-                    </Data>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <span className="font-medium text-2xl text-gray-600">
-              No hay reservas disponibles hoy
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div
-        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
-          !hayReservas ? 'justify-center items-center h-80' : ''
-        }`}>
-        {hayReservas ? (
-          <>
-            <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
               <div className="w-1/2 text-center">Turno</div>
               <div className="w-1/4 text-center">Salas</div>
               <div className="w-1/4 text-center">Edificio</div>
@@ -95,7 +50,7 @@ export default function ReservationsAvailable({
               <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
             </div>
 
-            <ul className="w-full overflow-auto scrollbar mt-1">
+              <ul className="w-full overflow-auto scrollbar mt-1">
               {reservationsToday.map((reservation) => (
                 <li key={reservation.studyGroupId}>
                   <Data reserva={reservation}>
@@ -119,14 +74,15 @@ export default function ReservationsAvailable({
                 </li>
               ))}
             </ul>
-          </>
-        ) : (
-          <span className="font-medium text-2xl text-gray-600">
-            No hay reservas disponibles hoy
-          </span>
-        )}
+            </>
+          ) : (
+            <span className="font-medium text-2xl text-gray-600">
+              No hay reservas disponibles hoy
+            </span>
+          )}
+        </div>
       </div>
-    
+
       <ModalExpress
         open={openExpress}
         onClose={() => setOpenExpress(false)}
