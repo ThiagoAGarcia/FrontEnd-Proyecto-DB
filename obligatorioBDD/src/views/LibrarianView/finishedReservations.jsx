@@ -33,7 +33,7 @@ export default function FinishedReservations({ finishedReservations }) {
         <div className="text-xl">
             <div className="sm:flex justify-between items-center w-full sm:pb-3">
                 <h2 className="ml-1 font-semibold text-gray-800 text-2xl">
-                    Reservas Gestionadas
+                    Reservas Finalizadas
                 </h2>
             </div>
             <div
@@ -45,7 +45,6 @@ export default function FinishedReservations({ finishedReservations }) {
                         <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
                             <div className="w-1/2 text-center">Turno</div>
                             <div className="w-1/4 text-center">Salas</div>
-                            <div className="w-1/4 text-center">Edificio</div>
                             <div className="w-1/4 text-center">Estado</div>
                             <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
                         </div>

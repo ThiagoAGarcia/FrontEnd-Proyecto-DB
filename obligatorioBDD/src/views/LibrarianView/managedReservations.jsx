@@ -9,6 +9,24 @@ export default function ReservationsAvailable({ managedReservations, handleResto
 
   const [doubleCheckOpen, setDoubleCheckOpen] = useState(false);
   const [shift, setShift] = useState('');
+  const turnos = [
+    { id: 1, label: "08:00" },
+    { id: 2, label: "09:00" },
+    { id: 3, label: "10:00" },
+    { id: 4, label: "11:00" },
+    { id: 5, label: "12:00" },
+    { id: 6, label: "13:00" },
+    { id: 7, label: "14:00" },
+    { id: 8, label: "15:00" },
+    { id: 9, label: "16:00" },
+    { id: 10, label: "17:00" },
+    { id: 11, label: "18:00" },
+    { id: 12, label: "19:00" },
+    { id: 13, label: "20:00" },
+    { id: 14, label: "21:00" },
+    { id: 15, label: "22:00" },
+  ];
+
 
   console.log(managedReservations)
 
@@ -52,7 +70,7 @@ export default function ReservationsAvailable({ managedReservations, handleResto
           }`}>
         {hayReservas ? (
           <>
-            <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
+            <div className="hidden lg:flex w-full text-gray-600 font-medium px-2 pb-2 border-b border-gray-300">
               <div className="w-1/3 text-center">Turno</div>
               <div className="w-1/5 text-center">Salas</div>
               <div className="w-1/7 text-center">Estado</div>
@@ -64,56 +82,42 @@ export default function ReservationsAvailable({ managedReservations, handleResto
                 managedReservations.map((reservation) => (
                   <li key={reservation.studyGroupId}>
                     <Data reserva={reservation}>
-
                       <button
                         onClick={() => handleRestoreAvailableReservation(reservation)}
-                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-1 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
-                        No Gestionar <i className="fa-solid fa-arrow-left "></i>
+                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-[#c9fffb]  border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d9fffd] transition-all">
+                        <i className="fa-solid fa-arrow-left "></i> No Gestionar
                       </button>
 
                       <button
                         onClick={() => handleNewManagedReservation(reservation)}
-                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-1 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
+                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
                         Cancelar <i className="fa-solid fa-xmark "></i>
                       </button>
-
-
-
                     </Data>
                   </li>
                 ))}
             </ul>
             <Modal open={doubleCheckOpen} onClose={() => setDoubleCheckOpen(false)}>
-              <div className='flex flex-col items-center p-2'>
-                <div className='flex items-center'>
-                  <h2>
-                    Elige el horario de las reservas terminadas
-                  </h2>
+              <div className="relative sm:max-h-[80vh] max-h-[100vh] w-full p-0 sm:p-6 rounded-xl">
+                <h2 className="text-2xl font-bold text-[#052e66] text-center mb-4">
+                  Finalizar Reservas
+                </h2>
+                <p className="text-center text-gray-700 mb-6">
+                  Selecciona el turno correspondiente a las reservas que querés finalizar.
+                </p>
+                <div className="w-full bg-gray-100/70 shadow-xl shadow-blue-50 border border-gray-200 rounded-2xl p-6">
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {turnos.map((shiftObj) => (
+                      <label key={shiftObj.id} className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer shadow-md transition-all ${shift === shiftObj.id.toString() ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]' : 'bg-gray-50 border border-gray-300 hover:shadow-lg'}`}>
+                        <input type="radio" name="shift" value={shiftObj.id} onChange={(e) => setShift(e.target.value)} className="hidden" />
+                        <span className="font-semibold text-blue-900">{shiftObj.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
-                <div>
-                  <label className="font-medium text-gray-700">Turno</label>
-                  <select
-                    id='shifts'
-                    onChange={(e) => setShift(e.target.value)}
-                  >
-                    <option value='1'>08:00</option>
-                    <option value='2'>09:00</option>
-                    <option value='3'>10:00</option>
-                    <option value='4'>11:00</option>
-                    <option value='5'>12:00</option>
-                    <option value='6'>13:00</option>
-                    <option value='7'>14:00</option>
-                    <option value='8'>15:00</option>
-                    <option value='9'>16:00</option>
-                    <option value='10'>17:00</option>
-                    <option value='11'>18:00</option>
-                    <option value='12'>19:00</option>
-                    <option value='13'>20:00</option>
-                    <option value='14'>21:00</option>
-                    <option value='15'>22:00</option>
-                  </select>
-                </div>
+              </div>
+              <div className='flex flex-col items-center p-2'>
 
                 <div className='w-full flex flex-row justify-center'>
                   <button onClick={() => handleFinishManagedReservations()} className='w-1/4 bg-blue-900 rounded-md p-2 m-1 text-white font-semibold hover:bg-blue-800 cursor-pointer transition-colors'>Aceptar</button>

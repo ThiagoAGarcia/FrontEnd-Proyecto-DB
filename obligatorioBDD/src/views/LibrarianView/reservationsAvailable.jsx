@@ -110,13 +110,13 @@ export default function ReservationsAvailable({
                     <Data reserva={reservation}>
                       <button
                         onClick={() => selectData(reservation)}
-                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-1 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
+                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
                         Cancelar <i className="fa-solid fa-xmark "></i>
                       </button>
 
                       <button
                         onClick={() => handleNewManagedReservation(reservation)}
-                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-1 cursor-pointer duration-200 bg-green-100 border border-green-300 text-[#052e66] shadow-md hover:bg-green-50 transition-all">
+                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-green-100 border border-green-300 text-[#052e66] shadow-md hover:bg-green-50 transition-all">
                         Gestionar <i className="fa-solid fa-check "></i>
                       </button>
                     </Data>
