@@ -13,6 +13,7 @@ export default function NavBar() {
   const [userRequest, setUserRequest] = useState([])
 
   const notificationRef = useRef(null)
+  const desplegableRef = useRef(null)
 
   const rawRole = localStorage.getItem('role') || '"unknown"'
   const role = rawRole.replace(/"/g, '')
@@ -58,7 +59,7 @@ export default function NavBar() {
   }, [])
 
   useEffect(() => {
-    if (!notification) return
+    if (!notification && !menuAbierto) return
 
     const handleClickOutside = (event) => {
       if (
@@ -67,11 +68,21 @@ export default function NavBar() {
       ) {
         setNotifications(false)
       }
+
+      if (
+        desplegableRef.current &&
+        !desplegableRef.current.contains(event.target)
+      ) {
+        setMenuAbierto(false)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [notification])
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [notification, menuAbierto])
 
   return (
     <>
@@ -166,7 +177,9 @@ export default function NavBar() {
             </button>
 
             {menuAbierto && (
-              <div className="absolute right-0 top-14 bg-white text-[#052e66] rounded-xl shadow-lg w-44 flex flex-col z-50">
+              <div
+                className="absolute right-0 top-14 bg-white text-[#052e66] rounded-xl shadow-lg w-44 flex flex-col z-50"
+                ref={desplegableRef}>
                 <button
                   className="text-left px-4 py-2 hover:bg-[#e5e9f2] rounded-t-xl transition cursor-pointer"
                   onClick={() => {
