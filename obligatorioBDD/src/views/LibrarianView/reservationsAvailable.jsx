@@ -1,6 +1,9 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import Data from './components/data'
 import ModalExpress from './components/modalExpress'
+import getGroupMembersService from '../../service/getGroupMembersService'
+import patchEmptyReservationService from '../../service/patchEmptyReservation'
+import { toast } from 'react-toastify'
 
 export default function ReservationsAvailable({
   reservationsToday,
@@ -8,6 +11,66 @@ export default function ReservationsAvailable({
   refreshReservationsToday,
 }) {
   const [openExpress, setOpenExpress] = useState(false)
+  const [selectedGroup, setSelectedGroup] = useState('')
+  const [selectedReservation, setSelectedReservation] = useState('')
+  const [groupMembers, setGroupMembers] = useState([])
+
+  const selectData = (reservation) => {
+    setSelectedReservation(reservation);
+    setSelectedGroup(reservation.studyGroupId);
+  }
+
+  useEffect(() => {
+    const getGroupMembers = async () => {
+      if (selectedGroup === '') {
+        return
+      } else {
+        const groupMembers = await getGroupMembersService(selectedGroup)
+        if (groupMembers.success) {
+          let membersCi = []
+          groupMembers.members.map((member) => {
+            membersCi.push(member.ci);
+          })
+          console.log(membersCi)
+          setGroupMembers(membersCi)
+        }
+      }
+    }
+
+    getGroupMembers();
+  }, [selectedGroup])
+
+  console.log(groupMembers)
+
+  useEffect(() => {
+    let end = new Date();
+    end.setMonth(end.getMonth() + 1);
+    const year = end.getFullYear();
+    const month = String(end.getMonth() + 1).padStart(2, '0');
+    const day = String(end.getDate()).padStart(2, '0');
+    const endDate = `${year}-${month}-${day}`;
+    const BODY = {
+      "studyGroupId": selectedGroup,
+      "studyRoomId": selectedReservation.studyRoomId,
+      "shift": selectedReservation.shift,
+      "members": groupMembers,
+      "endDate": endDate
+    }
+
+    const emptyReservationSanction = patchEmptyReservationService(BODY);
+    if (emptyReservationSanction.success) {
+      toast.success(emptyReservationSanction.description, {
+        position: 'bottom-left',
+        autoClose: 2500,
+      })
+    } else {
+      toast.warning(emptyReservationSanction.error, {
+        position: 'bottom-left',
+        autoClose: 2500,
+      })
+    }
+  }, [groupMembers])
+
 
   const hayReservas = reservationsToday && reservationsToday.length > 0
 
@@ -45,6 +108,7 @@ export default function ReservationsAvailable({
                 <li key={reservation.studyGroupId}>
                   <Data reserva={reservation}>
                     <button
+                      onClick={() => selectData(reservation)}
                       title="Cancelar reserva"
                       className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-red-100 cursor-pointer hover:bg-red-50 transition-colors">
                       <i className="fa-solid fa-xmark text-[#052e66]"></i>
