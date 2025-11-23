@@ -33,13 +33,13 @@ export default function FinishedReservations({ finishedReservations }) {
         <div className="text-xl">
             <div className="sm:flex justify-between items-center w-full sm:pb-3">
                 <h2 className="ml-1 font-semibold text-gray-800 text-2xl">
-                    Reservas Finalizadas
+                    Reservas Gestionadas
                 </h2>
             </div>
             <div
                 className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : ''
                     }`}>
-                
+
                 {hayReservas ? (
                     <>
                         <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">

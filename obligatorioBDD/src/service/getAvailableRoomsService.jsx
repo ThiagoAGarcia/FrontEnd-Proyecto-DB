@@ -10,10 +10,6 @@ export default async function getAvailableRoomsService(BUILDING, DATE) {
       },
     });
 
-    if (!res.ok) {
-      throw new Error(`GET ${PATH} -> ${res.status}`);
-    }
-
     return await res.json();
 
   } catch (error) {

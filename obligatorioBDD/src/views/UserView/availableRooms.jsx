@@ -11,6 +11,7 @@ export default function AvailableRooms() {
     const [buildings, setBuildings] = useState([]);
     const [date, setDate] = useState("");
     const [salas, setSalas] = useState([]);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     const cardAnimation = {
         hidden: { opacity: 0, y: -30 },
@@ -60,8 +61,10 @@ export default function AvailableRooms() {
             if (res.success) {
                 console.log(res);
                 setSalas(res.rooms);
+                setErrorMsg(null);
             } else {
                 setSalas([]);
+                setErrorMsg(res.description || "Ocurrió un error al obtener las salas.");
             }
 
         };
@@ -125,6 +128,13 @@ export default function AvailableRooms() {
                                             Seleccione una fecha para ver las salas disponibles
                                         </div>
                                     )}
+
+                                    {errorMsg && date && (
+                                        <div className="w-full text-center py-6 text-red-600 text-lg font-semibold bg-white rounded-xl border border-red-300 shadow">
+                                            {errorMsg}
+                                        </div>
+                                    )}
+
 
                                     {salasUnicas.map((sala, index) => (
                                         <details key={index} className="w-full bg-white shadow-md rounded-xl border border-gray-200 open:shadow-lg transition-all" >

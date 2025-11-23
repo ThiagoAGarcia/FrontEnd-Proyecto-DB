@@ -1,12 +1,12 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal'
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import deleteGroupMemberService from '../../../service/deleteGroupMemberService.jsx'
 import deleteGroupByIdService from '../../../service/deleteGroupByIdService.jsx'
 import getGroupDataService from '../../../service/getGroupDataService.jsx'
 import deleteLeaveGroupService from '../../../service/deleteLeaveGroupService.jsx'
 import sendGroupRequest from '../../../service/sendGroupRequest.jsx'
-import {Oval} from 'react-loader-spinner'
+import { Oval } from 'react-loader-spinner'
 import getSearchUsersOutsideRequest from '../../../service/getSearchUsersOutsideRequest.jsx'
 
 export default function SelectedGroupInfoModal({
@@ -203,7 +203,7 @@ export default function SelectedGroupInfoModal({
   }, [open])
 
   return (
-    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
+    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
           <Oval
@@ -268,7 +268,13 @@ export default function SelectedGroupInfoModal({
               </div>
 
               <ul className="w-full overflow-y-auto scrollbar mt-2 space-y-3 max-h-72">
+                {(!selectedGroupData.members || selectedGroupData.members.length === 0) && (
+                  <div className="text-center text-gray-600 py-6 bg-gray-50 rounded-xl border border-gray-200">
+                    No hay miembros en el grupo actualmente.
+                  </div>
+                )}
                 {selectedGroupData.members &&
+                  selectedGroupData.members.length > 0 &&
                   selectedGroupData.members.map((member) => (
                     <div
                       key={member.ci}

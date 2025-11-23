@@ -63,7 +63,6 @@ export default function Groups() {
                 <div
                   key={index}
                   className="w-full rounded-md bg-[#f4f7fc] border border-gray-200 text-black p-3 my-2">
-                  {/* Versión computadora */}
                   <div className="hidden lg:flex justify-between items-center text-xl">
                     <div className="w-1/2 text-center border-r-2 border-gray-300">
                       <h1>{grupo.groupName}</h1>
@@ -106,7 +105,6 @@ export default function Groups() {
                     </div>
                   </div>
 
-                  {/* Versión mobile */}
                   <div className="flex flex-col lg:hidden gap-2">
                     <span className="font-semibold text-gray-800">
                       {grupo.groupName}

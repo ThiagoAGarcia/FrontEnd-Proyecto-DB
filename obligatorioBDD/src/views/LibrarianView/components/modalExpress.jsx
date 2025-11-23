@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react'
-import {toast} from 'react-toastify'
-import {Oval} from 'react-loader-spinner'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { Oval } from 'react-loader-spinner'
 import 'react-toastify/dist/ReactToastify.css'
 
 import Modal from '../../../components/modal.jsx'
@@ -9,7 +9,7 @@ import postReservationExpressService from '../../../service/postReservationExpre
 import getAllGroupsService from '../../../service/getAllGroupsService.jsx'
 import getRoomShiftTodayService from '../../../service/getRoomShiftToday.jsx'
 
-const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
+const ModalExpress = ({ open, onClose, selectedGroup, onCreated }) => {
   const [groupId, setGroupId] = useState(selectedGroup || null)
 
   const [groups, setGroups] = useState([])
@@ -198,13 +198,13 @@ const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
       open={open}
       onClose={
         isLoading
-          ? () => {}
+          ? () => { }
           : () => {
-              onClose()
-              resetForm()
-            }
+            onClose()
+            resetForm()
+          }
       }>
-      <div className="relative max-h-screen sm:max-h-[80vh] w-full p-4 sm:p-6 pr-8 rounded-xl">
+      <div className="relative sm:max-h-[80vh] max-h-[100vh] w-full p-0 sm:p-6 rounded-xl">
         {isLoading && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-xl">
             <Oval
@@ -223,7 +223,7 @@ const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
           Reserva express
         </h2>
 
-        <div className="w-full bg-white shadow-md rounded-2xl p-4 flex flex-col border border-gray-300">
+        <div className="w-full bg-gray-100/70 shadow-xl shadow-blue-50 border border-gray-200 rounded-2xl p-6">
           <section className="sm:h-[52vh] h-[68vh] overflow-y-auto scroll-ucu p-2">
             <p className="text-sm text-gray-600 mb-4">
               La reserva se realizará para hoy:{' '}
@@ -233,24 +233,21 @@ const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
             </p>
 
             <div className="mb-4">
-              <label className="font-medium text-[#052e66] text-lg mb-2 block">
-                Buscar grupo de estudio
-              </label>
-              <input
-                type="text"
-                value={searchText}
-                onChange={handleSearchChange}
-                placeholder="Buscar por nombre de grupo"
-                className="bg-gray-50 border rounded-xl p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#052e66]/40"
-                disabled={isLoading}
-              />
-            </div>
+              <div className='flex flex-col mb-4 sm:flex-row items-start sm:items-end justify-between'>
+                <label className="font-medium text-[#052e66] text-lg block">
+                  Grupos de estudio
+                </label>
+                <input
+                  type="text"
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  placeholder="Buscar por nombre de grupo"
+                  className="bg-white border rounded-xl p-2 w-full sm:w-1/2 focus:outline-none focus:ring-2 focus:ring-[#052e66]/40"
+                  disabled={isLoading}
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="font-medium text-[#052e66] text-lg mb-2 block">
-                Grupos de estudio
-              </label>
-              <div className="bg-gray-50 border rounded-2xl p-3 max-h-60 overflow-y-auto">
+              <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto">
                 {groups.length === 0 && (
                   <p className="text-sm text-gray-500">
                     No se encontraron grupos.
@@ -263,11 +260,10 @@ const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
                       e.preventDefault()
                       toggleGroup(g.studyGroupId)
                     }}
-                    className={`flex items-center justify-between gap-4 p-3 my-2 rounded-xl cursor-pointer shadow-sm transition-all ${
-                      groupId === g.studyGroupId
-                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                        : 'bg-white border border-gray-300 hover:shadow-md'
-                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    className={`flex items-center justify-between gap-4 p-3 my-2 rounded-xl cursor-pointer shadow-sm transition-all ${groupId === g.studyGroupId
+                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.005]'
+                      : 'bg-white border border-gray-300 hover:shadow-md'
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="grupo"
@@ -295,83 +291,92 @@ const ModalExpress = ({open, onClose, selectedGroup, onCreated}) => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {salas.length > 0 && (
-                <div>
-                  <h3 className="font-bold text-[#052e66] text-xl mb-4">
-                    Salas
-                  </h3>
-                  <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scroll-ucu">
-                    {salas.map((sala) => (
-                      <label
-                        key={sala.roomId}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          toggleSala(sala.roomId)
-                        }}
-                        className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                          selectedSala === sala.roomId
-                            ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                            : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                        <input
-                          type="radio"
-                          name="sala"
-                          className="hidden"
-                          value={sala.roomId}
-                          checked={selectedSala === sala.roomId}
-                          readOnly
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-lg font-semibold">
-                            {sala.roomName}
-                          </span>
-                        </div>
-                        <span className="text-sm text-gray-600">
-                          Capacidad: {sala.capacity}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-              {turnos.length > 0 && (
-                <div>
-                  <h3 className="font-bold text-[#052e66] text-xl mb-4">
-                    Turnos
-                  </h3>
-                  <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scroll-ucu">
-                    {turnos.map((turno) => (
-                      <label
-                        key={turno.shiftId}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          toggleTurno(turno.shiftId)
-                        }}
-                        className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                          selectedTurno === turno.shiftId
+              <div>
+                <h3 className="font-semibold text-[#052e66] text-xl mb-2">
+                  Salas
+                </h3>
+                <div className="bg-gray-50 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-72 overflow-y-auto">
+                  {salas.length === 0 ? (
+                    <p className="text-sm text-gray-500">
+                      No hay salas disponibles para los filtros actuales.
+                    </p>
+                  ) : (
+                    <>
+                      {salas.map((sala) => (
+                        <label
+                          key={sala.roomId}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            toggleSala(sala.roomId)
+                          }}
+                          className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
                             ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                             : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                        <input
-                          type="radio"
-                          name="turno"
-                          className="hidden"
-                          value={turno.shiftId}
-                          checked={selectedTurno === turno.shiftId}
-                          readOnly
-                        />
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-gray-800">
-                            {turno.start} - {turno.end}
+                            } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                          <input
+                            type="radio"
+                            name="sala"
+                            className="hidden"
+                            value={sala.roomId}
+                            checked={selectedSala === sala.roomId}
+                            readOnly
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-lg font-semibold">
+                              {sala.roomName}
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-600">
+                            Capacidad: {sala.capacity}
                           </span>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
+                        </label>
+                      ))}
+                    </>
+                  )}
                 </div>
-              )}
+              </div>
+
+
+              <div>
+                <h3 className="font-semibold text-[#052e66] text-xl mb-2">
+                  Turnos
+                </h3>
+                <div className="bg-gray-50 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-72 overflow-y-auto">
+                  {turnos.length === 0 ? (
+                    <p className="text-sm text-gray-500">
+                      No hay turnos disponibles para los filtros actuales.
+                    </p>
+                  ) : (
+                    turnos.map((turno) => (
+                    <label
+                      key={turno.shiftId}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        toggleTurno(turno.shiftId)
+                      }}
+                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
+                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                      <input
+                        type="radio"
+                        name="turno"
+                        className="hidden"
+                        value={turno.shiftId}
+                        checked={selectedTurno === turno.shiftId}
+                        readOnly
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-800">
+                          {turno.start} - {turno.end}
+                        </span>
+                      </div>
+                    </label>
+                  )))}
+                </div>
+              </div>
             </div>
           </section>
         </div>
