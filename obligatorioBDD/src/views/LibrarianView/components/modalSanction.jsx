@@ -76,6 +76,7 @@ export default function ModalSanction({open, onClose, groupMembers}) {
           position: 'bottom-left',
           autoClose: 2500,
         })
+        onClose()
       }
     } catch (error) {
       toast.error(error)

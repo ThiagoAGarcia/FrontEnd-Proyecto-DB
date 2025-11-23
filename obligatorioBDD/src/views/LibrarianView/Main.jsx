@@ -166,6 +166,8 @@ export default function Main() {
                 reservationsToday={availableReservations}
                 refreshReservationsToday={getReservationsToday}
                 handleNewManagedReservation={handleNewManagedReservation}
+                managing={managing}
+                setManaging={setManaging}
               />
             )}
 

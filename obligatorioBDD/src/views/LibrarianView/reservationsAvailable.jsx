@@ -5,58 +5,68 @@ import getGroupMembersService from '../../service/getGroupMembersService'
 import patchEmptyReservationService from '../../service/patchEmptyReservation'
 import {toast} from 'react-toastify'
 
-export default function ReservationsAvailable({
-  reservationsToday,
-  handleNewManagedReservation,
-  refreshReservationsToday,
-}) {
+export default function ReservationsAvailable({ reservationsToday, handleNewManagedReservation, refreshReservationsToday, managing, setManaging }) {
   const [openExpress, setOpenExpress] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState('')
   const [selectedReservation, setSelectedReservation] = useState('')
-  const [groupMembers, setGroupMembers] = useState([])
+  const [selectedGroupMembers, setSelectedGroupMembers] = useState([])
 
-  const selectData = (reservation) => {
-    setSelectedReservation(reservation)
-    setSelectedGroup(reservation.studyGroupId)
+  const selectData = async (reservation) => {
+    setSelectedReservation(reservation);
+    setSelectedGroup(reservation.studyGroupId);
   }
 
   useEffect(() => {
-    const getGroupMembers = async () => {
-      if (selectedGroup === '') {
-        return
-      } else {
-        const groupMembers = await getGroupMembersService(selectedGroup)
-        if (groupMembers.success) {
-          let membersCi = []
-          groupMembers.members.map((member) => {
-            membersCi.push(member.ci)
-          })
-
-          setGroupMembers(membersCi)
-        }
-      }
+    if (selectedGroup === '') {
+      return
+    } else {
+      getGroupMembers();
     }
-
-    getGroupMembers()
   }, [selectedGroup])
 
   useEffect(() => {
-    let end = new Date()
-    end.setMonth(end.getMonth() + 1)
-    const year = end.getFullYear()
-    const month = String(end.getMonth() + 1).padStart(2, '0')
-    const day = String(end.getDate()).padStart(2, '0')
-    const endDate = `${year}-${month}-${day}`
+    if (selectedGroupMembers.length === 0) {
+      return;
+    } else {
+      patchEmptyReservation();
+    }
+  }, [selectedGroupMembers])
+
+  const getGroupMembers = async () => {
+    if (selectedGroup === '') {
+      return
+    } else {
+      const groupMembers = await getGroupMembersService(selectedGroup)
+      if (groupMembers.success) {
+        let membersCi = []
+        groupMembers.members.map((member) => {
+          membersCi.push(member.ci);
+        })
+        setSelectedGroupMembers(membersCi)
+      }
+    }
+  }
+
+  const patchEmptyReservation = async () => {
+    let end = new Date();
+    end.setMonth(end.getMonth() + 1);
+    const year = end.getFullYear();
+    const month = String(end.getMonth() + 1).padStart(2, '0');
+    const day = String(end.getDate()).padStart(2, '0');
+    const endDate = `${year}-${month}-${day}`;
     const BODY = {
-      'studyGroupId': selectedGroup,
-      'studyRoomId': selectedReservation.studyRoomId,
-      'shift': selectedReservation.shift,
-      'members': groupMembers,
-      'endDate': endDate,
+      "studyGroupId": selectedGroup,
+      "studyRoomId": selectedReservation.studyRoomId,
+      "shift": selectedReservation.shift,
+      "members": selectedGroupMembers,
+      "endDate": endDate,
+      "startDate": selectedReservation.date
     }
 
-    const emptyReservationSanction = patchEmptyReservationService(BODY)
-    if (emptyReservationSanction.success) {
+    console.log(BODY)
+    const emptyReservationSanction = await patchEmptyReservationService(BODY);
+    if (emptyReservationSanction?.success) {
+      setManaging(!managing)
       toast.success(emptyReservationSanction.description, {
         position: 'bottom-left',
         autoClose: 2500,
@@ -67,7 +77,7 @@ export default function ReservationsAvailable({
         autoClose: 2500,
       })
     }
-  }, [groupMembers])
+  }
 
   const hayReservas = reservationsToday && reservationsToday.length > 0
 
