@@ -1,8 +1,11 @@
 import {useEffect, useState} from 'react'
 import getDaySanctionsService from '../../service/getDaySanctionsService'
+import deleteSanctionService from '../../service/deleteSanctionService'
+import { toast } from 'react-toastify'
 
 export default function Sanctions() {
   const [sanctions, setSanctions] = useState([])
+  const [refreshSanctions, setRefreshSanctions] = useState(false)
 
   useEffect(() => {
     const getTodaySanctions = async () => {
@@ -17,7 +20,19 @@ export default function Sanctions() {
     }
 
     getTodaySanctions()
-  }, [])
+  }, [refreshSanctions])
+
+  const handleDeleteSanction = async (sanction) => {
+    const SANCTIONID = sanction.id;
+    const deletedSanction = await deleteSanctionService(SANCTIONID);
+    if (deletedSanction?.success) {
+      setRefreshSanctions(!refreshSanctions);
+      toast.success(deletedSanction.description, {
+        position: 'bottom-left',
+        autoClose: 2500,
+      })
+    }
+  }
 
   return (
     <>
@@ -46,9 +61,17 @@ export default function Sanctions() {
                   </p>
                 </div>
 
-                <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
-                  {sanction.description}
-                </span>
+                <div className='flex flex-row'>
+                  <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700 mr-1">
+                    {sanction.description}
+                  </span>
+                  <button 
+                  onClick={() => handleDeleteSanction(sanction)}
+                    className="inline-flex items-center rounded-full bg-red-500 px-3 py-1 text-sm font-semibold text-white hover:bg-red-600 ml-1">
+                    Eliminar
+                  </button>
+                </div>
+                
               </div>
 
               <div className="mt-4 border-t border-gray-100 pt-4">

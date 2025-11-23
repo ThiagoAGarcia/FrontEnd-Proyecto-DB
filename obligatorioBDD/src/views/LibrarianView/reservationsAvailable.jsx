@@ -58,7 +58,7 @@ export default function ReservationsAvailable({ reservationsToday, handleNewMana
       "studyGroupId": selectedGroup,
       "studyRoomId": selectedReservation.studyRoomId,
       "shift": selectedReservation.shift,
-      "members": groupMembers,
+      "members": selectedGroupMembers,
       "endDate": endDate,
       "startDate": selectedReservation.date
     }
