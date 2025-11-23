@@ -17,8 +17,7 @@ export default function Groups() {
 
   useEffect(() => {
     refreshGroups()
-    console.log(grupos)
-  }, [deletingGroupOrLeft])
+  }, [deletingGroupOrLeft, refreshGroups])
 
   const selectGroup = (open, groupId) => {
     setInfoOpen(open)
@@ -190,6 +189,10 @@ export default function Groups() {
         open={reservaInfoOpen}
         selectedGroup={selectedGroup}
         onClose={() => setReservaInfoOpen(false)}
+        onReservationCanceled={() => {
+          refreshGroups()
+          setReservaInfoOpen(false)
+        }}
       />
     </>
   )
