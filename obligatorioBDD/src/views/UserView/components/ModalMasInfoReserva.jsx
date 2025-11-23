@@ -4,8 +4,14 @@ import {toast} from 'react-toastify'
 import {Oval} from 'react-loader-spinner'
 import getGroupReservationInfoService from '../../../service/getReservationInfoService.jsx'
 import extendReservationBlockService from '../../../service/extendReservationBlockService.jsx'
+import cancelReservationService from '../../../service/cancelReservationService.jsx'
 
-export default function ModalMasInfoReserva({open, selectedGroup, onClose}) {
+export default function ModalMasInfoReserva({
+  open,
+  selectedGroup,
+  onClose,
+  onReservationCanceled,
+}) {
   const [reservation, setReservation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -19,21 +25,9 @@ export default function ModalMasInfoReserva({open, selectedGroup, onClose}) {
         setReservation(resp.reservation)
       } else {
         setReservation(null)
-        toast.error(
-          resp?.description ||
-            'No se pudo obtener la información de la reserva',
-          {
-            position: 'bottom-left',
-            autoClose: 3000,
-          }
-        )
       }
     } catch (e) {
       setReservation(null)
-      toast.error('Error al obtener la información de la reserva', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
     } finally {
       setIsLoading(false)
     }
@@ -78,6 +72,52 @@ export default function ModalMasInfoReserva({open, selectedGroup, onClose}) {
       }
     } catch (e) {
       toast.error('Error al extender la reserva', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCancelReservation = async () => {
+    if (
+      !reservation?.studyGroupId ||
+      !reservation?.room?.studyRoomId ||
+      !reservation?.date ||
+      !reservation?.shiftId
+    )
+      return
+
+    try {
+      setIsLoading(true)
+
+      const resp = await cancelReservationService(
+        reservation.studyGroupId,
+        reservation.room.studyRoomId,
+        reservation.date,
+        reservation.shiftId
+      )
+
+      if (resp?.success) {
+        toast.success(resp?.description || 'La reserva se canceló con éxito', {
+          position: 'bottom-left',
+          autoClose: 2500,
+        })
+
+        if (typeof onReservationCanceled === 'function') {
+          onReservationCanceled()
+        } else {
+          onClose()
+        }
+      } else {
+        toast.error(resp?.description || 'No se pudo cancelar la reserva', {
+          position: 'bottom-left',
+          autoClose: 3000,
+        })
+      }
+    } catch (e) {
+      toast.error('Error al cancelar la reserva', {
         position: 'bottom-left',
         autoClose: 3000,
       })
@@ -222,28 +262,36 @@ export default function ModalMasInfoReserva({open, selectedGroup, onClose}) {
               </div>
             </div>
 
-            <div className="flex flex-col mt-6 sm:flex-row sm:justify-end gap-3">
-              {canExtend && (
-                <button
-                  onClick={handleExtendBlock}
-                  disabled={isLoading}
-                  className="px-4 py-2 rounded-xl border border-[#0d9b64] bg-[#e6f9f0] text-[#064b34] text-sm shadow-md cursor-pointer hover:bg-[#d4f5e8] disabled:opacity-60 disabled:cursor-not-allowed">
-                  Extender a 2 horas
-                </button>
-              )}
-
-              {!canExtend && (
-                <span className="text-xs sm:text-sm text-gray-600 self-start sm:self-center">
-                  La reserva ya es de 2 horas.
-                </span>
-              )}
-
+            <div className="flex flex-col w-full mt-6 sm:flex-row sm:justify-between gap-3">
               <button
-                onClick={onClose}
+                onClick={handleCancelReservation}
                 disabled={isLoading}
-                className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
-                Cerrar
+                className="px-4 py-2 rounded-xl border border-[#9b0d0d] bg-[#f9e6e6] text-[#4b0606] text-sm shadow-md cursor-pointer hover:bg-[#f5d4d4] disabled:opacity-60 disabled:cursor-not-allowed">
+                Cancelar reservacion
               </button>
+              <section className="flex flex-row sm:w-1/2 justify-end gap-10">
+                {canExtend && (
+                  <button
+                    onClick={handleExtendBlock}
+                    disabled={isLoading}
+                    className="px-4 py-2 rounded-xl border border-[#0d9b64] bg-[#e6f9f0] text-[#064b34] text-sm shadow-md cursor-pointer hover:bg-[#d4f5e8] disabled:opacity-60 disabled:cursor-not-allowed">
+                    Extender a 2 horas
+                  </button>
+                )}
+
+                {!canExtend && (
+                  <span className="text-xs sm:text-sm text-gray-600 self-start sm:self-center">
+                    La reserva ya es de 2 horas.
+                  </span>
+                )}
+
+                <button
+                  onClick={onClose}
+                  disabled={isLoading}
+                  className="w-full sm:w-1/3 py-3 cursor-pointer text-white bg-[#052e66] rounded-xl font-semibold shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
+                  Cerrar
+                </button>
+              </section>
             </div>
           </>
         ) : (
