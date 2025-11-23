@@ -50,33 +50,34 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
     let cancelled = false
 
     const fetchData = async () => {
-      const shiftToSend = selectedTurno ?? 'null'
-      const roomToSend = selectedSala ?? 'null'
+      const shiftToSend = selectedTurno ?? 'null';
+      const roomToSend = selectedSala ?? 'null';
 
       try {
-        const res = await getRoomShift(building, date, shiftToSend, roomToSend)
+        const res = await getRoomShift(selectedGroup, building, date, shiftToSend, roomToSend);
 
-        if (cancelled) return
+        if (cancelled) return;
 
         if (!res?.success) {
-          setErrorMsg(res?.description || 'Error al obtener información.')
-          return
+          setErrorMsg(res?.description || "Error al obtener información.");
+          return;
         }
 
-        setErrorMsg('')
+        setErrorMsg("");
 
         if (res.salas !== undefined) {
-          setSalas(res.salas)
+          setSalas(res.salas);
         }
 
         if (res.turnos !== undefined) {
-          setTurnos(res.turnos)
+          setTurnos(res.turnos);
         }
+
       } catch (err) {
-        if (cancelled) return
-        setErrorMsg('Error de conexión con el servidor.')
+        if (cancelled) return;
+        setErrorMsg("Error de conexión con el servidor.");
       }
-    }
+    };
 
     fetchData()
 

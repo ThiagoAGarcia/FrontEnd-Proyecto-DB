@@ -1,9 +1,9 @@
 const API = 'http://localhost:5000'
 const PATH = '/roomShift'
 
-export default async function getRoomShift(BUILDING, DATE, SHIFTID, ROOMID) {
+export default async function getRoomShift(SELECTEDGROUP,BUILDING, DATE, SHIFTID, ROOMID) {
     try {
-        const res = await fetch(`${API}${PATH}/${BUILDING}&${DATE}&${SHIFTID}&${ROOMID}`, {
+        const res = await fetch(`${API}${PATH}/${SELECTEDGROUP}&${BUILDING}&${DATE}&${SHIFTID}&${ROOMID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
