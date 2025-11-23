@@ -1,12 +1,12 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal'
 import getRoomShift from '../../../service/getRoomShift.jsx'
 import newReservation from '../../../service/createReservation.jsx'
-import {toast} from 'react-toastify'
-import {Oval} from 'react-loader-spinner'
+import { toast } from 'react-toastify'
+import { Oval } from 'react-loader-spinner'
 import getBuildingsService from '../../../service/getBuildingsService.jsx'
 
-export default function ModalReservation({open, onClose, selectedGroup}) {
+export default function ModalReservation({ open, onClose, selectedGroup }) {
   const [selectedSala, setSelectedSala] = useState(null)
   const [selectedTurno, setSelectedTurno] = useState(null)
   const [salas, setSalas] = useState([])
@@ -152,7 +152,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
       })
 
       return
-    } 
+    }
 
     try {
       setIsLoading(true)
@@ -215,7 +215,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   }
 
   return (
-    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
+    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
       <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar relative">
         {isLoading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
@@ -273,61 +273,72 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {salas.length > 0 && (
-            <div>
-              <h3 className="font-bold text-[#052e66] text-xl mb-4">Salas</h3>
-              <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
-                {salas.map((sala) => (
-                  <label
-                    key={sala.roomId}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      toggleSala(sala.roomId)
-                    }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                      selectedSala === sala.roomId
+
+          <div>
+            <h3 className="font-bold text-[#052e66] text-xl mb-4">Salas</h3>
+            <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
+              {salas.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No hay salas disponibles para los filtros actuales.
+                </p>
+              ) : (
+                <>
+                  {salas.map((sala) => (
+                    <label
+                      key={sala.roomId}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        toggleSala(sala.roomId)
+                      }}
+                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
                         ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                         : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                    <input
-                      type="radio"
-                      name="sala"
-                      className="hidden"
-                      value={sala.roomId}
-                      checked={selectedSala === sala.roomId}
-                      readOnly
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-lg font-semibold">
-                        {sala.roomName}
+                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                      <input
+                        type="radio"
+                        name="sala"
+                        className="hidden"
+                        value={sala.roomId}
+                        checked={selectedSala === sala.roomId}
+                        readOnly
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-lg font-semibold">
+                          {sala.roomName}
+                        </span>
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {' '}
+                        Capacidad: {sala.capacity}{' '}
                       </span>
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      {' '}
-                      Capacidad: {sala.capacity}{' '}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
+                    </label>
 
-          {turnos.length > 0 && (
-            <div>
-              <h3 className="font-bold text-[#052e66] text-xl mb-4">Turnos</h3>
-              <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
-                {turnos.map((turno) => (
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+
+
+          <div>
+            <h3 className="font-bold text-[#052e66] text-xl mb-4">Turnos</h3>
+            <div className="bg-white shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
+              {turnos.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No hay turnos disponibles para los filtros actuales.
+                </p>
+              ) : (
+                turnos.map((turno) => (
                   <label
                     key={turno.shiftId}
                     onClick={(e) => {
                       e.preventDefault()
                       toggleTurno(turno.shiftId)
                     }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                      selectedTurno === turno.shiftId
-                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
+                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="turno"
@@ -342,10 +353,9 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
                       </span>
                     </div>
                   </label>
-                ))}
-              </div>
+                )))}
             </div>
-          )}
+          </div>
         </div>
 
         <div className="flex lg:justify-end justify-center mt-6">

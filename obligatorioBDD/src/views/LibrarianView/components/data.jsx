@@ -15,7 +15,7 @@ export default function Data({ children, reserva }) {
             </div>
 
             <div className="hidden lg:flex lg:flex-row w-full items-center text-gray-700 md:text-lg text-sm">
-                <div className="w-1/3 text-center border-r-2 border-gray-300">
+                <div className="w-1/3 text-center font-bold border-r-2 border-gray-300">
                     {reserva.start} - {reserva.end}
                 </div>
 
@@ -23,7 +23,7 @@ export default function Data({ children, reserva }) {
                     {reserva.studyRoom}
                 </div>
 
-                <div className={`w-1/7 text-center font-semibold border-r-2 border-gray-300 ${reserva.state === "Finalizada" ? "text-red-500" : "text-green-500"} ${reserva.state === "Finalizada" ? "Finalizada" : "Activa"}`}>
+                <div className={`w-1/7 text-center font-semibold border-r-2 border-gray-300 ${reserva.state === "Finalizada" ? "text-[#052e66] font-bold" : "text-green-500"} ${reserva.state === "Finalizada" ? "Finalizada" : "Activa"}`}>
                     {reserva.state}
                 </div>
 

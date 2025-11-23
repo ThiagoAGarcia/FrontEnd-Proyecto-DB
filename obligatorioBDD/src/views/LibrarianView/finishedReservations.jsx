@@ -31,22 +31,19 @@ export default function FinishedReservations({ finishedReservations }) {
 
     return (
         <div className="text-xl">
-            <div className="sm:flex justify-between items-center w-full sm:pb-3">
-                <h2 className="ml-1 font-semibold text-gray-800 text-2xl">
+            <div className="sm:flex justify-between sm:items-end items-start w-full sm:pb-4">
+                <h2 className="flex ml-1 font-semibold items-end justify-start sm:justify-end text-gray-800 text-2xl">
                     Reservas Finalizadas
                 </h2>
             </div>
-            <div
-                className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : ''
-                    }`}>
-
+            <div className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : '' }`}>
                 {hayReservas ? (
                     <>
-                        <div className="w-full flex justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 md:text-lg text-base">
-                            <div className="w-1/2 text-center">Turno</div>
-                            <div className="w-1/4 text-center">Salas</div>
-                            <div className="w-1/4 text-center">Estado</div>
-                            <div className="w-1/2 sm:w-1/3 text-center">Acciones</div>
+                        <div className="hidden lg:flex w-full text-gray-600 font-medium px-2 pb-2 border-b border-gray-300">
+                            <div className="w-1/3 text-center">Turno</div>
+                            <div className="w-1/5 text-center">Salas</div>
+                            <div className="w-1/7 text-center">Estado</div>
+                            <div className="w-1/3 sm:w-1/3 text-center">Acciones</div>
                         </div>
 
                         <ul className="w-full overflow-auto scrollbar mt-1">
@@ -54,12 +51,11 @@ export default function FinishedReservations({ finishedReservations }) {
                                 finishedReservations.map((reservation) => (
                                     <li key={reservation.studyGroupId}>
                                         <Data reserva={reservation}>
+
                                             <button
-                                                onClick={() =>
-                                                    selectGroup(reservation.studyGroupId)
-                                                }
-                                                title="Nueva sanción"
-                                                className="border-1 rounded-md sm:mx-1 px-2 mx-0.5 p-0.5 bg-gray-300 hover:bg-gray-200  cursor-pointer transition-colors">                                                <i className="fa-solid fa-circle-exclamation text-[#052e66]"></i>
+                                                onClick={() => selectGroup(reservation.studyGroupId)}
+                                                className="font-medium sm:w-1/2 w-full lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-gray-300 hover:bg-gray-200 border border-gray-300 text-[#052e66] shadow-md transition-all">
+                                                Colocar sanción <i className="fa-solid fa-circle-exclamation "></i>
                                             </button>
                                         </Data>
                                     </li>

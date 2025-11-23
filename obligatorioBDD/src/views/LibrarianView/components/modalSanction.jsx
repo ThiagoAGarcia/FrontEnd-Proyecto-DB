@@ -8,7 +8,7 @@ export default function ModalSanction({ open, onClose, groupMembers }) {
     let currentDate = `${startYear}-${startMonth}-${startDay}`;
 
     const [selectedMembers, setSelectedMembers] = useState([]);
-    const [selectedDescription, setSelectedDescription] = useState('');
+    const [selectedDescription, setSelectedDescription] = useState(null);
     const [selectedEndDate, setSelectedEndDate] = useState('');
     const [trigger, setTrigger] = useState(false);
 
@@ -67,6 +67,7 @@ export default function ModalSanction({ open, onClose, groupMembers }) {
                     position: 'bottom-left',
                     autoClose: 2500,
                 })
+                onClose();
             } else {
                 toast.warning(sanctions.error, {
                     position: 'bottom-left',
@@ -80,44 +81,90 @@ export default function ModalSanction({ open, onClose, groupMembers }) {
 
     console.log(selectedMembers)
 
+    useEffect(() => {
+        setSelectedDescription(0);
+        setSelectedMembers([]);
+        setSelectedEndDate('');
+    }, [open]);
+
     return (
         <Modal open={open} onClose={onClose}>
-            <div className='flex flex-col items-center p-6'>
-                <form id='members'>
-                    <div className='w-full border-2 rounded-lg border-gray-200 p-4'>
-                        {groupMembers && groupMembers.map((member) => (
-                            <div key={member.ci}>
-                                <input onChange={(e) => handleCheckboxes(e)} checked={selectedMembers.includes(String(member.ci))} type='checkbox' id={member.ci} value={member.ci} />
-                                <label htmlFor={member.ci}> <span className='p-1'>{member.name} {member.lastName}</span></label>
-                            </div>
-                        ))}
-                    </div>
-                </form>
+            <div className="relative sm:max-h-[85vh] max-h-[100vh] w-full p-6 rounded-xl scroll-ucu overflow-y-auto">
 
-                <select id='description' onChange={(e) => setSelectedDescription(e.target.value)}>
-                    <option value='Comer'>Comer</option>
-                    <option value='Ruidoso'>Ruidoso</option>
-                    <option value='Vandalismo'>Vandalismo</option>
-                    <option value='Imprudencia'>Imprudencia</option>
-                    <option value='Ocupar'>Ocupar</option>
-                </select>
+                <h2 className="text-2xl font-bold text-[#052e66] text-center mb-4">
+                    Asignar Sanciones
+                </h2>
 
-                <div className='flex flex-row justify-between w-full p-10'>
-                    <div className="w-1/2 flex flex-col items-center">
-                        <label className="text-sm font-semibold text-blue-900 mb-1">Fecha de inicio</label>
-                        <p className='text-xl'>{currentDate}</p>
-                    </div>
+                <p className="text-center text-gray-700 mb-6">
+                    Seleccione los miembros y el motivo de la sanción.
+                </p>
 
-                    <div className="w-1/2 flex flex-col items-center">
-                        <label className="text-sm font-semibold text-blue-900 mb-1">Fecha de finalización</label>
-                        <p>{selectedEndDate}</p>
+                <div className="w-full bg-gray-100 shadow-xl border text-gray-500 border-gray-200 rounded-2xl p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {groupMembers &&
+                            groupMembers.map((member) => {
+                                const isChecked = selectedMembers.includes(String(member.ci));
+
+                                return (
+                                    <label key={member.ci} className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer shadow-md transition-all ${isChecked ? "bg-gradient-to-t from-blue-100 to-blue-50 text-[#052e66] shadow-[#4379c5] scale-[1.01]" : "bg-white border border-gray-300 hover:shadow-lg"}`}>
+                                        <input type="checkbox" id={member.ci} value={member.ci} checked={isChecked} onChange={(e) => handleCheckboxes(e)} className="hidden" />
+
+                                        <span className="font-semibold ">
+                                            {member.name} {member.lastName}
+                                        </span>
+                                    </label>
+                                );
+                            })}
                     </div>
                 </div>
 
-                <button onClick={() => sendSanctions()} className='bg-blue-800 hover:bg-blue-900 rounded-xl text-white font-xl p-2'>
-                    Enviar sanciones
-                </button>
+                <div className="mt-5 w-full">
+                    <label className="font-semibold text-blue-900 ml-1">Motivo</label>
+
+                    <select value={selectedDescription} id="description" onChange={(e) => setSelectedDescription(e.target.value)} className="w-full mt-2 p-3 border border-gray-300 rounded-xl shadow-sm bg-white text-black cursor-pointer hover:shadow-md transition">
+                        <option value={0} disabled selected>Seleccione un motivo</option>
+                        <option value="Comer">Comer</option>
+                        <option value="Ruidoso">Ruidoso</option>
+                        <option value="Vandalismo">Vandalismo</option>
+                        <option value="Imprudencia">Imprudencia</option>
+                        <option value="Ocupar">Ocupar</option>
+                    </select>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between w-full gap-4 mt-6">
+                    <div className="w-full sm:w-1/2 flex flex-col items-center bg-gray-100 p-4 rounded-2xl shadow-inner">
+                        <label className="text-sm font-semibold text-blue-900 mb-1">
+                            Fecha de inicio
+                        </label>
+                        <p className="text-xl text-gray-800 font-bold">{currentDate}</p>
+                    </div>
+
+                    <div className="w-full sm:w-1/2 flex flex-col items-center bg-gray-100 p-4 rounded-2xl shadow-inner">
+                    
+                        <label className="text-sm font-semibold text-blue-900 mb-1">
+                            Fecha de finalización
+                        </label>
+
+                        {selectedEndDate == '' ? (
+                            <p className="text-xl text-gray-800 font-bold">-</p>
+                        ) : (
+                            <p className="text-xl text-gray-800 font-bold">{selectedEndDate}</p>
+                        )}
+                        
+                    </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
+                    <button onClick={() => sendSanctions()} className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/2 lg:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
+                        Enviar sanciones
+                    </button>
+
+                    <button onClick={() => onClose()} className="sm:hidden inline border border-[#052e66] cursor-pointer text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
+                        Cancelar
+                    </button>
+                </div>
             </div>
         </Modal>
+
     )
 }

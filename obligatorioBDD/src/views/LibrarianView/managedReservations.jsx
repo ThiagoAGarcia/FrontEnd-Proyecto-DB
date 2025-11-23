@@ -27,9 +27,6 @@ export default function ReservationsAvailable({ managedReservations, handleResto
     { id: 15, label: "22:00" },
   ];
 
-
-  console.log(managedReservations)
-
   const handleFinishManagedReservations = async () => {
     console.log(shift)
     const BODY = {
@@ -59,7 +56,7 @@ export default function ReservationsAvailable({ managedReservations, handleResto
         </h2>
 
         <div className=" sm:py-0 sm:m-0 my-3 px-1 sm:px-0 text-gray-300">
-          <button onClick={() => setDoubleCheckOpen(true)} className="px-4 cursor-pointer sm:w-auto w-full duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-lg font-medium shadow-md hover:bg-[#0b49a1] transition p-2">
+          <button onClick={() => {setDoubleCheckOpen(true); setShift('')}} className="px-4 cursor-pointer sm:w-auto w-full duration-300 text-white bg-[#052e66] border-2 border-[#052e66] rounded-lg font-medium shadow-md hover:bg-[#0b49a1] transition p-2">
             Finalizar reservas
           </button>
         </div>
@@ -105,7 +102,7 @@ export default function ReservationsAvailable({ managedReservations, handleResto
                 <p className="text-center text-gray-700 mb-6">
                   Selecciona el turno correspondiente a las reservas que querés finalizar.
                 </p>
-                <div className="w-full bg-gray-100/70 shadow-xl shadow-blue-50 border border-gray-200 rounded-2xl p-6">
+                <div className="w-full bg-gray-100/70 shadow-xl border border-gray-200 rounded-2xl p-6">
                   <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {turnos.map((shiftObj) => (
                       <label key={shiftObj.id} className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer shadow-md transition-all ${shift === shiftObj.id.toString() ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]' : 'bg-gray-50 border border-gray-300 hover:shadow-lg'}`}>
@@ -117,12 +114,15 @@ export default function ReservationsAvailable({ managedReservations, handleResto
                 </div>
 
               </div>
-              <div className='flex flex-col items-center p-2'>
 
-                <div className='w-full flex flex-row justify-center'>
-                  <button onClick={() => handleFinishManagedReservations()} className='w-1/4 bg-blue-900 rounded-md p-2 m-1 text-white font-semibold hover:bg-blue-800 cursor-pointer transition-colors'>Aceptar</button>
-                  <button onClick={() => setDoubleCheckOpen(false)} className='w-1/4 bg-red-500 border-2 rounded-md p-2 m-1 text-white font-semibold hover:bg-red-600 cursor-pointer transition-colors'>Cancelar</button>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-3 mt-5 justify-end">
+                <button onClick={() => handleFinishManagedReservations()} className="bg-[#052e66] cursor-pointer text-white w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#073c88] transition disabled:opacity-60 disabled:cursor-not-allowed">
+                  Finalizar Reservas
+                </button>
+
+                <button onClick={() => setDoubleCheckOpen(false)} className="sm:hidden inline border border-[#052e66] cursor-pointer text-[#052e66] w-full sm:w-1/3 py-3 rounded-xl shadow-md hover:bg-[#eef3fb] transition disabled:opacity-60 disabled:cursor-not-allowed">
+                  Cancelar
+                </button>
               </div>
 
             </Modal>
