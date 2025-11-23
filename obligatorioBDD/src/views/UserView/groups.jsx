@@ -17,7 +17,7 @@ export default function Groups() {
 
   useEffect(() => {
     refreshGroups()
-  }, [deletingGroupOrLeft, refreshGroups])
+  }, [deletingGroupOrLeft])
 
   const selectGroup = (open, groupId) => {
     setInfoOpen(open)
