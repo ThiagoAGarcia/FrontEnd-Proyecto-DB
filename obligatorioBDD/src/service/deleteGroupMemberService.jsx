@@ -15,12 +15,6 @@ export default async function deleteGroupMemberService(GROUPID, USERID) {
 
         const data = await res.json().catch(() => null);
 
-        if (!res.ok) {
-            return data || {
-                success: false,
-                description: `Error ${res.status}`
-            };
-        }
 
         return data;
 

@@ -117,46 +117,46 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   async function crearReserva() {
     if (isLoading) return
 
-    if (!date.trim()) {
-      toast.error('La fecha es obligatoria', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
-      return
-    }
+    // if (!date.trim()) {
+    //   toast.error('La fecha es obligatoria', {
+    //     position: 'bottom-left',
+    //     autoClose: 3000,
+    //   })
+    //   return
+    // }
 
-    if (!building.trim() || building == 0) {
-      toast.error('El edificio es obligatorio', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
-      return
-    }
+    // if (!building.trim() || building == 0) {
+    //   toast.error('El edificio es obligatorio', {
+    //     position: 'bottom-left',
+    //     autoClose: 3000,
+    //   })
+    //   return
+    // }
 
-    if (!selectedSala) {
-      toast.error('La sala es obligatoria', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
-      return
-    }
+    // if (!selectedSala) {
+    //   toast.error('La sala es obligatoria', {
+    //     position: 'bottom-left',
+    //     autoClose: 3000,
+    //   })
+    //   return
+    // }
 
-    if (!selectedTurno) {
-      toast.error('El turno es obligatorio', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
-      return
-    }
+    // if (!selectedTurno) {
+    //   toast.error('El turno es obligatorio', {
+    //     position: 'bottom-left',
+    //     autoClose: 3000,
+    //   })
+    //   return
+    // }
 
-    if (date < minDate) {
-      toast.error('La fecha no puede ser anterior a hoy', {
-        position: 'bottom-left',
-        autoClose: 3000,
-      })
+    // if (date < minDate) {
+    //   toast.error('La fecha no puede ser anterior a hoy', {
+    //     position: 'bottom-left',
+    //     autoClose: 3000,
+    //   })
 
-      return
-    }
+    //   return
+    // }
 
     try {
       setIsLoading(true)
