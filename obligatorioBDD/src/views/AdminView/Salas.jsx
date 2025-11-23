@@ -67,7 +67,6 @@ export default function Salas() {
       const res = await getBuildingsService()
       if (res.success) {
         setBuildings(res.buildings)
-        console.log(res)
       }
     }
     fetchBuildings()
@@ -79,7 +78,6 @@ export default function Salas() {
     const fetchRooms = async () => {
       const res = await getRoomsAdmin(selectedBuilding)
       if (res.success) {
-        console.log(res)
         setSalas(res.rooms)
       } else {
         setSalas([])

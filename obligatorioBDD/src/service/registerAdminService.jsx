@@ -19,7 +19,6 @@ export default async function registerAdminService(BODY) {
 
     return data
   } catch (error) {
-    console.log(error.message)
     return {
       success: false,
       description: 'Error de conexión con el servidor',

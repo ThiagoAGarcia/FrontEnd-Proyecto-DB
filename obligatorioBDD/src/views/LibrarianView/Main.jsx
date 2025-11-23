@@ -85,8 +85,6 @@ export default function Main() {
 
       setManaging((prev) => !prev)
     }
-
-    console.log(manageReservation)
   }
 
   const handleRestoreAvailableReservation = async (
@@ -139,7 +137,7 @@ export default function Main() {
             {
               id: 'Reservas finalizadas',
               label: 'Finalizadas',
-              icon: 'fa-hourglass-end'
+              icon: 'fa-hourglass-end',
             },
             {
               id: 'Sanciones',
@@ -174,21 +172,21 @@ export default function Main() {
             {activeTab === 'Reservas Gestionadas' && (
               <ManagedReservations
                 managedReservations={managedReservations}
-                handleRestoreAvailableReservation={handleRestoreAvailableReservation}
+                handleRestoreAvailableReservation={
+                  handleRestoreAvailableReservation
+                }
                 managing={managing}
                 setManaging={setManaging}
               />
             )}
 
             {activeTab === 'Reservas finalizadas' && (
-              <FinishedReservations 
+              <FinishedReservations
                 finishedReservations={finishedReservations}
               />
             )}
 
-            {activeTab === 'Sanciones' && (
-              <Sanctions />
-            )}
+            {activeTab === 'Sanciones' && <Sanctions />}
           </div>
         </div>
       </section>

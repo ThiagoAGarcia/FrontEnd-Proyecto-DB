@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import Modal from '../../../components/modal'
 import getRoomShift from '../../../service/getRoomShift.jsx'
 import newReservation from '../../../service/createReservation.jsx'
-import { toast } from 'react-toastify'
-import { Oval } from 'react-loader-spinner'
+import {toast} from 'react-toastify'
+import {Oval} from 'react-loader-spinner'
 import getBuildingsService from '../../../service/getBuildingsService.jsx'
 
-export default function ModalReservation({ open, onClose, selectedGroup }) {
+export default function ModalReservation({open, onClose, selectedGroup}) {
   const [selectedSala, setSelectedSala] = useState(null)
   const [selectedTurno, setSelectedTurno] = useState(null)
   const [salas, setSalas] = useState([])
@@ -50,34 +50,39 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
     let cancelled = false
 
     const fetchData = async () => {
-      const shiftToSend = selectedTurno ?? 'null';
-      const roomToSend = selectedSala ?? 'null';
+      const shiftToSend = selectedTurno ?? 'null'
+      const roomToSend = selectedSala ?? 'null'
 
       try {
-        const res = await getRoomShift(selectedGroup, building, date, shiftToSend, roomToSend);
+        const res = await getRoomShift(
+          selectedGroup,
+          building,
+          date,
+          shiftToSend,
+          roomToSend
+        )
 
-        if (cancelled) return;
+        if (cancelled) return
 
         if (!res?.success) {
-          setErrorMsg(res?.description || "Error al obtener información.");
-          return;
+          setErrorMsg(res?.description || 'Error al obtener información.')
+          return
         }
 
-        setErrorMsg("");
+        setErrorMsg('')
 
         if (res.salas !== undefined) {
-          setSalas(res.salas);
+          setSalas(res.salas)
         }
 
         if (res.turnos !== undefined) {
-          setTurnos(res.turnos);
+          setTurnos(res.turnos)
         }
-
       } catch (err) {
-        if (cancelled) return;
-        setErrorMsg("Error de conexión con el servidor.");
+        if (cancelled) return
+        setErrorMsg('Error de conexión con el servidor.')
       }
-    };
+    }
 
     fetchData()
 
@@ -92,7 +97,6 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
 
       if (resBuilding?.success) {
         setBuildingData(resBuilding.buildings)
-        console.log(building)
       }
     }
     build()
@@ -164,9 +168,8 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
         shiftId: selectedTurno,
       }
       const data = await newReservation(BODY)
-      console.log(data)
+
       if (!data?.success) {
-        console.log(data)
         toast.error(data?.description || 'Error creando la reserva', {
           position: 'bottom-left',
           autoClose: 3000,
@@ -215,7 +218,7 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
   }
 
   return (
-    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
+    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
       <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar relative">
         {isLoading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
@@ -273,7 +276,6 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
           <div>
             <h3 className="font-bold text-[#052e66] text-xl mb-4">Salas</h3>
             <div className="bg-white gap-4 shadow-inner border border-gray-300 rounded-2xl p-4 max-h-68 overflow-y-auto scrollbar">
@@ -290,10 +292,11 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                         e.preventDefault()
                         toggleSala(sala.roomId)
                       }}
-                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
-                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
+                        selectedSala === sala.roomId
+                          ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                          : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <input
                         type="radio"
                         name="sala"
@@ -312,13 +315,11 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                         Capacidad: {sala.capacity}{' '}
                       </span>
                     </label>
-
                   ))}
                 </>
               )}
             </div>
           </div>
-
 
           <div>
             <h3 className="font-bold text-[#052e66] text-xl mb-4">Turnos</h3>
@@ -335,10 +336,11 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                       e.preventDefault()
                       toggleTurno(turno.shiftId)
                     }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
-                      ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
-                      : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
+                      selectedTurno === turno.shiftId
+                        ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
+                        : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
+                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="turno"
@@ -353,7 +355,8 @@ export default function ModalReservation({ open, onClose, selectedGroup }) {
                       </span>
                     </div>
                   </label>
-                )))}
+                ))
+              )}
             </div>
           </div>
         </div>

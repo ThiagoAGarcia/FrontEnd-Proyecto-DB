@@ -7,10 +7,9 @@ export default function Sanctions() {
   useEffect(() => {
     const getTodaySanctions = async () => {
       const todaySanctions = await getDaySanctionsService()
-      console.log(todaySanctions)
       if (todaySanctions?.success) {
         let todaySanctionsArray = todaySanctions.sanciones || []
-        console.log(todaySanctionsArray)
+
         setSanctions(todaySanctionsArray)
       } else {
         setSanctions([])

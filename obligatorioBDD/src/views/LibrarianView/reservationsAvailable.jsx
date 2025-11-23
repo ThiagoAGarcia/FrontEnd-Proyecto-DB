@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import Data from './components/data'
 import ModalExpress from './components/modalExpress'
 import getGroupMembersService from '../../service/getGroupMembersService'
 import patchEmptyReservationService from '../../service/patchEmptyReservation'
-import { toast } from 'react-toastify'
+import {toast} from 'react-toastify'
 
 export default function ReservationsAvailable({
   reservationsToday,
@@ -16,8 +16,8 @@ export default function ReservationsAvailable({
   const [groupMembers, setGroupMembers] = useState([])
 
   const selectData = (reservation) => {
-    setSelectedReservation(reservation);
-    setSelectedGroup(reservation.studyGroupId);
+    setSelectedReservation(reservation)
+    setSelectedGroup(reservation.studyGroupId)
   }
 
   useEffect(() => {
@@ -29,35 +29,33 @@ export default function ReservationsAvailable({
         if (groupMembers.success) {
           let membersCi = []
           groupMembers.members.map((member) => {
-            membersCi.push(member.ci);
+            membersCi.push(member.ci)
           })
-          console.log(membersCi)
+
           setGroupMembers(membersCi)
         }
       }
     }
 
-    getGroupMembers();
+    getGroupMembers()
   }, [selectedGroup])
 
-  console.log(groupMembers)
-
   useEffect(() => {
-    let end = new Date();
-    end.setMonth(end.getMonth() + 1);
-    const year = end.getFullYear();
-    const month = String(end.getMonth() + 1).padStart(2, '0');
-    const day = String(end.getDate()).padStart(2, '0');
-    const endDate = `${year}-${month}-${day}`;
+    let end = new Date()
+    end.setMonth(end.getMonth() + 1)
+    const year = end.getFullYear()
+    const month = String(end.getMonth() + 1).padStart(2, '0')
+    const day = String(end.getDate()).padStart(2, '0')
+    const endDate = `${year}-${month}-${day}`
     const BODY = {
-      "studyGroupId": selectedGroup,
-      "studyRoomId": selectedReservation.studyRoomId,
-      "shift": selectedReservation.shift,
-      "members": groupMembers,
-      "endDate": endDate
+      'studyGroupId': selectedGroup,
+      'studyRoomId': selectedReservation.studyRoomId,
+      'shift': selectedReservation.shift,
+      'members': groupMembers,
+      'endDate': endDate,
     }
 
-    const emptyReservationSanction = patchEmptyReservationService(BODY);
+    const emptyReservationSanction = patchEmptyReservationService(BODY)
     if (emptyReservationSanction.success) {
       toast.success(emptyReservationSanction.description, {
         position: 'bottom-left',
@@ -70,7 +68,6 @@ export default function ReservationsAvailable({
       })
     }
   }, [groupMembers])
-
 
   const hayReservas = reservationsToday && reservationsToday.length > 0
 
@@ -89,12 +86,12 @@ export default function ReservationsAvailable({
               Reserva express
             </button>
           </div>
-
         </div>
 
         <div
-          className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : ''
-            }`}>
+          className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
+            !hayReservas ? 'justify-center items-center h-80' : ''
+          }`}>
           {hayReservas ? (
             <>
               <div className="hidden lg:flex w-full text-gray-600 font-medium px-2 pb-2 border-b border-gray-300">
@@ -123,7 +120,6 @@ export default function ReservationsAvailable({
                   </li>
                 ))}
               </ul>
-
             </>
           ) : (
             <span className="font-medium text-2xl text-gray-600">
