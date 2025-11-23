@@ -12,7 +12,11 @@ export default async function patchFinishedReservationsService(BODY) {
                 ).replace(/"/g, '')}`,},
             body: JSON.stringify(BODY)
         });
-        if (!res.ok) throw new Error(`PATCH ${PATH} -> ${res.status}`);
+        if (!res.ok) {
+            const err = await res.json()
+            throw new Error(`PATCH ${PATH} -> ${err.error}`);
+        }
+            
         const finishedData = await res.json();
         return finishedData;
     } catch(error) {

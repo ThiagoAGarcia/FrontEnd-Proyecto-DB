@@ -8,6 +8,7 @@ export default function Data({ children, reserva }) {
                 </span>
                 <span>Sala: {reserva.studyRoom}</span>
                 <span>Estado: {reserva.state}</span>
+                <span>Fecha: {reserva.date}</span>
 
                 <div className="flex gap-3 mt-2">
                     {children}

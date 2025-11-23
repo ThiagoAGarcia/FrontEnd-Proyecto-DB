@@ -44,9 +44,7 @@ export default function ReservationsAvailable({
         position: 'bottom-left',
         autoClose: 2500,
       })
-      setDoubleCheckOpen(false)
-    } else {
-      toast.error(finishedReservations.description)
+      setDoubleCheckOpen(false);
     }
   }
 
