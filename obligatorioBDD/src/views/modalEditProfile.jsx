@@ -163,7 +163,7 @@ export default function ModalEditProfile({open, onClose, user, onUpdated}) {
                 }`}>
                 <div
                   className={`bg-white w-5 h-5 rounded-full shadow-md transform transition ${
-                    changePass ? 'translate-x-6' : 'translate-x-0'
+                    changePass ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
