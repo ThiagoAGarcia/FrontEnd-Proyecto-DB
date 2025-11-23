@@ -34,7 +34,6 @@ export default function NotificationUser({name, date, id, onAccepted, onDeny}) {
 
         setOpen(false)
       } else {
-        if (onAccepted) onAccepted()
         toast.error(result?.description || 'Error al aceptar la solicitud', {
           position: 'bottom-left',
           autoClose: 3000,
