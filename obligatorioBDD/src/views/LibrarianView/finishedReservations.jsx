@@ -9,19 +9,21 @@ export default function FinishedReservations({ finishedReservations }) {
     const [groupMembers, setGroupMembers] = useState(null);
     const [sanctionOpen, setSanctionOpen] = useState(false);
 
-    const selectGroup = (groupId) => {
+    const selectGroup = (reservation) => {
         setSanctionOpen(true);
-        setSelectedGroup(groupId);
+        setSelectedGroup(reservation.studyGroupId);
     }
+
+    console.log(selectedGroup)
 
     useEffect(() => {
         const getGroupMembers = async () => {
             if (selectedGroup === '') {
                 return
             } else {
-                const groupMembers = await getGroupMembersService(selectedGroup)
-                if (groupMembers.success) {
-                    setGroupMembers(groupMembers.members)
+                const groupMembersData = await getGroupMembersService(selectedGroup)
+                if (groupMembersData.success) {
+                    setGroupMembers(groupMembersData.members)
                 }
             }
         }
@@ -29,6 +31,7 @@ export default function FinishedReservations({ finishedReservations }) {
         getGroupMembers();
     }, [selectedGroup])
 
+    console.log(groupMembers)
     return (
         <div className="text-xl">
             <div className="sm:flex justify-between sm:items-end items-start w-full sm:pb-4">
@@ -53,7 +56,7 @@ export default function FinishedReservations({ finishedReservations }) {
                                         <Data reserva={reservation}>
 
                                             <button
-                                                onClick={() => selectGroup(reservation.studyGroupId)}
+                                                onClick={() => selectGroup(reservation)}
                                                 className="font-medium sm:w-1/2 w-full lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-gray-300 hover:bg-gray-200 border border-gray-300 text-[#052e66] shadow-md transition-all">
                                                 Colocar sanción <i className="fa-solid fa-circle-exclamation "></i>
                                             </button>
