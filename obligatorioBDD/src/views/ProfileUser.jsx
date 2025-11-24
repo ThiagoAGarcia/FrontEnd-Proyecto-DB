@@ -35,13 +35,11 @@ export default function ProfileUser() {
       const userRes = await getUsersByCiService(ci)
       if (userRes && userRes.user) {
         setUserData(userRes.user)
-        console.log(userRes.user)
       }
 
       const careerRes = await getCareerService()
       if (careerRes && careerRes.careers) {
         setCareerData(careerRes.careers)
-        console.log(careerRes)
       }
 
       const reservationData = await getReservationsUserService()
@@ -121,7 +119,7 @@ export default function ProfileUser() {
       } else if (Array.isArray(roles) && roles.length) {
         localStorage.setItem('roles', JSON.stringify(roles))
       }
-      console.log(currentRole)
+      
     } catch (error) {
       console.error('Error al cambiar rol:', error)
       const storedRoleRaw = localStorage.getItem('role')

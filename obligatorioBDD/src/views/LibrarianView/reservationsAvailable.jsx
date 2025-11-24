@@ -63,7 +63,6 @@ export default function ReservationsAvailable({ reservationsToday, handleNewMana
       "startDate": selectedReservation.date
     }
 
-    console.log(BODY)
     const emptyReservationSanction = await patchEmptyReservationService(BODY);
     if (emptyReservationSanction?.success) {
       setManaging(!managing)

@@ -14,8 +14,6 @@ export default function FinishedReservations({ finishedReservations }) {
         setSelectedGroup(reservation.studyGroupId);
     }
 
-    console.log(selectedGroup)
-
     useEffect(() => {
         const getGroupMembers = async () => {
             if (selectedGroup === '') {
@@ -31,7 +29,6 @@ export default function FinishedReservations({ finishedReservations }) {
         getGroupMembers();
     }, [selectedGroup])
 
-    console.log(groupMembers)
     return (
         <div className="text-xl">
             <div className="sm:flex justify-between sm:items-end items-start w-full sm:pb-4">

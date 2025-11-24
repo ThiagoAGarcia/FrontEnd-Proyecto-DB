@@ -1,12 +1,12 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal'
 import getRoomShift from '../../../service/getRoomShift.jsx'
 import newReservation from '../../../service/createReservation.jsx'
-import {toast} from 'react-toastify'
-import {Oval} from 'react-loader-spinner'
+import { toast } from 'react-toastify'
+import { Oval } from 'react-loader-spinner'
 import getBuildingsService from '../../../service/getBuildingsService.jsx'
 
-export default function ModalReservation({open, onClose, selectedGroup}) {
+export default function ModalReservation({ open, onClose, selectedGroup }) {
   const [selectedSala, setSelectedSala] = useState(null)
   const [selectedTurno, setSelectedTurno] = useState(null)
   const [salas, setSalas] = useState([])
@@ -117,46 +117,46 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   async function crearReserva() {
     if (isLoading) return
 
-    // if (!date.trim()) {
-    //   toast.error('La fecha es obligatoria', {
-    //     position: 'bottom-left',
-    //     autoClose: 3000,
-    //   })
-    //   return
-    // }
+    if (!date.trim()) {
+      toast.error('La fecha es obligatoria', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+      return
+    }
 
-    // if (!building.trim() || building == 0) {
-    //   toast.error('El edificio es obligatorio', {
-    //     position: 'bottom-left',
-    //     autoClose: 3000,
-    //   })
-    //   return
-    // }
+    if (!building.trim() || building == 0) {
+      toast.error('El edificio es obligatorio', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+      return
+    }
 
-    // if (!selectedSala) {
-    //   toast.error('La sala es obligatoria', {
-    //     position: 'bottom-left',
-    //     autoClose: 3000,
-    //   })
-    //   return
-    // }
+    if (!selectedSala) {
+      toast.error('La sala es obligatoria', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+      return
+    }
 
-    // if (!selectedTurno) {
-    //   toast.error('El turno es obligatorio', {
-    //     position: 'bottom-left',
-    //     autoClose: 3000,
-    //   })
-    //   return
-    // }
+    if (!selectedTurno) {
+      toast.error('El turno es obligatorio', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
+      return
+    }
 
-    // if (date < minDate) {
-    //   toast.error('La fecha no puede ser anterior a hoy', {
-    //     position: 'bottom-left',
-    //     autoClose: 3000,
-    //   })
+    if (date < minDate) {
+      toast.error('La fecha no puede ser anterior a hoy', {
+        position: 'bottom-left',
+        autoClose: 3000,
+      })
 
-    //   return
-    // }
+      return
+    }
 
     try {
       setIsLoading(true)
@@ -218,7 +218,7 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
   }
 
   return (
-    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
+    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
       <div className="text-left w-full p-4 sm:p-6 overflow-y-auto sm:max-h-[80vh] max-h-[100vh] scrollbar relative">
         {isLoading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
@@ -292,11 +292,10 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
                         e.preventDefault()
                         toggleSala(sala.roomId)
                       }}
-                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                        selectedSala === sala.roomId
+                      className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedSala === sala.roomId
                           ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                           : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                        } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <input
                         type="radio"
                         name="sala"
@@ -336,11 +335,10 @@ export default function ModalReservation({open, onClose, selectedGroup}) {
                       e.preventDefault()
                       toggleTurno(turno.shiftId)
                     }}
-                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                      selectedTurno === turno.shiftId
+                    className={`flex items-center gap-4 p-4 my-4 rounded-xl cursor-pointer shadow-md transition-all ${selectedTurno === turno.shiftId
                         ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                         : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                    } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                      } ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <input
                       type="radio"
                       name="turno"

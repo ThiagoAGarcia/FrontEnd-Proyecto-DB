@@ -17,7 +17,6 @@ const PorcentajeReservasEfectivasYNoEfectivas = () => {
         if (!res?.success) {
           throw new Error(res?.description || 'Error al obtener los datos')
         }
-        console.log(res)
 
         const datos = res.reservas[0]
 

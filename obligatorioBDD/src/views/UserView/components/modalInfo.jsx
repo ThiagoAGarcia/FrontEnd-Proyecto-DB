@@ -108,8 +108,6 @@ export default function SelectedGroupInfoModal({
         memberCi
       )
 
-      console.log(deletedMember);
-
       if (deletedMember?.description?.toLowerCase().includes("reserva")) {
         toast.warning("Miembro eliminado y reserva cancelada", {
           position: "bottom-left",
@@ -175,18 +173,35 @@ export default function SelectedGroupInfoModal({
     try {
       setIsLoading(true)
       const memberLeft = await deleteLeaveGroupService(studyGroupId)
-      if (memberLeft.success) {
-        toast.success('Saliste del grupo', {
-          position: 'bottom-left',
+
+      if (memberLeft?.description?.toLowerCase().includes("La reserva fue cancelada y se te aplicó una sanción por abandonar el mismo día.")) {
+        toast.warning("La reserva fue cancelada y se te aplicó una sanción por abandonar el mismo día.", {
+          position: "bottom-left",
           autoClose: 2500,
         })
         onClose()
         setDeletingGroupOrLeft()
-      } else {
-        toast.error(memberLeft?.description || 'Error al salir del grupo', {
-          position: 'bottom-left',
-          autoClose: 3000,
+        return
+      }
+
+      if (memberLeft?.description?.toLowerCase().includes("La reserva fue cancelada por quedar con menos del 50%.")) {
+        toast.warning("La reserva fue cancelada por quedar con menos del 50%.", {
+          position: "bottom-left",
+          autoClose: 2500,
         })
+        onClose()
+        setDeletingGroupOrLeft()
+        return
+      }
+
+      if (memberLeft?.success === true) {
+        toast.success(memberLeft?.description, {
+          position: "bottom-left",
+          autoClose: 2500,
+        })
+        onClose()
+        setDeletingGroupOrLeft()
+        return
       }
     } catch (e) {
       toast.error('Error al salir del grupo', {
