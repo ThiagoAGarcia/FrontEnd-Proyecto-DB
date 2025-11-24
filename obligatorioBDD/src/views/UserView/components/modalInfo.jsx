@@ -13,7 +13,7 @@ export default function SelectedGroupInfoModal({
   selectedGroup,
   open,
   onClose,
-  setDeletingGroupOrLeft,
+  setDeletingGroupOrLeft, onReservationUpdated
 }) {
   const [isLeader, setIsLeader] = useState(false)
   const [selectedGroupData, setSelectedGroupData] = useState(null)
@@ -108,30 +108,39 @@ export default function SelectedGroupInfoModal({
         memberCi
       )
 
-      if (deletedMember.success) {
-        toast.success('Miembro eliminado', {
-          position: 'bottom-left',
+      console.log(deletedMember);
+
+      if (deletedMember?.description?.toLowerCase().includes("reserva")) {
+        toast.warning("Miembro eliminado y reserva cancelada", {
+          position: "bottom-left",
           autoClose: 2500,
         })
         setDeletingMember(!deletingMember)
-      } else {
-        toast.error(
-          deletedMember?.description || 'Error eliminando el miembro',
-          {
-            position: 'bottom-left',
-            autoClose: 3000,
-          }
-        )
+        if (onReservationUpdated) {
+          await onReservationUpdated().catch(() => { })
+        }
+        return
       }
+
+      if (deletedMember?.success === true) {
+        toast.success("Miembro eliminado", {
+          position: "bottom-left",
+          autoClose: 2500,
+        })
+        setDeletingMember(!deletingMember)
+        return
+      }
+
     } catch (e) {
-      toast.error('Error eliminando el miembro', {
-        position: 'bottom-left',
+      toast.error("Error eliminando el miembro", {
+        position: "bottom-left",
         autoClose: 3000,
       })
     } finally {
       setIsLoading(false)
     }
   }
+
 
   const handleDeleteStudyGroup = async (studyGroupId) => {
     if (isLoading) return

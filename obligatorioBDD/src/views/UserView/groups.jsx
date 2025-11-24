@@ -1,6 +1,6 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
-import {useGroups} from '../../context/useGroup.jsx'
+import { useGroups } from '../../context/useGroup.jsx'
 import ModalReservation from '../UserView/components/modalReservation.jsx'
 import ModalGroup from '../UserView/components/modalGroup.jsx'
 import ModalInfo from '../UserView/components/modalInfo.jsx'
@@ -13,7 +13,7 @@ export default function Groups() {
   const [selectedGroup, setSelectedGroup] = useState('')
   const [reservaOpen, setReservaOpen] = useState(false)
   const [reservaInfoOpen, setReservaInfoOpen] = useState(false)
-  const {grupos, refreshGroups} = useGroups()
+  const { grupos, refreshGroups } = useGroups()
 
   useEffect(() => {
     refreshGroups()
@@ -46,9 +46,8 @@ export default function Groups() {
       </div>
 
       <div
-        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
-          !hayGrupos ? 'justify-center items-center h-80' : ''
-        }`}>
+        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayGrupos ? 'justify-center items-center h-80' : ''
+          }`}>
         {hayGrupos ? (
           <>
             <div className="hidden lg:flex w-full justify-between text-gray-700 font-semibold px-2 pb-1 border-b border-gray-300 text-lg">
@@ -168,7 +167,9 @@ export default function Groups() {
         setDeletingGroupOrLeft={() =>
           setDeletingGroupOrLeft(!deletingGroupOrLeft)
         }
+        onReservationUpdated={() => refreshGroups()}
       />
+
 
       <ModalReservation
         open={reservaOpen}
