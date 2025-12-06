@@ -1,7 +1,7 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../../../components/modal.jsx'
-import {toast} from 'react-toastify'
-import {Oval} from 'react-loader-spinner'
+import { toast } from 'react-toastify'
+import { Oval } from 'react-loader-spinner'
 import getGroupReservationInfoService from '../../../service/getReservationInfoService.jsx'
 import extendReservationBlockService from '../../../service/extendReservationBlockService.jsx'
 import cancelReservationService from '../../../service/cancelReservationService.jsx'
@@ -137,7 +137,13 @@ export default function ModalMasInfoReserva({
     })
   }
 
-  const formatTime = (timeStr) => (timeStr ? timeStr.slice(0, 5) : '-')
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "-";
+
+    const [hh, mm] = timeStr.split(":");
+    return `${hh.padStart(2, "0")}:${mm}`;
+  };
+
 
   const blocksLabel = () => {
     if (!reservation?.blocks) return '1 bloque (1 hora)'
@@ -149,7 +155,7 @@ export default function ModalMasInfoReserva({
   const canExtend = reservation?.blocks === 1
 
   return (
-    <Modal open={open} onClose={isLoading ? () => {} : onClose}>
+    <Modal open={open} onClose={isLoading ? () => { } : onClose}>
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-2xl">
           <Oval

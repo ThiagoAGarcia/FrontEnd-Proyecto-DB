@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import getUsersService from '../../service/getUsersService'
 import deleteUserByCiService from '../../service/deleteUserByCi'
-import { ToastContainer, toast } from 'react-toastify'
+import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ModalUpdate from './ModifyUserModal'
 import CreateUserModal from './CreateUserModal'
+import activateUserByCiService from '../../service/activateUserByCi'
 
 export default function UserView() {
   const [userSearch, setUserSearch] = useState('')
@@ -12,6 +13,7 @@ export default function UserView() {
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [crearUserModal, setCrearUserModal] = useState(false)
+  const [active, setActive] = useState(false)
 
   const getUsuarios = async () => {
     try {
@@ -25,20 +27,35 @@ export default function UserView() {
 
   useEffect(() => {
     getUsuarios()
-  }, [])
+  }, [active])
 
   const deleteUser = async (ci) => {
     try {
       const res = await deleteUserByCiService(ci)
 
       if (res.success) {
-        setUsers((prev) => prev.filter((u) => u.ci !== ci))
+        setActive(!active)
         toast.success(res.description || 'Usuario eliminado correctamente')
       } else {
         toast.error(res.description || 'No se pudo eliminar el usuario')
       }
     } catch (error) {
       toast.error(error.message || 'Error al eliminar el usuario')
+    }
+  }
+
+  const activateUser = async (ci) => {
+    try {
+      const res = await activateUserByCiService(ci)
+
+      if (res.success) {
+        setActive(!active)
+        toast.success(res.description || 'Usuario activado correctamente')
+      } else {
+        toast.error(res.description || 'No se pudo activar el usuario')
+      }
+    } catch (error) {
+      toast.error(error.message || 'Error al activar el usuario')
     }
   }
 
@@ -51,7 +68,9 @@ export default function UserView() {
     <>
       <div className="text-xl">
         <div className="sm:flex justify-between items-center w-full sm:pb-3">
-          <h2 className="ml-1 font-semibold text-gray-800 text-2xl">Usuarios</h2>
+          <h2 className="ml-1 font-semibold text-gray-800 text-2xl">
+            Usuarios
+          </h2>
 
           <div className="py-3 sm:py-0 px-1 sm:px-0 sm:p-4 text-gray-300 sm:w-1/2">
             <div className="relative flex"></div>
@@ -59,7 +78,13 @@ export default function UserView() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 pb-3">
-          <input type="text" className="bg-white text-gray-800 h-10 px-5 sm:w-1/2 w-full rounded-full text-sm focus:outline-none border-2 placeholder-gray-400 border-gray-500" placeholder="Buscar" value={userSearch} onChange={(e) => setUserSearch(e.target.value)} />
+          <input
+            type="text"
+            className="bg-white text-gray-800 h-10 px-5 sm:w-1/2 w-full rounded-full text-sm focus:outline-none border-2 placeholder-gray-400 border-gray-500"
+            placeholder="Buscar"
+            value={userSearch}
+            onChange={(e) => setUserSearch(e.target.value)}
+          />
 
           <button
             onClick={() => setCrearUserModal(true)}
@@ -68,8 +93,12 @@ export default function UserView() {
           </button>
         </div>
 
-
-        <div className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!users || users.length === 0 ? 'justify-center items-center h-80' : ''}`}>
+        <div
+          className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
+            !users || users.length === 0
+              ? 'justify-center items-center h-80'
+              : ''
+          }`}>
           {!users || users.length === 0 ? (
             <span className="font-medium text-2xl text-gray-600">
               No hay usuarios en el sistema
@@ -77,7 +106,7 @@ export default function UserView() {
           ) : (
             <>
               <div className="hidden lg:flex w-full px-4 text-left justify-between text-gray-700 font-semibold pb-1 border-b border-gray-300 md:text-lg text-base">
-                <div className="w-1/4 text-center">Cédula</div>
+                <div className="w-1/4 text-center">CÃ©dula</div>
                 <div className="w-1/3 text-center">Nombre completo</div>
                 <div className="w-1/4 text-center">Roles</div>
                 <div className="w-1/4 text-center">Administrar</div>
@@ -85,7 +114,9 @@ export default function UserView() {
 
               <ul className="w-full overflow-auto scrollbar mt-1 p-2">
                 {filteredUsers.map((data) => (
-                  <li key={data.ci} className="bg-[#f4f7fc] border border-gray-200 hover:bg-[#e9eef7] transition-all duration-300 rounded-md flex lg:flex-row flex-col lg:items-center justify-between lg:h-20 mb-3 p-3 gap-3" >
+                  <li
+                    key={data.ci}
+                    className="bg-[#f4f7fc] border border-gray-200 hover:bg-[#e9eef7] transition-all duration-300 rounded-md flex lg:flex-row flex-col lg:items-center justify-between lg:h-20 mb-3 p-3 gap-3">
                     <div className="lg:w-1/4 w-full lg:border-r-2 border-gray-300 order-2 lg:order-none">
                       <p className="text-base lg:text-xl text-gray-600 lg:text-gray-800 font-semibold text-left lg:text-center">
                         {data.ci}
@@ -98,11 +129,12 @@ export default function UserView() {
                       </p>
                     </div>
 
-
                     <div className="lg:w-1/4 w-full lg:border-r-2 border-gray-300 order-3">
                       <div className="flex flex-wrap justify-start lg:justify-center gap-2">
                         {data.roles.map((rol, i) => (
-                          <span key={i} className="px-2 py-1 bg-blue-100 text-[#052e66] rounded-md text-sm whitespace-nowrap" >
+                          <span
+                            key={i}
+                            className="px-2 py-1 bg-blue-100 text-[#052e66] rounded-md text-sm whitespace-nowrap">
                             {rol}
                           </span>
                         ))}
@@ -110,18 +142,30 @@ export default function UserView() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row justify-start lg:justify-center items-stretch gap-3 order-4 lg:w-1/4 w-full text-center">
-                      <button className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-[#052e66] text-white hover:bg-[#073c88]" onClick={() => {
-                        setSelectedUser(data)
-                        setOpen(true)
-                      }}>
+                      <button
+                        className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-[#052e66] text-white hover:bg-[#073c88]"
+                        onClick={() => {
+                          setSelectedUser(data)
+                          setOpen(true)
+                        }}>
                         <i className="fa-solid fa-pen text-white"></i>
                         <span className="sm:hidden">Modificar</span>
                       </button>
-
-                      <button onClick={() => deleteUser(data.ci)} className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-white text-[#052e66] hover:bg-[#f4f7fc]">
-                        <i className="fa-solid fa-trash text-[#052e66]"></i>
-                        <span className="sm:hidden">Eliminar</span>
-                      </button>
+                      {data.isActive ? (
+                        <button
+                          onClick={() => deleteUser(data.ci)}
+                          className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-white text-[#052e66] hover:bg-[#f4f7fc]">
+                          <i className="fa-solid fa-trash text-[#052e66]"></i>
+                          <span className="sm:hidden">Eliminar</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => activateUser(data.ci)}
+                          className="w-full px-4 cursor-pointer border border-[#052e66] py-2 rounded-xl transition-all duration-300 text-sm shadow-md flex items-center justify-center gap-2 bg-white text-[#052e66] hover:bg-[#f4f7fc]">
+                          <i class="fa-solid fa-check text-[#052e66]"></i>
+                          <span className="sm:hidden">Activar</span>
+                        </button>
+                      )}
                     </div>
                   </li>
                 ))}
@@ -131,7 +175,8 @@ export default function UserView() {
         </div>
       </div>
 
-      <ModalUpdate open={open}
+      <ModalUpdate
+        open={open}
         onClose={() => {
           setOpen(false)
           //setSelectedUser(null) Consideraria sacarlo
@@ -147,6 +192,5 @@ export default function UserView() {
         }}
       />
     </>
-
   )
 }

@@ -1,8 +1,8 @@
 import Data from './components/data'
 import patchFinishedReservationsService from '../../service/patchFinishedReservationsService'
-import {useState} from 'react'
+import { useState } from 'react'
 import Modal from '../../components/modal'
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 
 export default function ReservationsAvailable({
   managedReservations,
@@ -15,20 +15,20 @@ export default function ReservationsAvailable({
   const [doubleCheckOpen, setDoubleCheckOpen] = useState(false)
   const [shift, setShift] = useState('')
   const turnos = [
-    {id: 1, label: '09:00'},
-    {id: 2, label: '10:00'},
-    {id: 3, label: '11:00'},
-    {id: 4, label: '12:00'},
-    {id: 5, label: '13:00'},
-    {id: 6, label: '14:00'},
-    {id: 7, label: '15:00'},
-    {id: 8, label: '16:00'},
-    {id: 9, label: '17:00'},
-    {id: 10, label: '18:00'},
-    {id: 11, label: '19:00'},
-    {id: 12, label: '20:00'},
-    {id: 13, label: '21:00'},
-    {id: 14, label: '22:00'},
+    { id: 1, label: '09:00' },
+    { id: 2, label: '10:00' },
+    { id: 3, label: '11:00' },
+    { id: 4, label: '12:00' },
+    { id: 5, label: '13:00' },
+    { id: 6, label: '14:00' },
+    { id: 7, label: '15:00' },
+    { id: 8, label: '16:00' },
+    { id: 9, label: '17:00' },
+    { id: 10, label: '18:00' },
+    { id: 11, label: '19:00' },
+    { id: 12, label: '20:00' },
+    { id: 13, label: '21:00' },
+    { id: 14, label: '22:00' },
   ]
 
   const handleFinishManagedReservations = async () => {
@@ -72,9 +72,8 @@ export default function ReservationsAvailable({
       </div>
 
       <div
-        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${
-          !hayReservas ? 'justify-center items-center h-80' : ''
-        }`}>
+        className={`w-full bg-white shadow-md rounded-2xl p-2 flex flex-col border border-gray-400 ${!hayReservas ? 'justify-center items-center h-80' : ''
+          }`}>
         {hayReservas ? (
           <>
             <div className="hidden lg:flex w-full text-gray-600 font-medium px-2 pb-2 border-b border-gray-300">
@@ -96,12 +95,6 @@ export default function ReservationsAvailable({
                         className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-[#c9fffb]  border border-[#b8ebd6] text-[#052e66] shadow-md hover:bg-[#d9fffd] transition-all">
                         <i className="fa-solid fa-arrow-left "></i> No Gestionar
                       </button>
-
-                      <button
-                        onClick={() => handleNewManagedReservation(reservation)}
-                        className="font-medium w-1/2 lg:w-auto rounded-md px-3 py-2 sm:py-2 cursor-pointer duration-200 bg-red-100 border border-red-300 text-[#052e66] shadow-md hover:bg-red-50 transition-all">
-                        Cancelar <i className="fa-solid fa-xmark "></i>
-                      </button>
                     </Data>
                   </li>
                 ))}
@@ -122,15 +115,15 @@ export default function ReservationsAvailable({
                     {turnos.map((shiftObj) => (
                       <label
                         key={shiftObj.id}
-                        className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer shadow-md transition-all ${
-                          shift === shiftObj.id.toString()
+                        className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer shadow-md transition-all ${shift === shiftObj.id.toString()
                             ? 'bg-gradient-to-t from-blue-100 to-blue-50 border-none text-[#052e66] shadow-[#4379c5] scale-[1.01]'
                             : 'bg-gray-50 border border-gray-300 hover:shadow-lg'
-                        }`}>
+                          }`}>
                         <input
                           type="radio"
                           name="shift"
                           value={shiftObj.id}
+                          checked={shift === shiftObj.id.toString()}
                           onChange={(e) => setShift(e.target.value)}
                           className="hidden"
                         />
